@@ -1,0 +1,42 @@
+{
+  "name": "4rm0byte",
+  "version": "1.0.0",
+  "description": "My Personal Blogging Website",
+  "priveta": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Blog",
+    "Hugo",
+    "4rm0Byte Blogs",
+    "Decap CMS",
+    "Personal Blog",
+    "Web Development",
+    "Static Site Generator",
+    "CMS",
+    "Tailwind CSS"
+  ],
+  "engines": {
+    "node": ">=18.20.1",
+    "npm": ">=9.2.0",
+    "go": ">=1.22.0",
+    "hugo": ">=0.130.0"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "> 1%",
+    "maintained node versions",
+    "not dead"
+  ],
+  "author": "Armoghan-ul-Mohmin",
+  "license": "CC-BY-NC-ND-4.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Armoghan-Blogs/4rm0Byte.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Armoghan-Blogs/4rm0Byte/issues"
+  },
+  "homepage": "https://github.com/Armoghan-Blogs/4rm0Byte#readme"
+}
