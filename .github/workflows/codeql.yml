@@ -1,0 +1,75 @@
+name: "CodeQL Advanced"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '43 6 * * 2'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Detect Languages
+      id: detect-languages
+      run: |
+        LANGUAGES=$(gh api repos/${{ github.repository }}/languages --jq 'keys | join(",")' | tr '[:upper:]' '[:lower:]' || echo "")
+        if [[ -z "$LANGUAGES" ]]; then
+          echo "No languages detected. Skipping CodeQL analysis."
+          echo "skip_codeql=true" >> $GITHUB_ENV
+        else
+          echo "Detected languages: $LANGUAGES"
+          echo "languages=$LANGUAGES" >> $GITHUB_ENV
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Initialize CodeQL
+      if: env.skip_codeql != 'true'
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ env.languages }}
+        queries: security-extended,security-and-quality
+
+    - name: Perform CodeQL Analysis
+      if: env.skip_codeql != 'true'
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:all"
+      continue-on-error: true
+
+    - name: Upload CodeQL results
+      if: env.skip_codeql != 'true' && (success() || failure())
+      uses: actions/upload-artifact@v4
+      with:
+        name: codeql-results
+        path: codeql-results
+        if-no-files-found: ignore
+
+    - name: Notify on failure
+      if: failure() && env.skip_codeql != 'true'
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const issueTitle = `CodeQL Analysis failed`;
+          const issueBody = `The CodeQL analysis has failed. Please check the workflow logs for more details.`;
+          const issue = await github.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: issueTitle,
+            body: issueBody,
+          });
+          console.log(`Created issue ${issue.data.html_url}`);

@@ -16,6 +16,8 @@
 ![Last Commit](https://img.shields.io/github/last-commit/Armoghan-Blogs/4rm0Byte?style=for-the-badge)
 ![Repo Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 
+[![CodeQL Advanced](https://img.shields.io/github/actions/workflow/status/Armoghan-Blogs/4rm0Byte/codeql.yml?label=CodeQL&logo=github&color=blueviolet&style=for-the-badge)](https://github.com/Armoghan-Blogs/4rm0Byte/actions/workflows/codeql.yml)
+
 </div>
 
 ### Table of Contents
