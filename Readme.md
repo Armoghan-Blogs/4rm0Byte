@@ -37,7 +37,6 @@ Welcome to **4rm0Byte**! This is my personal blogging website.
 - **[Decap CMS](https://decapcms.org/)**: Content management system
 - **[Tailwind CSS](https://tailwindcss.com/)**: Utility-first CSS framework
 
-
 ## 📜 License
 
 This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. See the [LICENSE](https://github.com/Armoghan-Blogs/4rm0Byte/blob/main/LICENSE) file for details.

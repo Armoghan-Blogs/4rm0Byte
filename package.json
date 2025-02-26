@@ -2,9 +2,18 @@
   "name": "4rm0byte",
   "version": "1.0.0",
   "description": "My Personal Blogging Website",
-  "priveta": true,
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "concurrently \"npm run dev\" \"npm run decap-dev\"",
+    "decap-dev": "npx decap-server",
+    "dev": "hugo server --buildDrafts --buildFuture --buildExpired --gc --logLevel info --watch",
+    "prod": "hugo server --buildDrafts --buildFuture --buildExpired --gc --logLevel info --watch -e production",
+    "build": "hugo --gc --logLevel info --cleanDestinationDir --minify",
+    "update": "npm update",
+    "depcheck": "depcheck",
+    "cache-clean": "npm cache clean --force",
+    "clean-logs": "rimraf hugo.build.lock && find . -name '*.log' -type f -delete",
+    "rebuild-node-modules": "rimraf node_modules && npm install"
   },
   "keywords": [
     "Blog",
@@ -32,5 +41,10 @@
   "bugs": {
     "url": "https://github.com/Armoghan-Blogs/4rm0Byte/issues"
   },
-  "homepage": "https://github.com/Armoghan-Blogs/4rm0Byte#readme"
+  "homepage": "https://github.com/Armoghan-Blogs/4rm0Byte#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "depcheck": "^1.4.7",
+    "rimraf": "^6.0.1"
+  }
 }
