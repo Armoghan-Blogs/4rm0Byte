@@ -1,0 +1,144 @@
+ // **************************************
+ // * Tasks Configuration                *
+ // * Project: 4rm0Byte                  *
+ // * Description: This configuration    *
+ // * defines a series of tasks for      *
+ // * managing and building the project. *
+ // * It includes tasks for starting     *
+ // * the Hugo and Decap servers,        *
+ // * building the project, auditing     *
+ // * dependencies, and managing the     *
+ // * NPM cache and node_modules.        *
+ // **************************************
+
+{
+    "version": "2.0.0",
+    "tasks": [
+
+        {
+            "label": "Start ",
+            "type": "shell",
+            "command": "npm start",
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "isBackground": false
+        },
+
+        {
+            "label": "Start Hugo Server (Development)",
+            "type": "shell",
+            "command": "npm run dev",
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "isBackground": false
+        },
+
+        {
+            "label": "Start Hugo Server (Production)",
+            "type": "shell",
+            "command": "npm run prod",
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "isBackground": false
+        },
+
+        {
+            "label": "Start Decap Server",
+            "type": "shell",
+            "command": "npm run decap-dev",
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "isBackground": false
+        },
+
+        {
+            "label": "Build Hugo Project",
+            "type": "shell",
+            "command": "npm run build",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "isBackground": false
+        },
+
+        {
+            "label": "Audit Dependencies",
+            "type": "shell",
+            "command": "npm audit",
+            "problemMatcher": [],
+            "group": {
+                "isDefault": true
+            },
+            "isBackground": false
+        },
+
+        {
+            "label": "Audit Dependencies and Fix",
+            "type": "shell",
+            "command": "npm audit --fix",
+            "problemMatcher": [],
+            "group": {
+                "isDefault": false
+            },
+            "isBackground": false
+        },
+
+        {
+            "label": "Update Dependencies",
+            "type": "shell",
+            "command": "npm update",
+            "problemMatcher": [],
+            "group": {
+                "isDefault": false
+            },
+            "isBackground": false
+        },
+
+        {
+            "label": "Check for Unused Dependencies",
+            "type": "shell",
+            "command": "npx depcheck",
+            "problemMatcher": [],
+            "group": {
+                "isDefault": false
+            },
+            "isBackground": false
+        },
+
+        {
+            "label": "Clean NPM Cache",
+            "type": "shell",
+            "command": "npm cache clean --force",
+            "problemMatcher": [],
+            "group": {
+                "isDefault": true
+            },
+            "isBackground": false
+        },
+
+        {
+            "label": "Rebuild Node Modules",
+            "type": "shell",
+            "command": "rm -rf node_modules && npm install",
+            "problemMatcher": [],
+            "group": {
+                "isDefault": false
+            },
+            "isBackground": false
+        }
+    ]
+}

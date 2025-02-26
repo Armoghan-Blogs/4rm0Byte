@@ -1,0 +1,95 @@
+// **************************************
+// * VsCode Settings                    *
+// * Project: 4rm0Byte                  *
+// * Description: Configuration for     *
+// * optimizing the development         *
+// * environment for Hugo websites.     *
+// **************************************
+
+{
+    // **************************************
+    // * General Editor Settings            *
+    // **************************************
+
+    "files.autoSave": "onWindowChange",
+    "files.autoSaveDelay": 1000,
+
+    // Display line numbers and whitespace characters
+    "editor.lineNumbers": "on",
+    "editor.renderWhitespace": "all",
+
+    // Cursor and tab settings
+    "editor.cursorBlinking": "smooth",
+    "editor.tabSize": 4,
+    "editor.tabCompletion": "on",
+
+    // Suggestion settings
+    "editor.suggest.showSnippets": true,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestOnTriggerCharacters": true,
+    "files.insertFinalNewline": true,
+
+    // Code lens and hover settings
+    "editor.codeLens": true,
+    "editor.hover.enabled": true,
+
+    // Extensions Settings
+    "extensions.ignoreRecommendations": true,
+
+    // **************************************
+    // * Appearance Settings               *
+    // **************************************
+
+    // Disable minimap and set color theme
+    "editor.minimap.enabled": false,
+    "workbench.colorTheme": "Shades of Purple",
+    "editor.smoothScrolling": true,
+
+    // Enable bracket pair colorization
+    "editor.bracketPairColorization.enabled": true,
+
+    // **************************************
+    // * Github Copilot Settings           *
+    // **************************************
+
+    "github.copilot.enable": {
+        "*": true,
+        "markdown": true,
+        "plaintext": false
+    },
+    "github.copilot.editor.enableAutoCompletions": true,
+
+    // **************************************
+    // * Tailwind CSS & SCSS                *
+    // **************************************
+
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": true,
+        "strings": true
+    },
+
+    // **************************************
+    // * File Exclusion and Search Settings *
+    // **************************************
+
+    "files.exclude": {
+        "**/.git": true,
+        "**/node_modules": true,
+        "**/package-lock.json": true,
+        "**/.hugo_build.lock": true,
+        "**/public/**": true
+    },
+
+    "search.exclude": {
+        "**/.git": true,
+        "**/node_modules": true,
+        "**/public": true
+    },
+
+    "files.watcherExclude": {
+        "**/node_modules/**": true,
+        "**/public/**": true,
+        "**/.hugo_build.lock": true
+    },
+}

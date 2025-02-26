@@ -17,12 +17,6 @@
     "CMS",
     "Tailwind CSS"
   ],
-  "engines": {
-    "node": ">=18.20.1",
-    "npm": ">=9.2.0",
-    "go": ">=1.22.0",
-    "hugo": ">=0.130.0"
-  },
   "browserslist": [
     "last 2 versions",
     "> 1%",

@@ -1,0 +1,75 @@
+// **************************************
+// * VsCode Extensions                  *
+// * Project: 4rm0Byte                  *
+// * Description: Configuration for     *
+// * optimizing the development         *
+// * environment for Hugo websites.     *
+// **************************************
+{
+    "recommendations": [
+        // ==================================
+        // 🌟 UI & THEMES
+        // ==================================
+        "tal7aouy.icons",
+        "ahmadawais.shades-of-purple",
+        "vscode-icons-team.vscode-icons",
+        "ybaumes.highlight-trailing-white-spaces",
+        "oderwat.indent-rainbow",
+
+        // ==================================
+        // 🚀 GENERAL WEB DEVELOPMENT
+        // ==================================
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "streetsidesoftware.code-spell-checker",
+
+        // ==================================
+        // 🏗️ HUGO & GO DEVELOPMENT
+        // ==================================
+        "golang.go",
+        "budparr.language-hugo-vscode",
+        "rusnasonov.vscode-hugo",
+        "fivethree.vscode-hugo-snippets",
+        "kaellarkin.hugo-shortcode-syntax",
+        "huckbit.go-html-template",
+        "tamasfe.even-better-toml",
+
+        // ==================================
+        // 📜 HTML, HTMX, & TEMPLATE ENGINES
+        // ==================================
+        "sidthesloth.html5-boilerplate",
+        "antfu.iconify",
+        "pranaygp.vscode-css-peek",
+        "simonhaenisch.htmx",
+
+        // ==================================
+        // 🎨 CSS, SCSS, & TAILWIND CSS
+        // ==================================
+        "bradlc.vscode-tailwindcss",
+        "mrmlnc.vscode-scss",
+        "heybourn.headwind",
+
+        // ==================================
+        // ⚡ JAVASCRIPT & TYPESCRIPT
+        // ==================================
+        "xabikos.javascriptsnippets",
+        "dsznajder.es7-react-js-snippets",
+
+        // ==================================
+        // 🛠️ PRODUCTIVITY & UTILITIES
+        // ==================================
+        "eamodio.gitlens",
+        "gruntfuggly.todo-tree",
+        "usernamehw.errorlens",
+        "formulahendry.auto-rename-tag",
+        "christian-kohler.path-intellisense",
+        "redhat.vscode-yaml",
+
+        // ==================================
+        // 📝 MARKDOWN & WRITING
+        // ==================================
+        "yzhang.markdown-all-in-one",
+        "davidanson.vscode-markdownlint",
+        "bierner.markdown-mermaid"
+    ]
+}

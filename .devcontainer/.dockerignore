@@ -1,0 +1,21 @@
+# ============================
+# 📦 Docker Ignore File
+# Project: 4rm0Byte
+# Description: Prevents unnecessary files from being copied into the Docker image.
+# ============================
+
+# 🚀 Ignore Node.js dependencies (prevents large, unnecessary copies)
+node_modules
+**/node_modules/*
+
+# 🚀 Ignore Hugo-generated files (build outputs & cache)
+public/          # Static site output (Hugo-generated)
+resources/_gen/  # Generated assets (Hugo)
+.hugo/           # Hugo temporary files
+.hugo_cache/     # Hugo cache to speed up builds
+.hugo_builds/    # Build-related files
+
+# 🚀 Ignore unnecessary project files
+assets/jsconfig.json  # Local JS config file (not needed in container)
+hugo_stats.json       # Hugo statistics file (not needed)
+vendor/               # Vendor dependencies
