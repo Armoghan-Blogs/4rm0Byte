@@ -8,7 +8,7 @@
 <div align="center">
 
 [![Hugo Version](https://img.shields.io/static/v1?label=HUGO&message=0.130.0&color=blue&logo=hugo&style=for-the-badge)](https://github.com/gohugoio/hugo/releases/tag/v0.130.0)
-[![License](https://img.shields.io/badge/License-MIT-A855F7?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](https://github.com/Armoghan-Blogs/4rm0Byte/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/License-CC--BY--NC--ND--4.0-A855F7?style=for-the-badge&logo=creativecommons&logoColor=white)](https://github.com/Armoghan-Blogs/4rm0Byte/blob/main/LICENSE)
 
 [![Stars](https://img.shields.io/github/stars/Armoghan-Blogs/4rm0Byte?style=for-the-badge&logo=github&color=yellow)](https://github.com/Armoghan-Blogs/4rm0Byte/stargazers)
 [![Repo Size](https://img.shields.io/github/repo-size/Armoghan-Blogs/4rm0Byte?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Armoghan-Blogs/4rm0Byte)
