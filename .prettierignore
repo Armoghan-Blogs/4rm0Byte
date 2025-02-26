@@ -1,0 +1,25 @@
+# Ignore specific directories
+node_modules/*
+.github/*
+.vscode/*
+.git/*
+.devcontainer/*
+public/*
+.husky/*
+resources/*
+themes/*
+static/*
+data/*
+
+# Ignore specific files
+package.json
+package-lock.json
+.gitignore
+.prettierrc.js
+.prettierignore
+CONTRIBUTING.md
+SECURITY.md
+layouts/_default/index.json
+
+# Ignore SVG files
+*.svg

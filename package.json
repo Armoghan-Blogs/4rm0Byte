@@ -11,9 +11,32 @@
     "build": "hugo --gc --logLevel info --cleanDestinationDir --minify",
     "update": "npm update",
     "depcheck": "depcheck",
+    "stage": "lint-staged",
     "cache-clean": "npm cache clean --force",
     "clean-logs": "rimraf hugo.build.lock && find . -name '*.log' -type f -delete",
-    "rebuild-node-modules": "rimraf node_modules && npm install"
+    "rebuild-node-modules": "rimraf node_modules && npm install",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "concurrently": "^9.1.2",
+    "depcheck": "^1.4.7",
+    "eslint": "^9.21.0",
+    "eslint-plugin-html": "^8.1.2",
+    "eslint-plugin-json": "^4.0.1",
+    "eslint-plugin-markdown": "^5.1.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-tailwindcss": "^3.18.0",
+    "eslint-plugin-toml": "^0.12.0",
+    "eslint-plugin-yml": "^1.17.0",
+    "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.5.2",
+    "prettier-plugin-go-template": "^0.0.15",
+    "prettier-plugin-toml": "^2.0.2",
+    "rimraf": "^6.0.1",
+    "vendor-copy": "^3.0.1"
   },
   "keywords": [
     "Blog",
@@ -32,6 +55,31 @@
     "maintained node versions",
     "not dead"
   ],
+  "lint-staged": {
+    "*.html": [
+      "prettier --write"
+    ],
+    "*.css": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.js": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.toml": [
+      "prettier --write"
+    ],
+    "*.yml": [
+      "prettier --write"
+    ],
+    "*.json": [
+      "prettier --write"
+    ],
+    "*.md": [
+      "prettier --write"
+    ]
+  },
   "author": "Armoghan-ul-Mohmin",
   "license": "CC-BY-NC-ND-4.0",
   "repository": {
@@ -42,9 +90,10 @@
     "url": "https://github.com/Armoghan-Blogs/4rm0Byte/issues"
   },
   "homepage": "https://github.com/Armoghan-Blogs/4rm0Byte#readme",
-  "devDependencies": {
-    "concurrently": "^9.1.2",
-    "depcheck": "^1.4.7",
-    "rimraf": "^6.0.1"
-  }
+  "vendorCopy": [
+    {
+      "from": "",
+      "to": ""
+    }
+  ]
 }
