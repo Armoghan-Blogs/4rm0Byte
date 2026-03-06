@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question
+    url: https://github.com/Armoghan-Blogs/4rm0Byte/discussions/categories/q-a
+    about: For questions about using 4rm0Byte or general discussions
+  - name: General feedback
+    url: https://github.com/Armoghan-Blogs/4rm0Byte/discussions/categories/general
+    about: For general feedback, suggestions, or non-bug discussions
+  - name: Ideas in the 4rm0Byte ecosystem
+    url: https://github.com/Armoghan-Blogs/4rm0Byte/discussions/categories/ideas
+    about: For suggesting new features or improvements to 4rm0Byte
