@@ -1,0 +1,4 @@
+baseURL = 'https://example.org/'
+languageCode = 'en-US'
+title = '4rm0Byte'
+theme = "github.com/nunocoracao/blowfish/v2"
