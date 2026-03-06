@@ -1,0 +1,77 @@
+name: Feature request
+description: Suggest an enhancement or new feature for the 4rm0Byte site or tooling
+title: "[FEATURE] "
+labels: [enhancement]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for proposing a feature — describing the problem and a clear
+        proposed solution helps maintainers evaluate and implement it faster.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Short summary
+      description: One-line summary used as the issue title
+      placeholder: "e.g. 'Add RSS feed for tags'"
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the problem or limitation this feature addresses.
+      placeholder: "Describe the user problem or gap in functionality"
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the suggested change or feature, including rough design.
+      placeholder: "Describe the change and how it would work"
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any alternative solutions or trade-offs you considered.
+      placeholder: "Other options and why you chose this approach"
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefits / impact
+      description: Explain the benefits and impact of this feature.
+      placeholder: "Why this is useful and who benefits"
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature?
+      options:
+        - High — important for core workflow
+        - Medium — useful but not urgent
+        - Low — nice to have
+
+  - type: input
+    id: related
+    attributes:
+      label: Related issues / PRs
+      description: Link to any related issues, PRs, or discussions.
+      placeholder: "e.g., #123"
+
+  - type: input
+    id: environment
+    attributes:
+      label: Relevant environment
+      description: Versions or platforms this applies to (Hugo/Go/Node/OS)
+      placeholder: "Hugo v0.157.0, Node 22.22.1, Go 1.26.0, Windows"
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional context
+      description: Any extra context, mockups, links, or implementation notes.
+      placeholder: "Screenshots, design links, or code pointers"
