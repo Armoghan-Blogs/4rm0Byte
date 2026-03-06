@@ -1,0 +1,85 @@
+name: Blog suggestion
+description: Propose a blog post idea, topic, or improvement for 4rm0Byte
+title: "[BLOG] "
+labels: [content, blog]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a blog topic! Please provide enough detail so we
+        can evaluate and, if appropriate, assign or write the post.
+
+  - type: input
+    id: title
+    attributes:
+      label: Proposed post title
+      description: Short, descriptive title for the suggested post
+      placeholder: "e.g. 'Optimizing Hugo builds on Windows'"
+
+  - type: dropdown
+    id: suggestion_type
+    attributes:
+      label: Type of suggestion
+      options:
+        - Tutorial / How-to
+        - Guide / Deep-dive
+        - Opinion / Essay
+        - Project showcase
+        - Quick tip
+        - Correction / Update to existing post
+
+  - type: textarea
+    id: outline
+    attributes:
+      label: Proposed outline / summary
+      description: Short outline or summary of the post ideas and key points
+      placeholder: |
+        1. Intro
+        2. Step 1
+        3. Step 2
+        4. Conclusion
+
+  - type: textarea
+    id: audience
+    attributes:
+      label: Target audience
+      description: Who will benefit from this post? (beginners, intermediate, advanced)
+      placeholder: "e.g. Hugo users, Go developers, site builders"
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefits / value
+      description: Why this post would be useful and what readers will learn
+      placeholder: "e.g. reduces build times, shows practical examples"
+
+  - type: input
+    id: related_posts
+    attributes:
+      label: Related posts or resources
+      description: Links to existing posts or external resources (if any)
+      placeholder: "https://example.com/article"
+
+  - type: dropdown
+    id: willing_to_write
+    attributes:
+      label: Willing to write a draft?
+      options:
+        - Yes — I can write a draft
+        - Maybe — I can help with research
+        - No — just suggesting
+
+  - type: input
+    id: contact
+    attributes:
+      label: Contact / author (optional)
+      description: Your name and GitHub handle or email if you want to be credited
+      placeholder: "Armoghan-ul-Mohmin (@Armoghan-Blogs)"
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional context
+      description: Any other notes, screenshots, example code, or draft snippets
+      placeholder: "Add any extra context or attachments"
