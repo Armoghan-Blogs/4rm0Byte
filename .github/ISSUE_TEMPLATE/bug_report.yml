@@ -1,0 +1,86 @@
+name: Bug report
+description: Report a reproducible bug in the 4rm0Byte site or build tooling
+title: "[BUG] "
+labels: [bug]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug — please fill out the fields below with as
+        much detail as you can. Helpful reports accelerate fixes.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Short summary
+      description: A one-line summary of the bug (used as the issue title)
+      placeholder: "e.g. 'Hugo build fails on Windows with module error'"
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Step-by-step instructions to reproduce the bug.
+      placeholder: |
+        1. Clone the repo
+        2. fnm use 22.22.1
+        3. npm ci
+        4. hugo server -D
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior
+      description: What you expected to happen instead of the bug
+      placeholder: "Describe the expected behavior"
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual behavior
+      description: What actually happened (error messages, stack traces)
+      placeholder: "Paste error output or describe the incorrect behavior"
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this issue for your workflow?
+      options:
+        - High — blocks work / build
+        - Medium — impairs workflow
+        - Low — minor or cosmetic
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Provide relevant versions and OS (Hugo/Go/Node/OS)
+      placeholder: "Hugo v0.157.0, Go 1.26.0, Node 22.22.1, Windows 10"
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Error output
+      description: Paste relevant logs, stack traces, or CLI output. Truncate long logs and attach files if needed.
+
+  - type: markdown
+    attributes:
+      value: |
+        **Attach files**: please attach screenshots, build artifacts, or a small
+        repository/branch that reproduces the problem (if possible).
+
+  - type: input
+    id: workarounds
+    attributes:
+      label: Temporary workarounds
+      description: Any workaround you used (if applicable)
+      placeholder: "e.g., run 'hugo --gc' to avoid the error"
+
+  - type: input
+    id: additional_context
+    attributes:
+      label: Additional context
+      description: Any other context that may help resolve the issue (config, theme version, commit hash)
+      placeholder: "e.g., theme blowfish vX.Y, commit abc123"
