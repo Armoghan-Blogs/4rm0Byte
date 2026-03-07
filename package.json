@@ -4,6 +4,7 @@
   "description": "My Personal Blogging Website build using Hugo , Blowfish theme and Decap CMS.",
   "private": true,
   "scripts": {
+    "postinstall": "vendor-copy",
     "start": "concurrently \"npm run dev\" \"npm run decap-dev\"",
     "decap-dev": "npx decap-server",
     "dev": "hugo server --buildDrafts --buildFuture --buildExpired --gc --logLevel info --watch",
@@ -14,6 +15,7 @@
     "cache-clean": "npm cache clean --force",
     "clean-logs": "rimraf hugo.build.lock && find . -name '*.log' -type f -delete",
     "rebuild-node-modules": "rimraf node_modules && npm install",
+    "assets": "rimraf assets/lib && vendor-copy",
     "hbuild": "hugo -d ../Armoghan-Blogs-Public"
   },
   "keywords": [
@@ -23,20 +25,34 @@
     "Blogging Website",
     "Personal Blog"
   ],
+  "dependencies": {
+    "decap-cms-app": "^3.10.1",
+    "netlify-identity-widget": "^2.0.3"
+  },
   "devDependencies": {
     "concurrently": "^9.2.1",
     "depcheck": "^1.4.7",
-    "rimraf": "^6.1.3"
+    "rimraf": "^6.1.3",
+    "vendor-copy": "^3.0.1"
   },
   "author": "Armoghan-ul-Mohmin",
   "license": "MIT",
-    "repository": {
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/Armoghan-Blogs/4rm0Byte.git"
   },
   "bugs": {
     "url": "https://github.com/Armoghan-Blogs/4rm0Byte/issues"
   },
-  "homepage": "https://github.com/Armoghan-Blogs/4rm0Byte#readme"
+  "homepage": "https://github.com/Armoghan-Blogs/4rm0Byte#readme",
+  "vendorCopy": [
+    {
+      "from": "node_modules/netlify-identity-widget/build/netlify-identity-widget.js",
+      "to": "assets/lib/netlify-identity-widget.js"
+    },
+    {
+      "from": "node_modules/netlify-identity-widget/build/netlify-identity-widget.js.map",
+      "to": "assets/lib/netlify-identity-widget.js.map"
+    }
+  ]
 }
-
