@@ -1,0 +1,205 @@
+{{ define "main" }}
+  {{/* Chart.js Library */}}
+  {{- with resources.Get "/lib/chart/chart.min.js" }}
+    {{- if eq hugo.Environment "development" }}
+      {{- with . | js.Build }}
+        <script src="{{ .RelPermalink }}"></script>
+      {{- end }}
+    {{- else }}
+      {{- $opts := dict "minify" true }}
+      {{- with . | js.Build $opts | fingerprint }}
+        <script
+          src="{{ .RelPermalink }}"
+          integrity="{{- .Data.Integrity }}"
+          crossorigin="anonymous"
+        ></script>
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
+
+  <style>
+    .stats-card-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    /* Add your other styles here */
+  </style>
+
+  <div class="container mx-auto px-4 py-8">
+    {{/* Cards Section */}}
+    <section class="text-center mb-6">
+      <div class="text-2xl font-bold mb-6 underline">Site Report</div>
+      <div class="stats-card-container">
+        {{ partial "report-card.html" (dict "title" "Total Articles" "content" (len .Site.RegularPages)) }}
+        {{ partial "report-card.html" (dict "title" "Total Tags" "content" (len (index .Site.Taxonomies "tags"))) }}
+        {{ partial "report-card.html" (dict "title" "Total Sections" "content" (sub (len .Site.Sections) 1)) }}
+        {{ partial "report-card.html" (dict "title" "Total Series" "content" (len (index .Site.Taxonomies "series"))) }}
+        {{ partial "report-card.html" (dict "title" "Total Keywords" "content" (len (index .Site.Taxonomies "keywords"))) }}
+        {{ partial "report-card.html" (dict "title" "Total Categories" "content" (len .Site.Taxonomies.categories)) }}
+      </div>
+    </section>
+
+    <section class="text-center mt-6">
+      <h2 class="text-2xl font-bold mb-4 underline">Statistics Charts</h2>
+
+      {{/* Article Chart */}}
+      {{ $sections := dict
+        "Posts" (len (where .Site.Pages "Section" "posts"))
+        "Cheatsheets" (len (where .Site.Pages "Section" "cheatsheets"))
+        "Tutorials" (len (where .Site.Pages "Section" "tutorials"))
+      }}
+
+      {{ $labels := slice }}
+      {{ $data := slice }}
+
+      {{ range $section, $count := $sections }}
+        {{ $labels = $labels | append $section }}
+        {{ $data = $data | append (sub $count 1) }}
+      {{ end }}
+
+      {{ partial "report-chart.html" (dict
+        "id" "articlesBarChart"
+        "labels" $labels
+        "data" $data
+        "label" "Number of Articles"
+        "title" "Number of Articles"
+        )
+      }}
+
+      {{/* Tags Chart */}}
+      {{ $tags := .Site.Taxonomies.tags }}
+
+      {{ $labels := slice }}
+      {{ $data := slice }}
+
+      {{ range $tag, $pages := $tags }}
+        {{ $labels = $labels | append $tag }}
+        {{ $data = $data | append (len $pages) }}
+      {{ end }}
+
+      {{ partial "report-chart.html" (dict
+        "id" "tagsBarChart"
+        "labels" $labels
+        "data" $data
+        "label" "Number of Tags"
+        "title" "Number of Tags"
+        )
+      }}
+
+      {{/* Cheatsheets Chart */}}
+      {{ $categories := .Site.Taxonomies.categories }}
+
+      {{ $labels := slice }}
+      {{ $data := slice }}
+
+      {{ range $category, $pages := $categories }}
+        {{ $labels = $labels | append $category }}
+        {{ $data = $data | append (len $pages) }}
+      {{ end }}
+
+      {{ partial "report-chart.html" (dict
+        "id" "cheatsheetsBarChart"
+        "labels" $labels
+        "data" $data
+        "label" "Number of Cheatsheets"
+        "title" "Number of Cheatsheets"
+        )
+      }}
+
+      {{/* Series Chart */}}
+      {{ $series := .Site.Taxonomies.series }}
+
+      {{ $labels := slice }}
+      {{ $data := slice }}
+
+      {{ range $seriesName, $pages := $series }}
+        {{ $labels = $labels | append $seriesName }}
+        {{ $data = $data | append (len $pages) }}
+      {{ end }}
+
+      {{ partial "report-chart.html" (dict
+        "id" "seriesBarChart"
+        "labels" $labels
+        "data" $data
+        "label" "Number of Series"
+        "title" "Number of Series"
+        )
+      }}
+
+      {{/* Keywords Chart */}}
+      {{ $keywords := .Site.Taxonomies.keywords }}
+
+      {{ $labels := slice }}
+      {{ $data := slice }}
+
+      {{ range $keyword, $pages := $keywords }}
+        {{ $labels = $labels | append $keyword }}
+        {{ $data = $data | append (len $pages) }}
+      {{ end }}
+
+      {{ partial "report-chart.html" (dict
+        "id" "keywordsBarChart"
+        "labels" $labels
+        "data" $data
+        "label" "Number of Keywords"
+        "title" "Number of Keywords"
+        )
+      }}
+    </section>
+
+    {{/* Sections Summary */}}
+    <section class="text-center mt-2">
+      <h2 class="text-2xl font-bold mb-6 underline">Summary</h2>
+
+      {{/* Sections Summary */}}
+      {{ $sections := slice }}
+      {{ range .Site.Sections }}
+        {{ $sectionTitle := .Title }}
+        {{ if ne $sectionTitle "Site Report" }}
+          {{ if ne $sectionTitle "Content Manager" }}
+            {{ $sectionPermalink := .RelPermalink }}
+            {{ $cleanPermalink := replace $sectionPermalink "/" "" }}
+            {{ $sectionPages := where $.Site.RegularPages "Section" $cleanPermalink }}
+            {{ $totalArticles := len $sectionPages }}
+            {{ $sections = $sections | append (dict "title" $sectionTitle "permalink" $sectionPermalink "total" $totalArticles) }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+      {{ partial "report-section-summary.html" (dict "title" "Sections" "data" $sections) }}
+
+      {{/* Tags Summary */}}
+      {{ $tags := slice }}
+      {{ range $key, $taxonomy := .Site.Taxonomies.tags }}
+        {{ $tags = $tags | append (dict "title" $key "permalink" (print "/tags/" $key) "total" (len $taxonomy)) }}
+      {{ end }}
+      {{ partial "report-section-summary.html" (dict "title" "Tags" "data" $tags) }}
+
+      {{/* Categories Summary */}}
+      {{ $categories := slice }}
+      {{ range $key, $taxonomy := .Site.Taxonomies.categories }}
+        {{ $categories = $categories | append (dict "title" $key "permalink" (print "/categories/" $key) "total" (len
+          $taxonomy))
+        }}
+      {{ end }}
+      {{ partial "report-section-summary.html" (dict "title" "Categories" "data" $categories) }}
+
+      {{/* Series Summary */}}
+      {{ $series := slice }}
+      {{ range $key, $taxonomy := .Site.Taxonomies.series }}
+        {{ $series = $series | append (dict "title" $key "permalink" (print "/series/" $key) "total" (len $taxonomy)) }}
+      {{ end }}
+      {{ partial "report-section-summary.html" (dict "title" "Series" "data" $series) }}
+
+      {{/* Keywords Summary */}}
+      {{ $keywords := slice }}
+      {{ range $key, $taxonomy := .Site.Taxonomies.keywords }}
+        {{ $keywords = $keywords | append (dict "title" $key "permalink" (print "/keywords/" $key) "total" (len $taxonomy)) }}
+      {{ end }}
+      {{ partial "report-section-summary.html" (dict "title" "Keywords" "data" $keywords) }}
+    </section>
+  </div>
+{{ end }}

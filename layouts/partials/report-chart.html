@@ -1,0 +1,112 @@
+{{/* Chart.js Partial Template with Hardcoded Colors
+  Parameters:
+  - id: The ID for the canvas element.
+  - labels: Array of labels for the chart.
+  - data: Array of data points for the chart.
+  - label: Label for the dataset.
+  - title: Title of the chart.
+*/}}
+
+
+<div class="container mx-auto px-4 py-8">
+  <div class="card bg-white shadow-lg rounded-lg overflow-hidden h-64">
+    <div class="card-body p-4 h-full">
+      <canvas id="{{ .id }}" width="150" height="400"></canvas>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var ctx = document.getElementById('{{ .id }}').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: {{ .labels }},
+      datasets: [{
+        label: '{{ .label }}',
+        data: {{ .data }},
+      barThickness: 50,
+      maxBarThickness: 200,
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 205, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(201, 203, 207, 0.2)',
+        'rgba(255, 99, 71, 0.2)',
+        'rgba(255, 140, 0, 0.2)',
+        'rgba(255, 215, 0, 0.2)',
+        'rgba(0, 255, 255, 0.2)',
+        'rgba(148, 0, 211, 0.2)',
+        'rgba(0, 128, 0, 0.2)',
+        'rgba(255, 69, 0, 0.2)',
+        'rgba(128, 0, 128, 0.2)',
+        'rgba(128, 128, 0, 0.2)',
+        'rgba(0, 128, 128, 0.2)',
+        'rgba(255, 192, 203, 0.2)',
+        'rgba(0, 0, 128, 0.2)',
+        'rgba(192, 192, 192, 0.2)',
+        'rgba(255, 105, 180, 0.2)',
+        'rgba(0, 250, 154, 0.2)',
+        'rgba(50, 205, 50, 0.2)',
+        'rgba(255, 20, 147, 0.2)',
+        'rgba(255, 69, 0, 0.2)'
+      ],
+      borderColor: [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)',
+        'rgb(153, 102, 255)',
+        'rgb(201, 203, 207)',
+        'rgb(255, 99, 71)',
+        'rgb(255, 140, 0)',
+        'rgb(255, 215, 0)',
+        'rgb(0, 255, 255)',
+        'rgb(148, 0, 211)',
+        'rgb(0, 128, 0)',
+        'rgb(255, 69, 0)',
+        'rgb(128, 0, 128)',
+        'rgb(128, 128, 0)',
+        'rgb(0, 128, 128)',
+        'rgb(255, 192, 203)',
+        'rgb(0, 0, 128)',
+        'rgb(192, 192, 192)',
+        'rgb(255, 105, 180)',
+        'rgb(0, 250, 154)',
+        'rgb(50, 205, 50)',
+        'rgb(255, 20, 147)',
+        'rgb(255, 69, 0)'
+      ],
+      borderWidth: 1
+          }]
+        },
+      options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          beginAtZero: true,
+          title: {
+            display: true
+          }
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: '{{ .title }}'
+          },
+          ticks: {
+            stepSize: 1
+          }
+        }
+      }
+    }
+      });
+    });
+  </script>
+</div>
