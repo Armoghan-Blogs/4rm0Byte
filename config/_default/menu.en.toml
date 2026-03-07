@@ -1,14 +1,57 @@
 [[main]]
-name = 'Home'
-pageRef = '/'
+name = "Home"
+url = "/"
 weight = 10
 
 [[main]]
-name = 'Posts'
-pageRef = '/posts'
+name = "Blog"
+url = "/posts"
 weight = 20
 
 [[main]]
-name = 'Tags'
-pageRef = '/tags'
+name = "Cheatsheet"
+url = "/cheatsheets"
 weight = 30
+
+[[main]]
+name = "Tutorial"
+url = "/tutorials"
+weight = 40
+
+[[main]]
+name = "About Me"
+url = "https://armoghan.netlify.app"
+weight = 50
+
+[[main]]
+name = "Contact"
+url = "https://armoghan.netlify.app/"
+weight = 60
+
+# -- Footer Menu --
+# The footer menu is displayed at the bottom of the page, just before
+# the copyright notice. Configure as per the main menu above.
+[[footer]]
+name = "Tags"
+url = "/tags"
+weight = 10
+
+[[footer]]
+name = "Categories"
+url = "/categories"
+weight = 20
+
+[[footer]]
+name = "Series"
+url = "/series"
+weight = 30
+
+[[footer]]
+name = "Keywords"
+url = "/keywords"
+weight = 40
+
+# [[footer]]
+# name = "Newsletter"
+# url = ""
+# weight = 50

@@ -1,0 +1,29 @@
+languageCode = "en"
+languageName = "English"
+title = '4rm0Byte'
+weight = 1
+
+[params]
+dateFormat = "18 December 2002"
+description = "A blogging platform built with Hugo and Blowfish theme, showcasing the latest tech trends and insights in the world of technology."
+displayName = "EN"
+isoCode = "en"
+logo = "media/Armoghan.png"
+rtl = false
+secondaryLogo = "media/Armoghan.png"
+
+[author]
+headline = "Software engineer and cybersecurity professional specializing in digital forensics and secure development. I write about developer tooling, site performance, and practical security practices."
+image = "img/armoghan.png"
+name = "Armoghan-ul-Mohmin"
+bio = "Software engineer and cybersecurity professional specializing in digital forensics and secure development. I write about developer tooling, site performance, and practical security practices."
+links = [
+    { email = "mailto:armoghan@proton.me" },
+    { discord = "https://discord.com/users/905072957141946399" },
+    { facebook = "https://www.facebook.com/armoghanul.mohmin" },
+    { github = "https://github.com/Armoghan-ul-Mohmin" },
+    { gitlab = "https://gitlab.com/Armoghan-ul-Mohmin" },
+    { instagram = "https://www.instagram.com/___armoghan/" },
+    { linkedin = "http://www.linkedin.com/in/armoghan-ul-mohmin-4289a9248" },
+    { twitter = "https://twitter.com/Armoghan12" },
+]

@@ -1,0 +1,165 @@
+# -- Theme Options --
+# These options control how the theme functions and allow you to
+# customise the display of your website.
+#
+# Refer to the theme docs for more details about each of these parameters.
+# https://blowfish.page/docs/configuration/#theme-parameters
+
+autoSwitchAppearance = true
+colorScheme = "blowfish"
+defaultAppearance = "light"
+
+enableCodeCopy = true
+enableSearch = true
+
+mainSections = ["posts", "categories", "tutorials"]
+# robots = ""
+
+disableImageOptimization = false
+disableTextInHeader = false
+
+#defaultBackgroundImage = "" # used as default for background images
+#defaultFeaturedImage = ""   # used as default for featured images in all articles
+
+highlightCurrentMenuArea = true
+smartTOC = true
+# smartTOCHideUnfocusedChildren = true
+
+[header]
+layout = "fixed-fill-blur" # valid options: basic, fixed, fixed-fill, fixed-gradient, fixed-fill-blur
+
+[footer]
+showAppearanceSwitcher = true
+showCopyright = true
+showMenu = true
+showScrollToTop = true
+showThemeAttribution = true
+
+[homepage]
+cardView = true
+cardViewScreenWidth = false
+#homepageImage = "img/background.jpeg" # used in: hero, and card
+layout = "background"       # valid options: page, profile, hero, card, background, custom
+layoutBackgroundBlur = true # only used when layout equals background
+showMoreLink = true
+showMoreLinkDest = "/posts"
+showRecent = true
+showRecentItems = 6
+
+[article]
+editAppendPath = true
+editURL = "https://github.com/Armoghan-Blogs/4rm0Byte/"
+heroStyle = "background" # valid options: basic, big, background, thumbAndBackground
+invertPagination = false
+layoutBackgroundBlur = true # only used when heroStyle equals background or thumbAndBackground
+layoutBackgroundHeaderSpace = true # only used when heroStyle equals background
+newsletter = false
+relatedContentLimit = 3
+seriesOpened = false
+sharingLinks = [
+    "linkedin",
+    "twitter",
+    "reddit",
+    "pinterest",
+    "facebook",
+    "email",
+    "whatsapp",
+    "telegram",
+]
+showAuthor = true
+showAuthorBottom = true
+showAuthorsBadges = false
+showBreadcrumbs = true
+showDate = true
+showDateOnlyInArticle = false
+showDateUpdated = false
+showDraftLabel = true
+showEdit = true
+showHeadingAnchors = false
+showHero = true
+showLikes = true
+showPagination = true
+showReadingTime = true
+showRelatedContent = true
+showTableOfContents = false
+showTaxonomies = false
+showViews = true
+showWordCount = true
+showZenMode = false
+
+[list]
+cardView = true
+cardViewScreenWidth = false
+constrainItemsWidth = false
+groupByYear = true
+heroStyle = "background"           # valid options: basic, big, background, thumbAndBackground
+layoutBackgroundBlur = true        # only used when heroStyle equals background or thumbAndBackground
+layoutBackgroundHeaderSpace = true # only used when heroStyle equals background
+orderByWeight = false
+showBreadcrumbs = true
+showCards = true
+showHero = true
+showLikes = true
+showSummary = true
+showTableOfContents = true
+showViews = true
+
+[sitemap]
+excludedKinds = ["taxonomy", "term"]
+
+[taxonomy]
+cardView = true
+heroStyle = "background"   # valid options: basic, big, background, thumbAndBackground
+showBreadcrumbs = true
+showHero = true
+showLikes = true
+showTableOfContents = true
+showTermCount = true
+showViews = true
+
+[term]
+cardView = true
+cardViewScreenWidth = false
+groupByYear = true
+heroStyle = "thumbAndBackground" # valid options: basic, big, background, thumbAndBackground
+showBreadcrumbs = false
+showHero = true
+showLikes = true
+showTableOfContents = true
+showViews = true
+
+[firebase]
+# apiKey = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# appId = "x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# authDomain = "domain.firebaseapp.com"
+# measurementId = "G-XXXXXXXXXXX"
+# messagingSenderId = "00000000000"
+# projectId = "ID.firebaseapp.com"
+# storageBucket = "bucket-aa5b6.appspot.com"
+
+[fathomAnalytics]
+# site = "ABC12345"
+# domain = "llama.yoursite.com"
+
+[umamiAnalytics]
+# websiteid = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+#domain = "cloud.umami.is"
+#dataDomains = "https://example.com/"
+# enableTrackEvent = true
+
+[selineAnalytics]
+# token = "XXXXXX"
+# enableTrackEvent = true
+
+[buymeacoffee]
+# identifier = ""
+# globalWidget = true
+# globalWidgetMessage = "Hello"
+# globalWidgetColor = "#FFDD00"
+# globalWidgetPosition = "Right"
+
+[verification]
+# bing = ""
+# google = ""
+# pinterest = ""
+# yandex = ""

@@ -1,11 +1,72 @@
 baseURL = 'https://example.org/'
-languageCode = 'en-US'
-title = '4rm0Byte'
+defaultContentLanguage = "en"
 theme = "github.com/nunocoracao/blowfish/v2"
 
+enableRobotsTXT = true
+paginate = 10
+summaryLength = 0
+pluralizeListTitles = "true"
+
+buildDrafts = false
+buildFuture = false
+
+enableEmoji = true
+
+googleAnalytics = "G-xxxxxxxx"
+
+[imaging]
+anchor = 'Center'
+
+[taxonomies]
+author = "authors"
+category = "categories"
+keywords = "keywords"
+series = "series"
+tag = "tags"
+
+[sitemap]
+changefreq = 'daily'
+filename = 'sitemap.xml'
+priority = 0.5
+
+[output]
+home = ["HTML", "RSS", "JSON", "config"]
+
 [outputFormats.config]
-mediaType = "application/yaml"
 baseName = "config"
-extension = "yml"
 isPlainText = true
-notAlternative = true
+mediaType = "application/yaml"
+notAlternative = false
+
+[mediaTypes."application/yaml"]
+suffixes = ["yml"]
+
+[related]
+threshold = 0
+toLower = false
+
+[[related.indices]]
+name = "tags"
+weight = 100
+
+[[related.indices]]
+name = "categories"
+weight = 100
+
+[[related.indices]]
+name = "series"
+weight = 50
+
+[[related.indices]]
+name = "authors"
+weight = 20
+
+[[related.indices]]
+name = "date"
+weight = 10
+
+[[related.indices]]
+applyFilter = false
+name = 'fragmentrefs'
+type = 'fragments'
+weight = 10
