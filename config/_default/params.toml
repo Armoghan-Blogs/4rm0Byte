@@ -23,7 +23,7 @@ disableTextInHeader = false
 
 highlightCurrentMenuArea = true
 smartTOC = true
-# smartTOCHideUnfocusedChildren = true
+smartTOCHideUnfocusedChildren = true
 
 [header]
 layout = "fixed-fill-blur" # valid options: basic, fixed, fixed-fill, fixed-gradient, fixed-fill-blur
@@ -38,7 +38,7 @@ showThemeAttribution = true
 [homepage]
 cardView = true
 cardViewScreenWidth = false
-#homepageImage = "img/background.jpeg" # used in: hero, and card
+homepageImage = "img/background.png" # used in: hero, and card
 layout = "background"       # valid options: page, profile, hero, card, background, custom
 layoutBackgroundBlur = true # only used when layout equals background
 showMoreLink = true

@@ -1,0 +1,14 @@
+User-agent: *
+
+Crawl-delay: 10
+
+{{ range .Pages }}
+{{ $page := .RelPermalink }}
+{{- if and (ne $page "/admin/") (ne $page "/report/") -}}
+Allow: {{ $page }}
+{{- else -}}
+Disallow: {{ $page }}
+{{- end -}}
+{{ end }}
+
+Sitemap: {{ .Site.BaseURL }}sitemap.xml

@@ -2,5 +2,6 @@
     "yaml.validate": true,
     "[yaml]": {
         "yaml.validate": false
-    }
+    },
+    "json.validate.enable": false
 }
