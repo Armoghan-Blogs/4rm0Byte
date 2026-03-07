@@ -1,0 +1,65 @@
+[[plugins]]
+package = "@netlify/plugin-lighthouse"
+
+[build]
+command = "npm run build"
+publish = "public"
+
+[plugins.inputs.thresholds]
+performance = 0.9
+
+[plugins.inputs.audits]
+output_path = "reports/lighthouse.html"
+
+[plugins.inputs.audits.thresholds]
+performance = 0.8
+
+[build.environment]
+GO111MODULE = "on"          # Enable Go modules
+HUGO_ENABLEGITINFO = "true" # Enable Git information for Hugo
+HUGO_ENV = "production"     # Set environment to production
+HUGO_VERSION = "0.157.0"    # Specify the latest Hugo version with extended support
+NODE_VERSION = "22.22.1"     # Specify Node.js version
+
+[build.cache]
+paths = ["node_modules", "public"]
+
+[build.processing]
+css = { minify = true }
+html = { minify = true }
+js = { minify = true }
+
+[build.processing.images]
+auto = true
+cache = true
+formats = [
+    "webp",
+    "jpeg",
+    "jpg",
+    "png",
+    "svg",
+    "gif",
+    "bmp",
+    "tiff",
+    "ico",
+    "heif",
+    "avif",
+    "raw",
+    "pdf",
+]
+quality = 85
+
+[context.deploy-preview]
+HUGO_ENV = "preview"
+command = "hugo --gc --cleanDestinationDir --minify --buildFuture --buildDrafts -b $DEPLOY_PRIME_URL"
+publish = "public"
+
+[context.production]
+HUGO_ENV = "production"
+command = "npm run build"
+publish = "public"
+
+[context.branch-deploy]
+HUGO_ENV = "branch"
+command = "hugo --gc --cleanDestinationDir --minify --buildFuture --buildDrafts"
+publish = "public"
