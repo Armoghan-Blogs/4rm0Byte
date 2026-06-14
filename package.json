@@ -1,0 +1,36 @@
+{
+    "name": "4rm0byte",
+    "version": "1.0.0",
+    "description": "My Personal Blogging Website build using Hugo , Blowfish theme and Decap CMS.",
+    "private": true,
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "4rm0byte",
+        "Hugo",
+        "Decap CMS",
+        "Blowfish Theme",
+        "Blogging Website",
+        "Personal Blog"
+    ],
+    "engines": {
+        "node": ">=21.7.3",
+        "npm": ">=10.5.0",
+        "hugo": ">=0.157.0"
+    },
+    "author": {
+        "name": "Armoghan-ul-Mohmin",
+        "email": "armoghanblogs@gmail.com"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Armoghan-Blogs/4rm0Byte.git",
+        "description": "A personal blog built with Hugo and Decap-CMS, using the Blowfish theme."
+    },
+    "bugs": {
+        "url": "https://github.com/Armoghan-Blogs/4rm0Byte/issues"
+    },
+    "homepage": "https://github.com/Armoghan-Blogs/4rm0Byte#readme"
+}
