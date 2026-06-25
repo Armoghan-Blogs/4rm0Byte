@@ -1,0 +1,27 @@
+# Dependabot configuration file for keeping dependencies up-to-date 🛠️
+version: 2
+
+updates:
+  # NPM packages updates 🌐
+  - package-ecosystem: "npm" # 🛠️ Node.js package ecosystem
+    directory: "/" # 📁 Location of package manifests (package.json)
+    schedule:
+      interval: "weekly" # ⏰ Frequency of updates
+    allow:
+      - dependency-type: "all" # 👥 Update all types of dependencies (direct and development)
+
+  # Go modules updates, including Hugo 📚
+  - package-ecosystem: "gomod" # 🏠 Hugo and Go modules
+    directory: "/" # 📁 Location of Go module manifests (for Hugo)
+    schedule:
+      interval: "weekly" # ⏰ Frequency of updates
+    allow:
+      - dependency-type: "all" # 👥 Update all types of dependencies (direct and indirect)
+
+  # GitHub Actions updates 🔄
+  - package-ecosystem: "github-actions" # ⚙️ GitHub Actions workflows
+    directory: "/" # 📁 Location of GitHub Actions workflow files (.github/workflows)
+    schedule:
+      interval: "weekly" # ⏰ Frequency of updates
+    allow:
+      - dependency-type: "all" # 👥 Update all types of dependencies (actions and reusable workflows)
