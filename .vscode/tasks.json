@@ -1,0 +1,79 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // ===============================
+    // --- Development Tasks ---
+    // ===============================
+    {
+      "label": "Start Hugo and Decap CMS Dev Server",
+      "type": "shell",
+      "command": "npm start",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Hugo Dev Server (Dev)",
+      "type": "shell",
+      "command": "npm run dev",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Hugo Dev Server (Prod)",
+      "type": "shell",
+      "command": "npm run prod",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Decap CMS Dev Server",
+      "type": "shell",
+      "command": "npm run decap-dev",
+      "group": "build",
+      "problemMatcher": []
+    },
+
+    // ===============================
+    // --- Production / Build Tasks ---
+    // ===============================
+    {
+      "label": "Hugo Production Server",
+      "type": "shell",
+      "command": "npm run prod",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build",
+      "problemMatcher": []
+    },
+
+    // ===============================
+    // --- Installation / Maintenance ---
+    // ===============================
+    {
+      "label": "Install",
+      "type": "shell",
+      "command": "pnpm install",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Update Node Modules",
+      "type": "shell",
+      "command": "npm run update",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Dependency Check",
+      "type": "shell",
+      "command": "npm run depcheck",
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

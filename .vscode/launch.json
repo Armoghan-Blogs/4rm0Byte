@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // SCENARIO 1: Starts the Hugo Development server first, then launches Edge
+    {
+      "name": "1. Run Hugo (Dev) + Edge Preview",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:1313",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "Hugo Dev Server (Dev)"
+    },
+    // SCENARIO 1: Starts the Hugo Production server first, then launches Edge
+    {
+      "name": "2. Run Hugo (Prod) + Edge Preview",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:1313",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "Hugo Dev Server (Prod)"
+    },
+    // SCENARIO 2: Just opens Edge (Assumes your server is already running elsewhere)
+    {
+      "name": "3. Just Open Edge Preview (Server Already Running)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:1313",
+      "webRoot": "${workspaceFolder}"
+    }
+  ]
+}

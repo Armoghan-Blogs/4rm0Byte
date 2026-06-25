@@ -1,0 +1,118 @@
+{
+    // ===============================
+    // --- Autosave & Editor Behavior ---
+    // ===============================
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,           // 1 second delay for auto-saving
+    "editor.formatOnSave": true,            // auto-format YAML, TOML, JSON
+    "editor.tabSize": 2,                     // standard for Hugo/Decap
+    "editor.detectIndentation": false,
+    "search.followSymlinks": false,          // avoid searching Hugo output folders
+
+    // ===============================
+    // --- Formatting ---
+    // ===============================
+    "editor.defaultFormatter": "esbenp.prettier-vscode", // use Prettier for formatting
+    "prettier.requireConfig": true,                       // only format if Prettier config exists
+
+    // ===============================
+    // --- Linting ---
+    // ===============================
+    "eslint.enable": true,                    // enable ESLint for JavaScript/TypeScript
+
+    // ===============================
+    // --- JSON Settings ---
+    // ===============================
+    "json.schemas": [
+        {
+            "fileMatch": ["package.json"],
+            "url": ""                       // disables schema validation for package.json
+        }
+    ],
+
+    // ===============================
+    // --- YAML Settings ---
+    // ===============================
+    "yaml.validate": true,                    // default validation for YAML
+    "yaml.schemas": {
+        "": ["single.config.yml"]            // disables schema validation for this specific file
+    },
+    "[yaml]": {
+        "yaml.validate": false               // disable YAML validation in editor
+    },
+
+    // ===============================
+    // --- Editor / Hugo Workflow ---
+    // ===============================
+    "files.exclude": {
+        "**/public": true,                   // hide Hugo output folder
+        "**/resources": true,                // hide Hugo cache/resources
+        "**/node_modules": true,             // hide Node deps
+        "**/.git/**": true,                  // hide Git metadata
+        "package-lock.json": true,           // hide package-lock.json if preferred
+        ".gitignore": true,                  // hide .gitignore if preferred
+        ".hugo_build.lock": true,            // hide Hugo build lock file
+        "**/4rm0Byte-Public/**": true,       // hide 4rm0Byte-Public folder if present
+        "**/_vendor": true                   // hide Hugo vendor folder
+    },
+    "search.exclude": {
+        "**/public": true,
+        "**/resources": true,
+        "**/node_modules": true,
+        "**/.git/**": true,
+        "**/.hugo_build.lock": true,
+        "**/4rm0Byte-Public/**": true,
+        "**/_vendor": true
+    },
+    "files.associations": {
+        "*.toml": "toml",                    // Hugo config files
+        "*.yaml": "yaml",
+        "*.yml": "yaml",
+        "*.json": "json",
+        "*.css": "css",
+        "*.js": "javascript",
+        "*.html": "html"
+    },
+
+    // ===============================
+    // --- Node / NPM ---
+    // ===============================
+    "npm.packageManager": "pnpm",
+
+    // ===============================
+    // --- Hugo Module / Go Support ---
+    // ===============================
+    "go.useLanguageServer": true,            // if your Hugo has Go modules
+    "go.formatTool": "gofmt",
+    "go.lintTool": "golint",
+    "go.toolsEnvVars": {
+        "GOPROXY": "https://proxy.golang.org,direct"
+    },
+
+    // ===============================
+    // --- Hugo Specific Convenience ---
+    // ===============================
+    "files.watcherExclude": {
+        "**/public/**": true,
+        "**/resources/**": true,
+        "**/4rm0Byte-Public/**": true,
+        "**/.hugo_build.lock": true
+    },
+    "terminal.integrated.env.windows": {
+        "HUGO_ENV": "development",
+        "NODE_ENV": "development"
+    },
+
+    // ===============================
+    // --- Markdown Preview / Live Server ---
+    // ===============================
+    "markdown.preview.scrollEditorWithPreview": true,
+    "markdown.preview.scrollPreviewWithEditor": true,
+
+    // ===============================
+    // --- Misslaneous ---
+    // ===============================
+    "chat.instructionsFilesLocations": {
+      ".github/instructions": true,
+    }
+}

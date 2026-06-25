@@ -1,0 +1,41 @@
+{
+  "recommendations": [
+    // --- Formatting, Linting & Layout Visuals ---
+    "esbenp.prettier-vscode",                // Prettier formatter
+    "dbaeumer.vscode-eslint",                // ESLint integration
+    "oderwat.indent-rainbow",                // Colorizes indentation levels
+    "tal7aouy.rainbow-bracket",              // Colorizes matching brackets
+    "kamikillerto.vscode-colorize",          // Visualizes hex/rgb colors in code
+
+    // --- Hugo / TOML / YAML ---
+    "budparr.language-hugo-vscode",          // Hugo language support
+    "be5invis.toml",                         // TOML support
+    "redhat.vscode-yaml",                    // YAML validation & schema support
+
+    // --- JSON & XML Configs ---
+    "ZainChen.json",                         // JSON enhancements
+    "DotJoshJohnson.xml",                    // XML support
+
+    // --- CSS / Tailwind / HTML ---
+    "bradlc.vscode-tailwindcss",             // Tailwind CSS IntelliSense
+    "heybourn.headwind",                     // Tailwind CSS class sorter
+    "ecmel.vscode-html-css",                 // HTML/CSS IntelliSense
+    "formulahendry.auto-rename-tag",         // Auto rename paired HTML tags
+
+    // --- JavaScript, Node & Performance ---
+    "christian-kohler.npm-intellisense",     // Node/NPM IntelliSense
+    "xabikos.JavaScriptSnippets",            // JS/TS snippets
+    "wix.vscode-import-cost",                // Displays size of imported packages inline
+
+    // --- Markdown & Blogging ---
+    "yzhang.markdown-all-in-one",            // Markdown shortcuts, preview
+
+    // --- Browser & Dev Tools ---
+    "ms-edgedevtools.vscode-edge-devtools", // Edge DevTools integration
+
+    // --- Intelligence & Maintenance ---
+    "christian-kohler.path-intellisense",     // File path autocomplete
+    "streetsidesoftware.code-spell-checker",  // Spell checker
+    "gruntfuggly.todo-tree"                  // TODO comments highlighting
+  ]
+}
