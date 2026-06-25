@@ -1,0 +1,53 @@
+# ==========================================
+# --- Package Managers & System Locks ---
+# ==========================================
+node_modules/
+pnpm-lock.yaml
+
+# ==========================================
+# --- Static Site Generation Outputs ---
+# ==========================================
+# Prevents Prettier from formatting thousands of generated production files
+public/
+resources/
+
+# ==========================================
+# --- Static Assets & Media ---
+# ==========================================
+# Images, custom fonts, and third-party binaries do not need formatting
+static/
+
+# ==========================================
+# --- Hugo Core Layout Components ---
+# ==========================================
+# Preserves your specific template configurations
+layouts/shortcodes/
+themes/
+archetypes/
+i18n/
+data/
+
+# ==========================================
+# --- Git & CI/CD Frameworks ---
+# ==========================================
+.github/
+.gitignore
+
+# ==========================================
+# --- Editor Configuration & Caches ---
+# ==========================================
+.vscode/
+.hugo_build.lock
+.editorconfig
+
+# ==========================================
+# --- Project Documentation & Metadata ---
+# ==========================================
+LICENSE
+Readme.md
+go.mod
+go.sum
+.nvmrc
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+SECURITY.md
