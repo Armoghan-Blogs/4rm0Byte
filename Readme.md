@@ -27,24 +27,16 @@ Welcome to **4rm0Byte** — my personal blog about Digital Forensic & Cyber Secu
 
 ## Getting Started
 
-### Using Dev Containers (Recommended)
-1. Install [Docker](https://www.docker.com/) and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) for VS Code
-2. Open the workspace and click "Reopen in Container"
-3. Once ready, run:
-   ```bash
-   hugo server -D
-   ```
-
-### Local Setup
+### Setup
 1. Install dependencies:
    ```bash
    fnm install 21.7.3 && fnm use 21.7.3
-   npm install
+   pnpm install
    go mod tidy
    ```
 2. Start the dev server:
    ```bash
-   hugo server -D
+   npm run dev
    ```
 
 ---
