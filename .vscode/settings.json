@@ -8,6 +8,15 @@
     "editor.tabSize": 2,                     // standard for Hugo/Decap
     "editor.detectIndentation": false,
     "search.followSymlinks": false,          // avoid searching Hugo output folders
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": "on"
+    },
+    "editor.suggestOnTriggerCharacters": true,
+    "editor.suggest.showWords": true,
+    "editor.suggest.showSnippets": true,
+    "editor.snippetSuggestions": "top",
 
     // ===============================
     // --- Formatting ---
@@ -114,5 +123,8 @@
     // ===============================
     "chat.instructionsFilesLocations": {
       ".github/instructions": true,
-    }
+    },
+    "tailwindCSS.experimental.configFile": "./_vendor/github.com/nunocoracao/blowfish/v2@v2.100.0/assets/css/main.css",
+    "tailwindCSS.suggestions": true,
+    "editor.suggest.localityBonus": true
 }
