@@ -1,0 +1,76 @@
+{
+  "id": "/",
+  "name": "4rm0Byte",
+  "short_name": "4rm0Byte",
+  "description": "4rm0Byte is a personal blog about Digital Forensics, Cyber Security, projects, and writing.",
+  "lang": "en",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "dir": "auto",
+  "theme_color": "#1e1e2e",
+  "background_color": "#ffffff",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicons/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicons/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicons/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicons/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicons/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "Desktop1.png",
+      "sizes": "1853x863",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "Desktop2.png",
+      "sizes": "1853x863",
+      "type": "image/png"
+    },
+    {
+      "src": "Mobile1.png",
+      "sizes": "416x729",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "Mobile2.png",
+      "sizes": "419x746",
+      "type": "image/png"
+    }
+  ]
+}

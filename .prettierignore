@@ -39,6 +39,7 @@ data/
 .vscode/
 .hugo_build.lock
 .editorconfig
+.hintrc
 
 # ==========================================
 # --- Project Documentation & Metadata ---
