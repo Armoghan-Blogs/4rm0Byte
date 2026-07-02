@@ -25,10 +25,11 @@ pagerSize = 100
 anchor = 'Center'
 
 [taxonomies]
-tag = "tags"
-category = "categories"
 author = "authors"
+category = "categories"
+keywords = "keywords"
 series = "series"
+tag = "tags"
 
 [sitemap]
 changefreq = 'daily'
@@ -37,6 +38,15 @@ priority = 0.5
 
 [outputs]
 home = ["HTML", "RSS", "JSON"]
+
+[outputFormats.config]
+baseName = "config"
+isPlainText = true
+mediaType = "application/yaml"
+notAlternative = false
+
+[mediaTypes."application/yaml"]
+suffixes = ["yml"]
 
 [related]
 threshold = 0
