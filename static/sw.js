@@ -2,7 +2,7 @@ importScripts("/lib/workbox/workbox-sw.js");
 workbox.setConfig({ debug: false });
 
 const { registerRoute, setCatchHandler } = workbox.routing;
-const { cleanupOutdatedCaches, precacheAndRoute } = workbox.precaching;
+const { cleanupOutdatedCaches, precacheAndRoute, matchPrecache } = workbox.precaching;
 const { skipWaiting, clientsClaim } = workbox.core;
 const { CacheFirst, NetworkFirst, StaleWhileRevalidate } = workbox.strategies;
 const { CacheableResponsePlugin } = workbox.cacheableResponse;
@@ -48,8 +48,8 @@ const navigationStrategy = new NetworkFirst({
     new CacheableResponsePlugin({ statuses: [0, 200] }),
     new ExpirationPlugin({
       maxEntries: 30,
-      maxAgeSeconds: 7 * 24 * 60 * 60,
-    }),
+      maxAgeSeconds: 3 * 24 * 60 * 60,
+      }),
   ],
 });
 
@@ -57,7 +57,7 @@ const navigationStrategy = new NetworkFirst({
 const APP_SHELL = [
   { url: "/404.html", revision: "4e0d67" },
   { url: "/index.html", revision: "4e0d67" },
-  // { url: "/offline.html", revision: "4e0d67" },
+  { url: "/offline.html", revision: "4e0d67" },
   { url: "/site.webmanifest", revision: "4e0d67" },
   { url: "/favicons/favicon.ico", revision: "4e0d67" },
   { url: "/favicons/favicon.svg", revision: "4e0d67" },
@@ -88,7 +88,7 @@ registerRoute(
     cacheName: "assets-css-v1",
     plugins: [
       new CacheableResponsePlugin({ statuses: [0, 200] }),
-      new ExpirationPlugin({ maxEntries: 20, maxAgeSeconds: 30 * 24 * 60 * 60 }),
+      new ExpirationPlugin({ maxEntries: 20, maxAgeSeconds: 3 * 24 * 60 * 60 }),
       cssVersionCleanupPlugin,
     ],
   }),
@@ -101,7 +101,7 @@ registerRoute(
     cacheName: "assets-js-v1",
     plugins: [
       new CacheableResponsePlugin({ statuses: [0, 200] }),
-      new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 30 * 24 * 60 * 60 }),
+      new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 3 * 24 * 60 * 60 }),
     ],
   }),
 );
@@ -115,7 +115,7 @@ registerRoute(
       new CacheableResponsePlugin({ statuses: [0, 200] }),
       new ExpirationPlugin({
         maxEntries: 100,
-        maxAgeSeconds: 30 * 24 * 60 * 60,
+        maxAgeSeconds: 3 * 24 * 60 * 60,
       }),
     ],
   }),
@@ -169,26 +169,9 @@ self.addEventListener("activate", event => {
 
 // Handle offline fallback for navigation requests
 setCatchHandler(async ({ event }) => {
-  // Fallback to the cached offline page for navigation requests
   if (event.request.mode === "navigate") {
-    return caches.match("/index.html");
-    // return caches.match("/offline.html");
+    return matchPrecache("/offline.html");
   }
   return Response.error();
 });
-
-// // Delete the oldest cache when a limit of 20MB is reached
-// ExpirationPlugin.prototype._isCacheFull = async function (cache) {
-//   const cacheKeys = await cache.keys();
-//   let totalSize = 0;
-//   for (const request of cacheKeys) {
-//     const response = await cache.match(request);
-//     if (response) {
-//       const clonedResponse = response.clone();
-//       const buffer = await clonedResponse.arrayBuffer();
-//       totalSize += buffer.byteLength;
-//     }
-//   }
-//   return totalSize > 20 * 1024 * 1024; // 20MB limit
-// }
 

@@ -1,0 +1,25 @@
+{{ define "main" }}
+  <h1 class="mb-3 text-4xl font-extrabold">You are offline</h1>
+  <p class="mt-4 mb-8 text-neutral-500 dark:text-neutral-400">
+    Your network connection appears to be unavailable right now.
+  </p>
+  <div class="prose dark:prose-invert mb-8">
+    <p>
+      You can still read pages that were already cached. Reconnect to the internet and try again for fresh
+      content.
+    </p>
+  </div>
+  <div class="flex flex-wrap items-center gap-3">
+    <button
+      type="button"
+      class="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
+      onclick="window.location.reload()">
+      Try again
+    </button>
+    <a
+      href="{{ "/" | relURL }}"
+      class="inline-flex items-center rounded-md border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800">
+      Go to home
+    </a>
+  </div>
+{{ end }}
