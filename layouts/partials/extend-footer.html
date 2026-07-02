@@ -1,0 +1,20 @@
+{{/* Extra Javascript Files */}}
+
+
+<script>
+  console.log("Hello from 4rm0Byte! 👋");
+</script>
+
+{{/* Service Worker */}}
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", async () => {
+      try {
+        await navigator.serviceWorker.register("/sw.js");
+        console.log("Service Worker registered Successfully");
+      } catch (err) {
+        console.error("Error registering Service Worker:", err);
+      }
+    });
+  }
+</script>

@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      workbox-sw:
+        specifier: ^7.4.1
+        version: 7.4.1
     devDependencies:
       concurrently:
         specifier: ^10.0.3
@@ -26,6 +30,9 @@ importers:
       rimraf:
         specifier: ^6.1.3
         version: 6.1.3
+      vendor-copy:
+        specifier: ^3.0.1
+        version: 3.0.1
 
 packages:
 
@@ -397,6 +404,10 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  ncp@2.0.0:
+    resolution: {integrity: sha512-zIdGUrPRFTUELUvr3Gmc7KZ2Sw/h1PiVM0Af/oHB6zgnV1ikqSfRk+TOufi79aHYCW3NiOXmr1BP5nWbzojLaA==}
+    hasBin: true
+
   package-json-from-dist@1.0.1:
     resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
 
@@ -548,9 +559,17 @@ packages:
     resolution: {integrity: sha512-fIRiVTJNcSRmXKPZtGzFQv9WRrZ3M9eoptl/teFJvjOzmpU+/K/JH6HZ8deBfb5vMEpicJcLn7JmvdknlMq7Zg==}
     hasBin: true
 
+  vendor-copy@3.0.1:
+    resolution: {integrity: sha512-XjQ707tDNDVR9HBH2XoDffBB6em2QmWmD52uh8mt+KbFjv94DjDtz/Sh9lXSEWU1POg/fWXnjswe8hW5fqgL+w==}
+    engines: {node: '>=12'}
+    hasBin: true
+
   which@1.3.1:
     resolution: {integrity: sha512-HxJdYWq1MTIQbJ3nw0cqssHoTNU267KlrDuGZ1WYlxDStUtKUhOaJmh112/TZmHxxUfuJqPXSOm7tDyas0OSIQ==}
     hasBin: true
+
+  workbox-sw@7.4.1:
+    resolution: {integrity: sha512-fez5f2DUlDJWTFYkCWQpY10N8gtztd849NswCbVFk0QlcSM4HT5A8x4g4ii650yem4I8tHY0R7JZahwp3ltIPw==}
 
   wrap-ansi@7.0.0:
     resolution: {integrity: sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==}
@@ -961,6 +980,8 @@ snapshots:
 
   nanoid@3.3.15: {}
 
+  ncp@2.0.0: {}
+
   package-json-from-dist@1.0.1: {}
 
   parent-module@1.0.1:
@@ -1088,9 +1109,15 @@ snapshots:
 
   ulid@2.4.0: {}
 
+  vendor-copy@3.0.1:
+    dependencies:
+      ncp: 2.0.0
+
   which@1.3.1:
     dependencies:
       isexe: 2.0.0
+
+  workbox-sw@7.4.1: {}
 
   wrap-ansi@7.0.0:
     dependencies:
