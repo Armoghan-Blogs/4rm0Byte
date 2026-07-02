@@ -1,0 +1,25 @@
+{{- $index := slice -}}
+{{- $excluded := slice "/offline.html" "/report/" "/admin/" "/404.html" -}}
+
+{{- range .Site.Pages -}}
+  {{- $permalink := .RelPermalink -}}
+  {{- $skip := in $excluded $permalink -}}
+
+  {{- if hasPrefix $permalink "/admin/" -}}
+    {{- $skip = true -}}
+  {{- end -}}
+
+  {{- if not $skip -}}
+    {{- $section := .Site.GetPage "section" .Section -}}
+    {{- $index = $index | append (dict
+      "date" (.Date | time.Format (.Site.Language.Params.dateFormat | default ":date_long"))
+      "title" (.Title | emojify | safeJS)
+      "section" ($section.Title | emojify | safeJS)
+      "summary" (.Summary | emojify | safeJS)
+      "content" (.Plain | emojify | safeJS)
+      "permalink" $permalink
+    ) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $index | jsonify -}}
