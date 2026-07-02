@@ -18,3 +18,13 @@
     });
   }
 </script>
+
+{{/* PWA Install Popup */}}
+{{ $js := resources.Get "/js/pwa-install.js" | js.Build }}
+{{ with $js }}
+  {{ if eq hugo.Environment "production" }}
+    <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}"></script>
+  {{ else }}
+    <script src="{{ .RelPermalink }}"></script>
+  {{ end }}
+{{ end }}
