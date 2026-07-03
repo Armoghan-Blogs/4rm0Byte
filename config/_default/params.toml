@@ -15,7 +15,7 @@ enableCodeCopy = true
 enableStructuredBreadcrumbs = false
 enableStyledScrollbar = true # disable to use native scrollbar style (defaults to true)
 
-replyByEmail = true
+replyByEmail = false
 
 # mainSections = ["section1", "section2"]
 # robots = ""
@@ -129,8 +129,8 @@ fingerprintAlgorithm = "sha512" # Valid values are "sha512" (default), "sha384",
   layoutBackgroundBlur = true # only used when heroStyle equals background or thumbAndBackground
   layoutBackgroundHeaderSpace = true # only used when heroStyle equals background
   showBreadcrumbs = true
-  showViews = true
-  showLikes = true
+  showViews = false
+  showLikes = false
   showTableOfContents = true
   cardView = true
 
