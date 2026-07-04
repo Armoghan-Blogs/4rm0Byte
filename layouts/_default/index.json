@@ -1,5 +1,5 @@
 {{- $index := slice -}}
-{{- $excluded := slice "/offline.html" "/report/" "/admin/" "/404.html" -}}
+{{- $excluded := slice "/offline.html" "/admin/" "/404.html" -}}
 
 {{- range .Site.Pages -}}
   {{- $permalink := .RelPermalink -}}

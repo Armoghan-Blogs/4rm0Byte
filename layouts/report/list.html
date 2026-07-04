@@ -1,0 +1,1052 @@
+{{ define "main" }}
+  {{/* ================================= */}}
+  {{/* Chart.js from Blowfish/theme assets */}}
+  {{/* ================================= */}}
+  {{- with resources.Get "lib/chart/chart.min.js" }}
+    {{- if eq hugo.Environment "development" }}
+      {{- with . | js.Build }}
+        <script src="{{ .RelPermalink }}"></script>
+      {{- end }}
+    {{- else }}
+      {{- $opts := dict "minify" true }}
+      {{- with . | js.Build $opts | fingerprint }}
+        <script src="{{ .RelPermalink }}" integrity="{{- .Data.Integrity }}" crossorigin="anonymous"></script>
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
+  {{/* ======================================================== */}}
+  {{/* Keep custom CSS focused on polish, animation, and effects. */}}
+  {{/* ======================================================== */}}
+  {{- with resources.Get "css/report.css" }}
+    {{- if eq hugo.Environment "development" }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}" />
+    {{- else }}
+      {{- with . | resources.Minify | fingerprint }}
+        <link
+          rel="stylesheet"
+          href="{{ .RelPermalink }}"
+          integrity="{{ .Data.Integrity }}"
+          crossorigin="anonymous" />
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
+  {{/* ============ */}}
+  {{/* Report JS file */}}
+  {{/* ============ */}}
+  {{- with resources.Get "Js/report.js" }}
+    {{- if eq hugo.Environment "development" }}
+      {{- with . | js.Build }}
+        <script src="{{ .RelPermalink }}"></script>
+      {{- end }}
+    {{- else }}
+      {{- $opts := dict "minify" true }}
+      {{- with . | js.Build $opts | fingerprint }}
+        <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous"></script>
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
+  {{/* ================================= */}}
+  {{/* Hugo Variables and dynamic things */}}
+  {{/* ================================= */}}
+
+  {{- $allPages := where .Site.RegularPages "Type" "ne" "authors" -}}
+  {{- $allPages = where $allPages "Section" "not in" (slice "report" "admin") -}}
+  {{- $allPages = where $allPages "RelPermalink" "not in" (slice "/offline.html" "/404.html") -}}
+
+  {{- $publishedPages := where $allPages "Draft" false -}}
+  {{- $draftPages := where $allPages "Draft" true -}}
+
+  {{- $totalPages := len $allPages -}}
+  {{- $publishedCount := len $publishedPages -}}
+  {{- $draftCount := len $draftPages -}}
+
+  {{- $totals := newScratch -}}
+  {{- $totals.Set "words" 0 -}}
+  {{- $totals.Set "readingTime" 0 -}}
+  {{- $totals.Set "short" 0 -}}
+  {{- $totals.Set "medium" 0 -}}
+  {{- $totals.Set "long" 0 -}}
+  {{- $totals.Set "epic" 0 -}}
+
+  {{- range $publishedPages -}}
+    {{- $totals.Add "words" .WordCount -}}
+    {{- $totals.Add "readingTime" .ReadingTime -}}
+    {{- if lt .WordCount 800 -}}
+      {{- $totals.Add "short" 1 -}}
+    {{- else if lt .WordCount 1600 -}}
+      {{- $totals.Add "medium" 1 -}}
+    {{- else if lt .WordCount 2600 -}}
+      {{- $totals.Add "long" 1 -}}
+    {{- else -}}
+      {{- $totals.Add "epic" 1 -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $totalWords := $totals.Get "words" -}}
+  {{- $totalReadingTime := $totals.Get "readingTime" -}}
+
+  {{- $avgWords := 0 -}}
+  {{- $avgReadingTime := 0 -}}
+  {{- if gt $publishedCount 0 -}}
+    {{- $avgWords = div $totalWords $publishedCount -}}
+    {{- $avgReadingTime = div $totalReadingTime $publishedCount -}}
+  {{- end -}}
+
+  {{- $thresholdUnix := (now.AddDate 0 0 -30).Unix -}}
+  {{- $freshCount := len (where $publishedPages "Lastmod.Unix" "ge" $thresholdUnix) -}}
+
+  {{- $sectionRows := slice -}}
+  {{- range .Site.Sections -}}
+    {{- $count := len (where .RegularPages "Draft" false) -}}
+    {{- if gt $count 0 -}}
+      {{- $sectionRows = $sectionRows | append (dict "name" .Title "slug" .Section "count" $count) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $sectionRows = sort $sectionRows "count" "desc" -}}
+
+  {{- $tagRows := slice -}}
+  {{- range $name, $taxonomy := .Site.Taxonomies.tags -}}
+    {{- $tagRows = $tagRows | append (dict "name" $name "count" (len $taxonomy)) -}}
+  {{- end -}}
+  {{- $tagRows = sort $tagRows "count" "desc" -}}
+
+  {{- $categoryRows := slice -}}
+  {{- range $name, $taxonomy := .Site.Taxonomies.categories -}}
+    {{- $categoryRows = $categoryRows | append (dict "name" $name "count" (len $taxonomy)) -}}
+  {{- end -}}
+  {{- $categoryRows = sort $categoryRows "count" "desc" -}}
+
+  {{- $seriesRows := slice -}}
+  {{- range $name, $taxonomy := .Site.Taxonomies.series -}}
+    {{- $seriesRows = $seriesRows | append (dict "name" $name "count" (len $taxonomy)) -}}
+  {{- end -}}
+  {{- $seriesRows = sort $seriesRows "count" "desc" -}}
+
+  {{- $keywordRows := slice -}}
+  {{- range $name, $taxonomy := .Site.Taxonomies.keywords -}}
+    {{- $keywordRows = $keywordRows | append (dict "name" $name "count" (len $taxonomy)) -}}
+  {{- end -}}
+  {{- $keywordRows = sort $keywordRows "count" "desc" -}}
+
+  {{- $lengthBuckets := slice
+    (dict "label" "Short (<800)" "count" ($totals.Get "short"))
+    (dict "label" "Medium (800-1599)" "count" ($totals.Get "medium"))
+    (dict "label" "Long (1600-2599)" "count" ($totals.Get "long"))
+    (dict "label" "Epic (2600+)" "count" ($totals.Get "epic"))
+  -}}
+
+  {{- $monthlyRows := slice -}}
+  {{- range $group := $publishedPages.GroupByDate "2006-01" -}}
+    {{- $monthlyRows = $monthlyRows | append (dict "label" $group.Key "count" (len $group.Pages)) -}}
+  {{- end -}}
+
+  {{- $latestRows := first 14 (sort $publishedPages "Lastmod" "desc") -}}
+  {{- $longRows := first 8 (sort $publishedPages "WordCount" "desc") -}}
+  {{- $topTags := first 10 $tagRows -}}
+  {{- $topCategories := first 8 $categoryRows -}}
+  {{- $topSeries := first 8 $seriesRows -}}
+  {{- $topKeywords := first 8 $keywordRows -}}
+
+  {{- $taxonomyCoverage := add (len $tagRows) (len $categoryRows) -}}
+  {{- $taxonomyCoverage = add $taxonomyCoverage (len $seriesRows) -}}
+  {{- $taxonomyCoverage = add $taxonomyCoverage (len $keywordRows) -}}
+
+  {{- $healthScore := 100 -}}
+  {{- if gt $draftCount 0 -}}
+    {{- $healthScore = sub $healthScore 10 -}}
+  {{- end -}}
+  {{- if lt $freshCount 3 -}}
+    {{- $healthScore = sub $healthScore 15 -}}
+  {{- end -}}
+  {{- if lt $taxonomyCoverage 10 -}}
+    {{- $healthScore = sub $healthScore 10 -}}
+  {{- end -}}
+  {{- if lt $publishedCount 10 -}}
+    {{- $healthScore = sub $healthScore 10 -}}
+  {{- end -}}
+  {{- if lt $healthScore 0 -}}
+    {{- $healthScore = 0 -}}
+  {{- end -}}
+
+  {{/* ######################################################### */}}
+  {{/* Top Summery Section */}}
+  {{/* ######################################################### */}}
+  <section
+    class="bg-white border shadow-sm Section rounded-2xl border-neutral-200 dark:border-neutral-800 dark:bg-neutral-900"
+    id="Summary">
+    {{/* TOP BAR */}}
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <!-- TITLE -->
+      <div class="space-y-2">
+        <h1 class="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white md:text-5xl">
+          {{ .Title }}
+        </h1>
+        <p class="max-w-2xl text-sm text-neutral-500 md:text-base">
+          Monitor publishing consistency, content quality, and growth signals in one unified dashboard.
+        </p>
+      </div>
+    </div>
+
+    {{/* Summary Tabs */}}
+    <div class="grid grid-cols-2 gap-3 mt-6 md:grid-cols-3 lg:grid-cols-4">
+      {{/* Site Generated Timestamps */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Generated</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ now.Format "2006-01-02 15:04" }}
+        </h3>
+      </div>
+
+      {{/* Environment */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Environment</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ hugo.Environment | title }}
+        </h3>
+      </div>
+
+      {{/* Health Score */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Health Score</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ $healthScore }}
+        </h3>
+      </div>
+
+      {{/* Total Content */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Total Content</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ sub (len $allPages) 1 }}
+        </h3>
+      </div>
+
+      {{/* Published Content */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Published</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ sub (len (where $allPages "Draft" false)) 1 }}
+        </h3>
+      </div>
+
+      {{/* Draft Content */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Drafts</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ len (where $allPages "Draft" true) }}
+        </h3>
+      </div>
+
+      {{/* Total Words */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Total Words</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ $totals.Get "words" }}
+        </h3>
+      </div>
+
+      {{/* Average Words */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Average Words</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ $avgWords }}
+        </h3>
+      </div>
+
+      {{/* Average Reading Time */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Average Reading Time</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ $avgReadingTime }} minutes
+        </h3>
+      </div>
+
+      {{/* Recent Articles in past 7 days */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Recent (7d)</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ $recent7d := len (where $publishedPages "Lastmod.Unix" "ge" (now.AddDate 0 0 -7).Unix) }}
+          {{ $recent7d }}
+        </h3>
+      </div>
+
+      {{/* Recent Articles in past 30 days */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Recent (30d)</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ $recent30d := len (where $publishedPages "Lastmod.Unix" "ge" (now.AddDate 0 0 -30).Unix) }}
+          {{ $recent30d }}
+        </h3>
+      </div>
+
+      {{/* Long Posts */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Long Posts</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
+          {{ add ($totals.Get "long") ($totals.Get "epic") }}
+        </h3>
+      </div>
+
+      {{/* PWA Install Status */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">PWA Install status</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white" id="pwa-status">
+          Checking...
+        </h3>
+      </div>
+
+      {{/* Total Cache storage */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Cache Storage</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white" id="cache-storage">
+          Calculating...
+        </h3>
+      </div>
+
+      {{/* Total Browser storage */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Browser Storage</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white" id="browser-storage">
+          Calculating...
+        </h3>
+      </div>
+
+      {{/* PWA install Popup cooldown */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">PWA Install Cooldown</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white" id="pwa-cooldown">
+          Calculating...
+        </h3>
+      </div>
+
+      {{/* Cached assets */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Cached Assets</p>
+        <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white" id="cached-assets">
+          Calculating...
+        </h3>
+      </div>
+
+      {{/* Duplicate entries for cached assets */}}
+      <div
+        class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
+        <p class="text-[11px] uppercase tracking-wide text-neutral-500">Duplicate Cached Assets</p>
+        <h3
+          class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white"
+          id="duplicate-cached-assets">
+          Calculating...
+        </h3>
+      </div>
+    </div>
+  </section>
+
+  {{/* ######################################################### */}}
+  {{/* Report Toolbar */}}
+  {{/* ######################################################### */}}
+  <section
+    class="bg-white border shadow-sm Section rounded-2xl border-neutral-200 dark:border-neutral-800 dark:bg-neutral-900"
+    id="Toolbar">
+    <!-- LEFT -->
+    <div class="space-y-1">
+      <p class="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white md:text-5xl">
+        Visualization Controls
+      </p>
+      <p class="max-w-2xl text-sm text-neutral-500 md:text-base">
+        Adjust chart density to maintain clarity across large datasets and manage PWA and cached assets for
+        optimal performance.
+      </p>
+    </div>
+    <!-- RIGHT -->
+    <div class="pt-3 mt-3">
+      {{/* Charts Density */}}
+      <select
+        id="chartLimit"
+        class="w-full rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-sm font-medium transition hover:border-sky-500 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white md:w-52">
+        <option value="8">Top 8</option>
+        <option value="12" selected>Top 12</option>
+        <option value="20">Top 20</option>
+        <option value="30">Top 30</option>
+      </select>
+
+      {{/* PWA Install Popup Reset */}}
+      <div class="flex gap-3 pt-3 mt-3">
+        <button
+          id="reset-pwa-install"
+          class="group relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-xl border border-neutral-300 bg-gradient-to-b from-neutral-50 to-white px-4 py-3 text-sm font-semibold text-neutral-700 shadow-sm shadow-neutral-900/5 transition-all duration-200 ease-out select-none cursor-pointer hover:-translate-y-0.5 hover:border-primary-400 hover:text-primary-600 hover:shadow-lg hover:shadow-primary-500/10 active:translate-y-px active:scale-[0.985] active:shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus-visible:border-primary-500 dark:border-neutral-700 dark:from-neutral-800 dark:to-neutral-900 dark:bg-gradient-to-b dark:text-neutral-100 dark:shadow-black/20 dark:hover:border-primary-500 dark:hover:text-primary-400 dark:hover:shadow-primary-500/20">
+          <span
+            class="transition-all duration-200 group-hover:scale-110 group-hover:rotate-6 group-hover:text-primary-500">
+            {{ partial "icon.html" "bell" }}
+          </span>
+          <span>Reset Install Popup</span>
+        </button>
+
+        {{/* Clear cached storage */}}
+        <button
+          id="clear-cache-storage"
+          class="group relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-xl border border-neutral-300 bg-gradient-to-b from-neutral-50 to-white px-4 py-3 text-sm font-semibold text-neutral-700 shadow-sm shadow-neutral-900/5 transition-all duration-200 ease-out select-none cursor-pointer hover:-translate-y-0.5 hover:border-primary-400 hover:text-primary-600 hover:shadow-lg hover:shadow-primary-500/10 active:translate-y-px active:scale-[0.985] active:shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus-visible:border-primary-500 dark:border-neutral-700 dark:from-neutral-800 dark:to-neutral-900 dark:bg-gradient-to-b dark:text-neutral-100 dark:shadow-black/20 dark:hover:border-primary-500 dark:hover:text-primary-400 dark:hover:shadow-primary-500/20">
+          <span
+            class="transition-all duration-200 group-hover:scale-110 group-hover:rotate-6 group-hover:text-primary-500">
+            {{ partial "icon.html" "fire" }}
+          </span>
+          <span>Clear Cache</span>
+        </button>
+
+        {{/* Delete Duplicate Assets */}}
+        <button
+          id="delete-duplicate-assets"
+          class="group relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-xl border border-neutral-300 bg-gradient-to-b from-neutral-50 to-white px-4 py-3 text-sm font-semibold text-neutral-700 shadow-sm shadow-neutral-900/5 transition-all duration-200 ease-out select-none cursor-pointer hover:-translate-y-0.5 hover:border-primary-400 hover:text-primary-600 hover:shadow-lg hover:shadow-primary-500/10 active:translate-y-px active:scale-[0.985] active:shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus-visible:border-primary-500 dark:border-neutral-700 dark:from-neutral-800 dark:to-neutral-900 dark:bg-gradient-to-b dark:text-neutral-100 dark:shadow-black/20 dark:hover:border-primary-500 dark:hover:text-primary-400 dark:hover:shadow-primary-500/20">
+          <span
+            class="transition-all duration-200 group-hover:scale-110 group-hover:rotate-6 group-hover:text-primary-500">
+            {{ partial "icon.html" "fork" }}
+          </span>
+          <span>Delete Duplicate Assets</span>
+        </button>
+      </div>
+
+      {{/* Delete All Assets */}}
+      <div class="flex gap-2 pt-3 mt-3">
+        <button
+          id="delete-all-assets"
+          class="group relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-xl border border-neutral-300 bg-gradient-to-b from-neutral-50 to-white px-4 py-3 text-sm font-semibold text-neutral-700 shadow-sm shadow-neutral-900/5 transition-all duration-200 ease-out select-none cursor-pointer hover:-translate-y-0.5 hover:border-primary-400 hover:text-primary-600 hover:shadow-lg hover:shadow-primary-500/10 active:translate-y-px active:scale-[0.985] active:shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus-visible:border-primary-500 dark:border-neutral-700 dark:from-neutral-800 dark:to-neutral-900 dark:bg-gradient-to-b dark:text-neutral-100 dark:shadow-black/20 dark:hover:border-primary-500 dark:hover:text-primary-400 dark:hover:shadow-primary-500/20">
+          <span
+            class="transition-all duration-200 group-hover:scale-110 group-hover:rotate-6 group-hover:text-primary-500">
+            {{ partial "icon.html" "triangle-exclamation" }}
+          </span>
+          <span>Delete All Assets</span>
+        </button>
+
+        {{/* Remove Runtime cached assets */}}
+        <button
+          id="remove-runtime-assets"
+          class="group relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-xl border border-neutral-300 bg-gradient-to-b from-neutral-50 to-white px-4 py-3 text-sm font-semibold text-neutral-700 shadow-sm shadow-neutral-900/5 transition-all duration-200 ease-out select-none cursor-pointer hover:-translate-y-0.5 hover:border-primary-400 hover:text-primary-600 hover:shadow-lg hover:shadow-primary-500/10 active:translate-y-px active:scale-[0.985] active:shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus-visible:border-primary-500 dark:border-neutral-700 dark:from-neutral-800 dark:to-neutral-900 dark:bg-gradient-to-b dark:text-neutral-100 dark:shadow-black/20 dark:hover:border-primary-500 dark:hover:text-primary-400 dark:hover:shadow-primary-500/20">
+          <span
+            class="transition-all duration-200 group-hover:scale-110 group-hover:rotate-6 group-hover:text-primary-500">
+            {{ partial "icon.html" "cloud" }}
+          </span>
+          <span>Remove Runtime Assets</span>
+        </button>
+
+        {{/* Reset Service Worker */}}
+        <button
+          id="reset-service-worker"
+          class="group relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-xl border border-neutral-300 bg-gradient-to-b from-neutral-50 to-white px-4 py-3 text-sm font-semibold text-neutral-700 shadow-sm shadow-neutral-900/5 transition-all duration-200 ease-out select-none cursor-pointer hover:-translate-y-0.5 hover:border-primary-400 hover:text-primary-600 hover:shadow-lg hover:shadow-primary-500/10 active:translate-y-px active:scale-[0.985] active:shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus-visible:border-primary-500 dark:border-neutral-700 dark:from-neutral-800 dark:to-neutral-900 dark:bg-gradient-to-b dark:text-neutral-100 dark:shadow-black/20 dark:hover:border-primary-500 dark:hover:text-primary-400 dark:hover:shadow-primary-500/20">
+          <span
+            class="transition-all duration-200 group-hover:scale-110 group-hover:rotate-6 group-hover:text-primary-500">
+            {{ partial "icon.html" "code" }}
+          </span>
+          <span>Reset Service Worker</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  {{/* ######################################################### */}}
+  {{/* Graphs */}}
+  {{/* ######################################################### */}}
+  <section
+    class="p-4 mt-4 bg-white border shadow-sm graph-view rounded-2xl border-neutral-200 dark:border-neutral-800 dark:bg-neutral-900 md:p-5">
+    <div class="grid grid-cols-1 gap-4 chart-layout sm:grid-cols-2 xl:grid-cols-12">
+      <article
+        class="p-3 border chart-card chart-card--trend rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60 sm:col-span-2 xl:col-span-8">
+        <h3 class="pr-4 mb-2 font-semibold tracking-wide uppercase text-s text-neutral-500">
+          Publishing Trend
+        </h3>
+        <div class="chart-slot">
+          <canvas id="trendChart" class="w-full h-full"></canvas>
+        </div>
+      </article>
+
+      <article
+        class="p-3 border chart-card chart-card--sections rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60 xl:col-span-6">
+        <h3 class="pr-4 m-2 font-semibold tracking-wide uppercase text-s text-neutral-500">Sections</h3>
+        <div class="chart-slot">
+          <canvas id="sectionChart"></canvas>
+        </div>
+      </article>
+
+      <article
+        class="p-3 border chart-card chart-card--tags rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60 xl:col-span-6">
+        <h3 class="pr-4 m-2 font-semibold tracking-wide uppercase text-s text-neutral-500">Tags</h3>
+        <div class="chart-slot">
+          <canvas id="tagsChart"></canvas>
+        </div>
+      </article>
+
+      <article
+        class="p-3 border chart-card chart-card--categories rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60 sm:col-span-2 xl:col-span-6">
+        <h3 class="pr-4 m-2 font-semibold tracking-wide uppercase text-s text-neutral-500">
+          Categories Overview
+        </h3>
+        <div class="chart-slot">
+          <canvas id="categoriesChart"></canvas>
+        </div>
+      </article>
+
+      <article
+        class="p-3 border chart-card chart-card--series rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60 xl:col-span-3">
+        <h3 class="pr-4 m-2 font-semibold tracking-wide uppercase text-s text-neutral-500">Series</h3>
+        <div class="chart-slot">
+          <canvas id="seriesChart"></canvas>
+        </div>
+      </article>
+
+      <article
+        class="p-3 border chart-card chart-card--keywords rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60 xl:col-span-3">
+        <h3 class="pr-4 m-2 font-semibold tracking-wide uppercase text-s text-neutral-500">Keywords</h3>
+        <div class="chart-slot">
+          <canvas id="keywordsChart"></canvas>
+        </div>
+      </article>
+
+      <article
+        class="p-3 border chart-card chart-card--length rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60 sm:col-span-2 xl:col-span-12">
+        <h3 class="pr-4 mb-2 text-sm font-semibold tracking-wide uppercase text-neutral-500">Content Length</h3>
+        <div class="chart-slot">
+          <canvas id="lengthChart"></canvas>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  {{/* ######################################################### */}}
+  {{/* Tags Section */}}
+  {{/* ######################################################### */}}
+  <section
+    class="w-full p-6 mt-4 bg-white border shadow-md tags-section rounded-2xl border-neutral-200 dark:border-neutral-800 dark:bg-neutral-900">
+    <div class="mb-6 space-y-2">
+      <h1 class="text-4xl font-bold text-neutral-900 dark:text-white">Tags</h1>
+      <p class="max-w-3xl text-sm text-neutral-500 dark:text-neutral-400">
+        Explore all tags used on the site. Click any tag to see all related posts. Metrics include total posts,
+        words, and average reading time.
+      </p>
+    </div>
+    <!-- Grid container -->
+    <div id="tags-container" class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      {{ $tagRows := slice }}
+      {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
+        {{ $totalWords := 0 }}
+        {{ $totalReadingTime := 0 }}
+        {{ range $taxonomy }}
+          {{ $totalWords = add $totalWords .WordCount }}
+          {{ $totalReadingTime = add $totalReadingTime .ReadingTime }}
+        {{ end }}
+        {{ $avgWords := div $totalWords (len $taxonomy) }}
+        {{ $avgRead := div $totalReadingTime (len $taxonomy) }}
+        {{ $tagRows = $tagRows | append (dict "name" $name "count" (len $taxonomy) "totalWords" $totalWords "avgWords" $avgWords "avgRead" $avgRead) }}
+      {{ end }}
+      {{ $tagRows = sort $tagRows "count" "desc" }}
+
+
+      <!-- Pagination cards -->
+      {{ $perPage := 6 }}
+      <!-- Changed to 6 cards per page -->
+      {{ range $i, $tag := $tagRows }}
+        <a
+          href="{{ "/tags/" | relURL }}{{ $tag.name | urlize }}"
+          class="block p-4 transition-all duration-300 transform border opacity-0 tag-card group rounded-xl border-neutral-200 bg-neutral-50 hover:shadow-lg hover:-translate-y-1 dark:border-neutral-700 dark:bg-neutral-800 animate-fade-in"
+          data-page="{{ div $i $perPage }}">
+          <h3 class="text-lg font-semibold truncate text-neutral-900 dark:text-white group-hover:text-blue-500">
+            {{ $tag.name }}
+          </h3>
+          <div class="flex flex-wrap gap-2 mt-2 text-sm text-neutral-600 dark:text-neutral-300">
+            <span class="px-2 py-1 text-blue-800 bg-blue-100 rounded-md">Posts: {{ $tag.count }}</span>
+            <span class="px-2 py-1 text-green-800 bg-green-100 rounded-md">Words: {{ $tag.totalWords }}</span>
+            <span class="px-2 py-1 text-purple-800 bg-purple-100 rounded-md"
+              >Avg Words: {{ $tag.avgWords }}</span
+            >
+            <span class="px-2 py-1 text-orange-800 bg-orange-100 rounded-md"
+              >Avg Read: {{ $tag.avgRead }} min</span
+            >
+          </div>
+        </a>
+      {{ end }}
+    </div>
+    <!-- Pagination buttons -->
+    <div class="flex justify-center mt-6 space-x-2">
+      <button
+        id="prev-page"
+        class="px-3 py-1 transition rounded bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600">
+        Prev
+      </button>
+      <span id="current-page" class="px-3 py-1 font-medium text-neutral-700 dark:text-neutral-300">1</span>
+      <button
+        id="next-page"
+        class="px-3 py-1 transition rounded bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600">
+        Next
+      </button>
+    </div>
+  </section>
+
+  {{/* ######################################################### */}}
+  {{/* Categories Section */}}
+  {{/* ######################################################### */}}
+  <section
+    class="w-full p-6 mt-4 bg-white border shadow-md categories-section rounded-2xl border-neutral-200 dark:border-neutral-800 dark:bg-neutral-900">
+    <div class="mb-6 space-y-2">
+      <h1 class="text-4xl font-bold text-neutral-900 dark:text-white">Categories</h1>
+      <p class="max-w-3xl text-sm text-neutral-500 dark:text-neutral-400">
+        Explore all categories used on the site. Click any category to see all related posts.
+      </p>
+    </div>
+
+    <div
+      id="categories-container"
+      class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      {{ $catRows := slice }}
+      {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+        {{ $totalWords := 0 }}
+        {{ range $taxonomy }}
+          {{ $totalWords = add $totalWords .WordCount }}
+        {{ end }}
+        {{ $catRows = $catRows | append (dict "name" $name "count" (len $taxonomy) "totalWords" $totalWords) }}
+      {{ end }}
+      {{ $catRows = sort $catRows "count" "desc" }}
+
+      {{ $perPage := 6 }}
+      {{ range $i, $cat := $catRows }}
+        <a
+          href="{{ "/categories/" | relURL }}{{ $cat.name | urlize }}"
+          class="block p-4 transition-all duration-300 transform border opacity-0 category-card group rounded-xl border-neutral-200 bg-neutral-50 hover:shadow-lg hover:-translate-y-1 dark:border-neutral-700 dark:bg-neutral-800 animate-fade-in"
+          data-page="{{ div $i $perPage }}">
+          <h3 class="text-lg font-semibold truncate text-neutral-900 dark:text-white group-hover:text-blue-500">
+            {{ $cat.name }}
+          </h3>
+          <div class="flex flex-wrap gap-2 mt-2 text-sm text-neutral-600 dark:text-neutral-300">
+            <span class="px-2 py-1 text-blue-800 bg-blue-100 rounded-md">Posts: {{ $cat.count }}</span>
+            <span class="px-2 py-1 text-green-800 bg-green-100 rounded-md">Words: {{ $cat.totalWords }}</span>
+          </div>
+        </a>
+      {{ end }}
+    </div>
+
+    <div class="flex justify-center mt-6 space-x-2">
+      <button
+        id="prev-cat-page"
+        class="px-3 py-1 transition rounded bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600">
+        Prev
+      </button>
+      <span id="current-cat-page" class="px-3 py-1 font-medium text-neutral-700 dark:text-neutral-300">1</span>
+      <button
+        id="next-cat-page"
+        class="px-3 py-1 transition rounded bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600">
+        Next
+      </button>
+    </div>
+  </section>
+
+  {{/* ######################################################### */}}
+  {{/* Series Section */}}
+  {{/* ######################################################### */}}
+  <section
+    class="w-full p-6 mt-4 bg-white border shadow-md series-section rounded-2xl border-neutral-200 dark:border-neutral-800 dark:bg-neutral-900">
+    <div class="mb-6 space-y-2">
+      <h1 class="text-4xl font-bold text-neutral-900 dark:text-white">Series</h1>
+      <p class="max-w-3xl text-sm text-neutral-500 dark:text-neutral-400">
+        Explore all series used on the site. Click any series to see all related posts.
+      </p>
+    </div>
+
+    <div
+      id="series-container"
+      class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      {{ $seriesRows := slice }}
+      {{ range $name, $taxonomy := .Site.Taxonomies.series }}
+        {{ $totalWords := 0 }}
+        {{ range $taxonomy }}
+          {{ $totalWords = add $totalWords .WordCount }}
+        {{ end }}
+        {{ $seriesRows = $seriesRows | append (dict "name" $name "count" (len $taxonomy) "totalWords" $totalWords) }}
+      {{ end }}
+      {{ $seriesRows = sort $seriesRows "count" "desc" }}
+
+      {{ $perPage := 6 }}
+      {{ range $i, $series := $seriesRows }}
+        <a
+          href="{{ "/series/" | relURL }}{{ $series.name | urlize }}"
+          class="block p-4 transition-all duration-300 transform border opacity-0 series-card group rounded-xl border-neutral-200 bg-neutral-50 hover:shadow-lg hover:-translate-y-1 dark:border-neutral-700 dark:bg-neutral-800 animate-fade-in"
+          data-page="{{ div $i $perPage }}">
+          <h3 class="text-lg font-semibold truncate text-neutral-900 dark:text-white group-hover:text-blue-500">
+            {{ $series.name }}
+          </h3>
+          <div class="flex flex-wrap gap-2 mt-2 text-sm text-neutral-600 dark:text-neutral-300">
+            <span class="px-2 py-1 text-blue-800 bg-blue-100 rounded-md">Posts: {{ $series.count }}</span>
+            <span class="px-2 py-1 text-green-800 bg-green-100 rounded-md"
+              >Words: {{ $series.totalWords }}</span
+            >
+          </div>
+        </a>
+      {{ end }}
+    </div>
+
+    <div class="flex justify-center mt-6 space-x-2">
+      <button
+        id="prev-series-page"
+        class="px-3 py-1 transition rounded bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600">
+        Prev
+      </button>
+      <span id="current-series-page" class="px-3 py-1 font-medium text-neutral-700 dark:text-neutral-300"
+        >1</span
+      >
+      <button
+        id="next-series-page"
+        class="px-3 py-1 transition rounded bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600">
+        Next
+      </button>
+    </div>
+  </section>
+
+  {{/* ######################################################### */}}
+  {{/* Keywords Section */}}
+  {{/* ######################################################### */}}
+  <section
+    class="w-full p-6 mt-4 bg-white border shadow-md keywords-section rounded-2xl border-neutral-200 dark:border-neutral-800 dark:bg-neutral-900">
+    <div class="mb-6 space-y-2">
+      <h1 class="text-4xl font-bold text-neutral-900 dark:text-white">Keywords</h1>
+      <p class="max-w-3xl text-sm text-neutral-500 dark:text-neutral-400">
+        Explore all keywords used on the site. Click any keyword to see all related posts.
+      </p>
+    </div>
+
+    <div
+      id="keywords-container"
+      class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      {{ $keywordRows := slice }}
+      {{ range $name, $taxonomy := .Site.Taxonomies.keywords }}
+        {{ $totalWords := 0 }}
+        {{ range $taxonomy }}
+          {{ $totalWords = add $totalWords .WordCount }}
+        {{ end }}
+        {{ $keywordRows = $keywordRows | append (dict "name" $name "count" (len $taxonomy) "totalWords" $totalWords) }}
+      {{ end }}
+      {{ $keywordRows = sort $keywordRows "count" "desc" }}
+
+      {{ $perPage := 6 }}
+      {{ range $i, $keyword := $keywordRows }}
+        <a
+          href="{{ "/keywords/" | relURL }}{{ $keyword.name | urlize }}"
+          class="block p-4 transition-all duration-300 transform border opacity-0 keyword-card group rounded-xl border-neutral-200 bg-neutral-50 hover:shadow-lg hover:-translate-y-1 dark:border-neutral-700 dark:bg-neutral-800 animate-fade-in"
+          data-page="{{ div $i $perPage }}">
+          <h3 class="text-lg font-semibold truncate text-neutral-900 dark:text-white group-hover:text-blue-500">
+            {{ $keyword.name }}
+          </h3>
+          <div class="flex flex-wrap gap-2 mt-2 text-sm text-neutral-600 dark:text-neutral-300">
+            <span class="px-2 py-1 text-blue-800 bg-blue-100 rounded-md">Posts: {{ $keyword.count }}</span>
+            <span class="px-2 py-1 text-green-800 bg-green-100 rounded-md"
+              >Words: {{ $keyword.totalWords }}</span
+            >
+          </div>
+        </a>
+      {{ end }}
+    </div>
+
+    <div class="flex justify-center mt-6 space-x-2">
+      <button
+        id="prev-keyword-page"
+        class="px-3 py-1 transition rounded bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600">
+        Prev
+      </button>
+      <span id="current-keyword-page" class="px-3 py-1 font-medium text-neutral-700 dark:text-neutral-300"
+        >1</span
+      >
+      <button
+        id="next-keyword-page"
+        class="px-3 py-1 transition rounded bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600">
+        Next
+      </button>
+    </div>
+  </section>
+
+  {{/* ######################################################### */}}
+  {{/* PWA/Cache Summary Section */}}
+  {{/* ######################################################### */}}
+  <section
+    class="w-full p-6 mt-4 bg-white border shadow-lg rounded-2xl border-neutral-200 dark:border-neutral-800 dark:bg-neutral-900">
+    <!-- Header -->
+    <div class="mb-10">
+      <h1 class="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white">PWA / Cache Dashboard</h1>
+
+      <p class="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+        Inspect, manage, and optimize your service worker cache in real-time.
+      </p>
+    </div>
+
+    <!-- ===================== -->
+    <!-- Cache Cards           -->
+    <!-- ===================== -->
+
+    <div data-cache-grid class="grid gap-6 mb-10 md:grid-cols-2 xl:grid-cols-3">
+      <!-- CARD TEMPLATE -->
+      <!-- CSS -->
+      <div
+        class="relative p-6 transition-all duration-300 border group rounded-xl border-neutral-200 dark:border-neutral-700 hover:shadow-lg hover:-translate-y-1">
+        <!-- Accent -->
+        <div class="absolute top-0 left-0 w-full h-1 rounded-t-xl bg-sky-500"></div>
+
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold">CSS Cache</h3>
+            <p class="text-xs text-neutral-500">assets-css-v1</p>
+          </div>
+
+          <span
+            class="px-2 py-1 text-xs rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">
+            Styles
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 mt-6">
+          <div>
+            <p class="text-xs text-neutral-500">Files</p>
+            <p id="css-cache-files" class="text-2xl font-bold">--</p>
+          </div>
+
+          <div>
+            <p class="text-xs text-neutral-500">Size</p>
+            <p id="css-cache-size" class="text-2xl font-bold">--</p>
+          </div>
+        </div>
+
+        <div class="flex gap-2 mt-6">
+          <button
+            id="view-css-cache"
+            class="flex-1 py-2 text-sm text-white transition rounded-lg bg-primary-600 hover:bg-primary-700">
+            View
+          </button>
+
+          <button
+            id="delete-css-cache"
+            class="flex-1 py-2 text-sm text-red-500 transition border border-red-500 rounded-lg hover:bg-red-500 hover:text-white">
+            Delete
+          </button>
+        </div>
+      </div>
+
+      <!-- JS -->
+      <div
+        class="relative p-6 transition-all duration-300 border group rounded-xl border-neutral-200 dark:border-neutral-700 hover:shadow-lg hover:-translate-y-1">
+        <div class="absolute top-0 left-0 w-full h-1 bg-amber-500 rounded-t-xl"></div>
+
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold">JavaScript Cache</h3>
+            <p class="text-xs text-neutral-500">assets-js-v1</p>
+          </div>
+
+          <span
+            class="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+            Scripts
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 mt-6">
+          <div>
+            <p class="text-xs text-neutral-500">Files</p>
+            <p id="js-cache-files" class="text-2xl font-bold">--</p>
+          </div>
+
+          <div>
+            <p class="text-xs text-neutral-500">Size</p>
+            <p id="js-cache-size" class="text-2xl font-bold">--</p>
+          </div>
+        </div>
+
+        <div class="flex gap-2 mt-6">
+          <button
+            id="view-js-cache"
+            class="flex-1 py-2 text-sm text-white transition rounded-lg bg-primary-600 hover:bg-primary-700">
+            View
+          </button>
+
+          <button
+            id="delete-js-cache"
+            class="flex-1 py-2 text-sm text-red-500 transition border border-red-500 rounded-lg hover:bg-red-500 hover:text-white">
+            Delete
+          </button>
+        </div>
+      </div>
+
+      <!-- IMAGES -->
+      <div
+        class="relative p-6 transition-all duration-300 border group rounded-xl border-neutral-200 dark:border-neutral-700 hover:shadow-lg hover:-translate-y-1">
+        <div class="absolute top-0 left-0 w-full h-1 bg-green-500 rounded-t-xl"></div>
+
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold">Images Cache</h3>
+            <p class="text-xs text-neutral-500">images-v1</p>
+          </div>
+
+          <span
+            class="px-2 py-1 text-xs text-green-700 bg-green-100 rounded-full dark:bg-green-900/40 dark:text-green-300">
+            Media
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 mt-6">
+          <div>
+            <p class="text-xs text-neutral-500">Files</p>
+            <p id="image-cache-files" class="text-2xl font-bold">--</p>
+          </div>
+
+          <div>
+            <p class="text-xs text-neutral-500">Size</p>
+            <p id="image-cache-size" class="text-2xl font-bold">--</p>
+          </div>
+        </div>
+
+        <div class="flex gap-2 mt-6">
+          <button
+            id="view-image-cache"
+            class="flex-1 py-2 text-sm text-white transition rounded-lg bg-primary-600 hover:bg-primary-700">
+            View
+          </button>
+
+          <button
+            id="delete-image-cache"
+            class="flex-1 py-2 text-sm text-red-500 transition border border-red-500 rounded-lg hover:bg-red-500 hover:text-white">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== -->
+    <!-- Cache Explorer        -->
+    <!-- ===================== -->
+
+    <div class="mb-10">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xl font-semibold text-neutral-900 dark:text-white">Cache Explorer</h2>
+
+        <span
+          id="selected-cache-name"
+          class="px-3 py-1 text-xs rounded-full bg-neutral-200 dark:bg-neutral-700">
+          Select a cache
+        </span>
+      </div>
+
+      <div class="overflow-hidden border rounded-xl border-neutral-200 dark:border-neutral-700">
+        <div
+          id="cache-explorer"
+          class="max-h-[500px] overflow-y-auto divide-y text-sm font-mono divide-neutral-200 dark:divide-neutral-700">
+          <!-- injected rows -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== -->
+    <!-- Duplicate Assets      -->
+    <!-- ===================== -->
+
+    <div>
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-xl font-semibold text-red-600 dark:text-red-400">Duplicate Assets</h2>
+
+          <p class="text-sm text-neutral-500">These files are cached multiple times and waste storage.</p>
+        </div>
+
+        <button
+          id="delete-all-duplicates"
+          class="px-4 py-2 text-sm text-white transition bg-red-600 rounded-lg hover:bg-red-700">
+          Delete All
+        </button>
+      </div>
+
+      <div
+        id="duplicate-assets-list"
+        class="border divide-y rounded-xl border-neutral-200 dark:border-neutral-700 divide-neutral-200 dark:divide-neutral-700">
+        <!-- injected -->
+      </div>
+    </div>
+  </section>
+
+  {{/* ######################################################### */}}
+  {{/* Toast Notification */}}
+  {{/* ######################################################### */}}
+  <div
+    id="toast"
+    class="fixed z-50 transition-all duration-300 translate-y-6 opacity-0 pointer-events-none bottom-6 right-6">
+    <div
+      id="toast-box"
+      class="flex items-center gap-3 px-4 py-3 bg-white border shadow-xl rounded-xl border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900">
+      <span id="toast-icon"></span>
+      <div>
+        <p id="toast-title" class="font-semibold text-neutral-900 dark:text-white">Success</p>
+        <p id="toast-message" class="text-sm text-neutral-500">Action completed.</p>
+      </div>
+    </div>
+  </div>
+
+  {{/* ######################################################### */}}
+  {{/* Confirmation Modal */}}
+  {{/* ######################################################### */}}
+  <div
+    id="confirm-modal"
+    class="fixed inset-0 z-50 items-center justify-center hidden bg-black/50 backdrop-blur-sm">
+    <div
+      class="w-full max-w-md p-6 bg-white border shadow-2xl rounded-2xl border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900">
+      <h2 class="text-xl font-bold text-neutral-900 dark:text-white">Confirm Action</h2>
+      <p id="confirm-text" class="mt-3 text-sm text-neutral-500">Are you sure?</p>
+      <div class="flex justify-end gap-3 mt-6">
+        <button
+          id="confirm-cancel"
+          class="px-4 py-2 font-medium transition border rounded-xl border-neutral-300 hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800">
+          Cancel
+        </button>
+        <button
+          id="confirm-ok"
+          class="px-4 py-2 font-medium text-white transition rounded-xl bg-primary-500 hover:bg-primary-600">
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {{/* ######################################################### */}}
+  {{/* Report Data */}}
+  {{/* ######################################################### */}}
+  {{- $reportPayload := dict
+    "timeline" $monthlyRows
+    "sections" $sectionRows
+    "topTags" $topTags
+    "topCategories" $topCategories
+    "topSeries" $topSeries
+    "topKeywords" $topKeywords
+    "tags" $tagRows
+    "categories" $categoryRows
+    "series" $seriesRows
+    "keywords" $keywordRows
+    "lengthBuckets" $lengthBuckets
+    "totalPages" $totalPages
+    "publishedPages" $publishedCount
+    "draftCount" $draftCount
+    "freshCount" $freshCount
+    "avgWords" $avgWords
+    "avgReadingTime" $avgReadingTime
+    "totalWords" $totalWords
+    "taxonomyCoverage" $taxonomyCoverage
+    "healthScore" $healthScore
+  -}}
+    <script id="report-data" type="application/json">{{ $reportPayload | jsonify | safeHTML }}</script>
+{{ end }}
