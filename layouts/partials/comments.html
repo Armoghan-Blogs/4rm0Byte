@@ -1,0 +1,10 @@
+{{ if .Site.Params.comments.enabled }}
+  <script
+    src="https://utteranc.es/client.js"
+    repo="{{ .Site.Params.comments.repo }}"
+    issue-term="{{ .Site.Params.comments.issueTerm }}"
+    label="{{ .Site.Params.comments.label }}"
+    theme="{{ .Site.Params.comments.theme }}"
+    crossorigin="{{ .Site.Params.comments.crossorigin }}"
+    async></script>
+{{ end }}
