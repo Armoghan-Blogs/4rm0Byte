@@ -9,7 +9,7 @@ showWordCount: false
 showViews: false
 showLikes: false
 showBreadcrumbs: false
-# showTableOfContents: false
+heroStyle: "background"
 showReadingTime: false
 showPagination: false
 showEdit: false

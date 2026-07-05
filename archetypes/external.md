@@ -3,6 +3,7 @@ title: "{{ replace .Name "-" " " | title }}"
 date: {{ .Date }}
 summary: ""
 description: ""
+externalUrl: ""
 image: ""
 showSummary: true
 showTableOfContents: true

@@ -17,4 +17,5 @@ showDate: false
 showDateOnlyInArticle: false
 showDateUpdated: false
 replyByEmail: false
+heroStyle: "background"
 ---

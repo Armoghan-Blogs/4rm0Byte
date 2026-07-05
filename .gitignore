@@ -209,3 +209,5 @@ $RECYCLE.BIN/
 4rm0Byte-Public/
 _vendor/
 lib/
+Flask/
+Git/
