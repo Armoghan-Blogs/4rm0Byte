@@ -49,6 +49,12 @@ url = "/tools/"
 weight = 4
 
 [[main]]
+parent = "Learn"
+name = "Resources"
+url = "/resource"
+weight = 5
+
+[[main]]
 name = "About"
 url = "/about"
 weight = 7
@@ -94,8 +100,8 @@ url = "/keywords"
 weight = 40
 
 [[footer]]
-name = "Resources"
-url = "/resource"
+name = "Disclaimer"
+url = "/disclaimer"
 weight = 50
 
 [[footer]]
