@@ -199,3 +199,12 @@ issueTerm = "pathname"
 label = "Comments"
 theme = "icy-dark"
 crossorigin = "anonymous"
+
+[newsletter]
+enabled = true
+provider = ""
+title = "Get New Posts in Your Inbox"
+description = "No spam. Only practical posts and cybersecurity insights."
+action = ""
+buttonText = "Subscribe"
+disclaimer = "Unsubscribe anytime."
