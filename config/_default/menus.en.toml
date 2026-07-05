@@ -17,7 +17,7 @@ weight = 1
 
 [[main]]
 name = "Articles"
-url = "/posts"
+url = "/posts/"
 weight = 2
 
 [[main]]
@@ -27,13 +27,13 @@ weight = 3
 [[main]]
 parent = "Learn"
 name = "Guides"
-url = "/tutorials"
+url = "/tutorials/"
 weight = 1
 
 [[main]]
 parent = "Learn"
 name = "Cheatsheets"
-url = "/cheatsheet"
+url = "/cheatsheet/"
 weight = 2
 
 [[main]]
@@ -51,12 +51,12 @@ weight = 4
 [[main]]
 parent = "Learn"
 name = "Resources"
-url = "/resource"
+url = "/resource/"
 weight = 5
 
 [[main]]
 name = "About"
-url = "/about"
+url = "/about/"
 weight = 7
 
 [[main]]
@@ -66,7 +66,7 @@ weight = 8
 [[main]]
 parent = "Contact"
 name = "Portfolio"
-url = "https://armoghan.netlify.app"
+url = "https://armoghan.netlify.app/"
 weight = 1
 
 [[main]]
@@ -81,40 +81,45 @@ weight = 2
 
 [[footer]]
 name = "Tags"
-url = "/tags"
+url = "/tags/"
 weight = 10
 
 [[footer]]
 name = "Categories"
-url = "/categories"
+url = "/categories/"
 weight = 20
 
 [[footer]]
 name = "Series"
-url = "/series"
+url = "/series/"
 weight = 30
 
 [[footer]]
 name = "Keywords"
-url = "/keywords"
+url = "/keywords/"
 weight = 40
 
 [[footer]]
 name = "Disclaimer"
-url = "/disclaimer"
+url = "/disclaimer/"
 weight = 50
+
+[[footer]]
+name = "Privacy Policy"
+url = "/privacy-policy/"
+weight = 60
 
 [[footer]]
 name = "RSS"
 url = "/index.xml"
-weight = 60
+weight = 70
 
 [[footer]]
 name = "Sitemap"
 url = "/sitemap.xml"
-weight = 70
+weight = 80
 
 [[footer]]
 name = "Newsletter"
 url = "/newsletter"
-weight = 80
+weight = 90
