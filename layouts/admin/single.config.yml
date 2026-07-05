@@ -1,0 +1,88 @@
+{{ if eq hugo.Environment "development" }}
+# Development mode configuration
+backend:
+  name: test-repo
+local_backend:
+  url: http://localhost:8081/api/v1
+  allowed_hosts:
+    - "127.0.0.1"
+    - "localhost"
+{{ else }}
+# Production mode configuration
+backend:
+  name: git-gateway
+  branch: {{ .Site.Params.DecapCMS.branch }}
+  commit_messages:
+    create: Create {{ "{{collection}} “{{slug}}” " }}
+    update: Update {{ "{{collection}} “{{slug}}” " }}
+    delete: Delete {{ "{{collection}} “{{slug}}” " }}
+    uploadMedia: Upload “{{ "{{path}}" }}”
+    deleteMedia: Delete “{{ "{{path}}" }}”
+    openAuthoring: '{{ "{{message}}" }}'
+{{ end }}
+# Folder for storing media files
+media_folder: "{{ .Site.Params.DecapCMS.media }}"
+# Public URL path for accessing media files
+public_folder: "{{ .Site.Params.DecapCMS.public }}"
+# Publish mode for content (e.g., editorial workflow)
+publish_mode: {{ .Site.Params.DecapCMS.PublishMode }}
+# URL of the deployed site
+site_url: "{{ .Site.BaseURL }}"
+# Display URL for the site
+display_url: "{{ .Site.BaseURL }}"
+{{ if isset .Site.Params.DecapCMS "logo" }}
+# Custom Site Logo URL
+logo_url: "{{ .Site.Params.DecapCMS.logo }}"
+{{ end }}
+# Show preview links in the CMS
+show_preview_links: {{ .Site.Params.DecapCMS.preview }}
+# Disable search for faster rendering
+search: {{ .Site.Params.DecapCMS.search }}
+# Enable or disable the preview feature in the editor
+editor:
+  preview: false
+
+# Set filtering options for the CMS view
+view_filters:
+  - label: 'Drafts'
+    field: draft
+    pattern: 'true'
+    description: 'Show only draft posts.'
+
+  - label: 'Published'
+    field: draft
+    pattern: 'false'
+    description: 'Show only published posts.'
+
+  - label: 'All'
+    field: draft
+    pattern: ''
+    description: 'Show all posts.'
+
+  - label: 'External'
+    field: externalUrl
+    pattern: '^https?://'
+    description: 'Show only posts with external URLs.'
+
+# Set grouping options for the CMS view
+view_groups:
+  - label: 'Year'
+    field: date
+    pattern: '\d{4}'
+    description: 'Group posts by year based on the date field.'
+
+  - label: 'Month'
+    field: date
+    pattern: '\d{4}-\d{2}'
+    description: 'Group posts by month based on the date field.'
+
+  - label: 'Author'
+    field: author
+    pattern: '.*'
+    description: 'Group posts by author based on the author field.'
+
+# Set sorting options for the CMS view
+sortable_fields: ['commit_date', 'title', 'commit_author' ]
+
+# Collections configuration for the CMS
+collections:

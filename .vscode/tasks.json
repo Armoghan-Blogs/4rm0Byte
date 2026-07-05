@@ -57,7 +57,7 @@
     {
       "label": "Install",
       "type": "shell",
-      "command": "pnpm install",
+      "command": "npm install",
       "group": "build",
       "problemMatcher": []
     },

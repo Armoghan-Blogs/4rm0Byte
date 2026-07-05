@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="googlebot" content="noarchive" />
+    <link rel="shortcut icon" href="/favicons/favicon.ico" />
+    <title>{{ .Title }}</title>
+    {{/* Netlify Identity Widget */}}
+    {{- with resources.Get "lib/netlify-identity-widget/netlify-identity-widget.js" }}
+      {{- if eq hugo.Environment "development" }}
+        {{- with . | js.Build }}
+          <script src="{{ .RelPermalink }}"></script>
+        {{- end }}
+      {{- else }}
+        {{- $opts := dict "minify" true }}
+        {{- with . | js.Build $opts |fingerprint }}
+          <script src="{{ .RelPermalink }}" integrity="{{- .Data.Integrity }}" crossorigin="anonymous"></script>
+        {{- end }}
+      {{- end }}
+    {{- end }}
+
+    {{/* Netlify Identity Widget Initialization */}}
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.netlifyIdentity) {
+          window.netlifyIdentity.init();
+        }
+      });
+    </script>
+  </head>
+  <body>
+    {{/* Decap CMS Injects here */}}
+    <div id="nc-root"></div>
+    {{/* Decap CMS */}}
+    {{- with resources.Get "js/decap.js" }}
+      {{- if eq hugo.Environment "development" }}
+        {{- with . | js.Build }}
+          <script src="{{ .RelPermalink }}"></script>
+        {{- end }}
+      {{- else }}
+        {{- $opts := dict "minify" true }}
+        {{- with . | js.Build $opts |fingerprint }}
+          <script src="{{ .RelPermalink }}" integrity="{{- .Data.Integrity }}" crossorigin="anonymous"></script>
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  </body>
+</html>

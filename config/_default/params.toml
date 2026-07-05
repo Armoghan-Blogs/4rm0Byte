@@ -208,3 +208,13 @@ description = "No spam. Only practical posts and cybersecurity insights."
 action = ""
 buttonText = "Subscribe"
 disclaimer = "Unsubscribe anytime."
+
+# Decap CMS Config
+[DecapCMS]
+PublishMode = "editorial_workflow"
+branch = "main"
+media = "/static/img"
+public = "/img"
+logo = "/img/CMS-Logo.png"
+search = true
+preview = true

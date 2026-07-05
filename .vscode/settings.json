@@ -86,7 +86,7 @@
     // ===============================
     // --- Node / NPM ---
     // ===============================
-    "npm.packageManager": "pnpm",
+    "npm.packageManager": "npm",
 
     // ===============================
     // --- Hugo Module / Go Support ---

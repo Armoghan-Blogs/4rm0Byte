@@ -129,7 +129,7 @@ applyTo: "**"
 |                               | `npm run build`                                    | Build the site for production, minify assets, clean destination directory |
 |                               | `npm start`                                       | Run Hugo dev + Decap CMS dev concurrently |
 |                               | `npm run decap-dev`                                | Start Decap CMS dev server locally |
-|                               | `pnpm install`                                     | Install Node dependencies |
+|                               | `npm install`                                     | Install Node dependencies |
 |                               | `npm run update`                                   | Update Node dependencies |
 |                               | `npm run depcheck`                                 | Check for unused dependencies |
 |                               | `npm run clean-logs`                               | Delete Hugo build lock & all `.log` files |
@@ -167,8 +167,8 @@ This table summarizes **all available npm scripts, VS Code tasks, and Hugo/Markd
 | `start`                         | `concurrently "npm run dev" "npm run decap-dev"`    | Run Hugo dev + Decap CMS dev concurrently |
 | `decap-dev`                     | `npx decap-server`                                  | Start Decap CMS development server |
 | `build`                         | `hugo --gc --logLevel info --cleanDestinationDir --minify` | Build production-ready Hugo site |
-| `install`                       | `pnpm install`                                       | Install all Node dependencies |
-| `update`                        | `pnpm update`                                       | Update Node dependencies |
+| `install`                       | `npm install`                                       | Install all Node dependencies |
+| `update`                        | `npm update`                                       | Update Node dependencies |
 | `depcheck`                       | `depcheck`                                         | Check for unused dependencies |
 | `clean-logs`                     | `rimraf hugo.build.lock && find . -name '*.log' -type f -delete` | Delete Hugo build lock and all log files |
 | `hbuild`                        | `hugo -d ../Armoghan-Blogs-Public`                | Build Hugo site to custom output directory |

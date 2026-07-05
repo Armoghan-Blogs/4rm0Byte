@@ -10,7 +10,7 @@
     "dev": "hugo server --buildDrafts --buildFuture --buildExpired --gc --logLevel info --watch",
     "prod": "hugo server --buildDrafts --buildFuture --buildExpired --gc --logLevel info --watch -e production",
     "build": "hugo --gc --logLevel info --cleanDestinationDir --minify",
-    "update": "pnpm update",
+    "update": "npm update",
     "depcheck": "depcheck",
     "clean-logs": "rimraf hugo.build.lock && find . -name '*.log' -type f -delete",
     "hbuild": "hugo -d ./4rm0Byte-Public"
@@ -29,6 +29,8 @@
     "hugo": ">=0.157.0"
   },
   "dependencies": {
+    "decap-cms-app": "^3.14.1",
+    "netlify-identity-widget": "^2.0.3",
     "workbox-sw": "^7.4.1"
   },
   "devDependencies": {
@@ -62,6 +64,14 @@
     {
       "from": "/node_modules/workbox-sw/build/workbox-sw.js.map",
       "to": "/static/lib/workbox/workbox-sw.js.map"
+    },
+    {
+      "from": "node_modules/netlify-identity-widget/build/netlify-identity-widget.js",
+      "to": "/assets/lib/netlify-identity-widget/netlify-identity-widget.js"
+    },
+    {
+      "from": "node_modules/netlify-identity-widget/build/netlify-identity-widget.js.map",
+      "to": "/assets/lib/netlify-identity-widget/netlify-identity-widget.js.map"
     }
   ]
 }

@@ -53,7 +53,7 @@ Before completing this form, you **must** verify that this Pull Request meets th
 ### Local Verification Steps
 *Detail exactly how you tested these changes locally so they can be reproduced.*
 
-1. Run the local server using: `pnpm run dev` / `pnpm run prod`
+1. Run the local server using: `npm run dev` / `npm run prod`
 2. Navigate to: `http://localhost:1313/...`
 3. Observe the following behavior:
 

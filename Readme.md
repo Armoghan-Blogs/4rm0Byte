@@ -31,7 +31,7 @@ Welcome to **4rm0Byte** — my personal blog about Digital Forensic & Cyber Secu
 1. Install dependencies:
    ```bash
    fnm install 21.7.3 && fnm use 21.7.3
-   pnpm install
+   npm install
    go mod tidy
    ```
 2. Start the dev server:
@@ -51,7 +51,7 @@ Welcome to **4rm0Byte** — my personal blog about Digital Forensic & Cyber Secu
 - [x] **Go (go1.26.0)**: Build/runtime for Hugo and CLI tools
 - [x] **Go modules** (`go mod`): Go dependency management
 - [x] **Hugo modules**: theme and module management for Hugo
-- [x] **npm / pnpm**: JS package managers (scripts, builds)
+- [x] **npm**: JS package managers (scripts, builds)
 - [x] **CI / Actions**: GitHub Actions (recommended for builds and deploys)
 
 ---
