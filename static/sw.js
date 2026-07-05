@@ -48,7 +48,7 @@ const navigationStrategy = new NetworkFirst({
     new CacheableResponsePlugin({ statuses: [0, 200] }),
     new ExpirationPlugin({
       maxEntries: 30,
-      maxAgeSeconds: 3 * 24 * 60 * 60,
+      maxAgeSeconds: 30 * 24 * 60 * 60,
       }),
   ],
 });
@@ -88,7 +88,7 @@ registerRoute(
     cacheName: "assets-css-v1",
     plugins: [
       new CacheableResponsePlugin({ statuses: [0, 200] }),
-      new ExpirationPlugin({ maxEntries: 20, maxAgeSeconds: 3 * 24 * 60 * 60 }),
+      new ExpirationPlugin({ maxEntries: 20, maxAgeSeconds: 30 * 24 * 60 * 60 }),
       cssVersionCleanupPlugin,
     ],
   }),
@@ -101,7 +101,7 @@ registerRoute(
     cacheName: "assets-js-v1",
     plugins: [
       new CacheableResponsePlugin({ statuses: [0, 200] }),
-      new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 3 * 24 * 60 * 60 }),
+      new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 30 * 24 * 60 * 60 }),
     ],
   }),
 );
@@ -115,7 +115,7 @@ registerRoute(
       new CacheableResponsePlugin({ statuses: [0, 200] }),
       new ExpirationPlugin({
         maxEntries: 100,
-        maxAgeSeconds: 3 * 24 * 60 * 60,
+        maxAgeSeconds: 30 * 24 * 60 * 60,
       }),
     ],
   }),

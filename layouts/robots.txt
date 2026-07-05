@@ -11,4 +11,4 @@ Disallow: {{ $page }}
 {{- end -}}
 {{ end }}
 
-Sitemap: {{ .Site.BaseURL }}sitemap.xml
+Sitemap: {{ .Site.BaseURL }}index.xml

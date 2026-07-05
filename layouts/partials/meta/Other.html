@@ -1,0 +1,30 @@
+<!-- Meta tag for keywords -->
+{{ with .Params.keywords | default .Site.Params.keywords -}}
+  <meta name="keywords" content="{{ range . }}{{ . }},{{ end -}}" />
+{{- end }}
+<!-- Meta tag for Tags -->
+{{ with .Params.tags | default .Site.Params.tags -}}
+  <meta name="tags" content="{{ range . }}{{ . }},{{ end -}}" />
+{{- end }}
+<!-- Meta tag for categories -->
+{{ with .Params.categories | default .Site.Params.categories -}}
+  <meta name="categories" content="{{ range . }}{{ . }},{{ end -}}" />
+{{- end }}
+<!-- Meta tag for series -->
+{{ with .Params.series | default .Site.Params.series -}}
+  <meta name="series" content="{{ range . }}{{ . }},{{ end -}}" />
+{{- end }}
+<!-- Meta tag for forcing image rendering mode -->
+<meta name="imagemode" content="force" />
+<!-- Meta tags for coverage and distribution -->
+<meta name="coverage" content="Worldwide" />
+<meta name="distribution" content="Global" />
+<!-- Meta tag for indicating that the page is handheld-friendly -->
+<meta name="HandheldFriendly" content="True" />
+<!-- Meta tag to prevent tap highlighting on mobile devices -->
+<meta name="msapplication-tap-highlight" content="no" />
+<!-- Meta tags for Apple mobile web app -->
+<meta name="apple-mobile-web-app-title" content="{{ .Site.Params.Title }}" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-touch-fullscreen" content="yes" />

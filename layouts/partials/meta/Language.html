@@ -1,0 +1,21 @@
+<!-- Open Graph meta tag for locale -->
+<meta property="og:locale" content="{{ .Language.Lang }}" />
+
+<!-- Meta tag for specifying the primary language of the document -->
+<meta name="language" content="{{ .Language.LanguageName }}" />
+
+<!-- Loop through all translations to create alternate link tags for SEO -->
+{{ range .AllTranslations }}
+  <!-- Alternate link tag for each language translation -->
+  <link
+    rel="alternate"
+    hreflang="{{ .Language.Lang }}"
+    href="{{ .Permalink }}"
+    title="{{ .Language.LanguageName }}" />
+{{ end }}
+
+
+<!-- Language code meta tag for specifying the content language -->
+{{ with .Site.Language.Params.htmlCode | default .Site.LanguageCode }}
+  <meta http-equiv="content-language" content="{{ . }}" />
+{{ end }}

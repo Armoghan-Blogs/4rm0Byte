@@ -1,0 +1,29 @@
+<!-- Open Graph meta tag for specifying the type of content (website) -->
+<meta property="og:type" content="website" />
+<!-- Meta tag for specifying the author of the page -->
+<meta name="author" content="{{ .Site.Params.Author.name }}" />
+
+{{ if .IsHome -}}
+  <!-- JSON-LD structured data script for defining the website information -->
+<script defer type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "{{ (site.GetPage "/").Permalink | safeURL }}",
+    "name": "{{ .Site.Title | safeJS }}",
+    {{ with .Site.Params.description }}"description": "{{ . | safeJS }}",{{ end }}
+    {{ with .Site.LanguageCode }}"inLanguage": "{{ . }}",{{ end }}
+    "url": "{{ (site.GetPage "/").Permalink | safeURL }}",
+    {{ with .Site.Params.keywords }}"keywords": {{ . }},{{ end }}
+    "publisher": {
+        "@type": "Person",
+        "name": "{{ .Site.Params.Author.name | safeJS }}"
+    },
+    "sameAs": [
+        "{{ .Site.Params.facebook }}",
+        "{{ .Site.Params.github }}"
+    ],
+    "logo": "{{ .Site.BaseURL }}/favicons/favicon-72x72.png"
+}
+</script>
+{{ end }}

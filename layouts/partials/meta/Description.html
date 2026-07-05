@@ -1,0 +1,10 @@
+{{- with  .Params.Description | default .Params.Summary | default .Site.Params.description }}
+  <!-- Meta tag for page description -->
+  <meta name="description" content="{{ . }}" />
+  <!-- Meta tag for structured data description -->
+  <meta itemprop="description" content="{{ . }}" />
+  <!-- Open Graph meta tag for description -->
+  <meta property="og:description" content="{{ . }}" />
+  <!-- Twitter meta tag for description -->
+  <meta name="twitter:description" content="{{ . }}" />
+{{- end }}
