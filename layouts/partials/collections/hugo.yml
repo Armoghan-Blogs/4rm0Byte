@@ -1,0 +1,245 @@
+      # Hugo.toml
+      - name: "hugo_configuration"
+        label: "Hugo Configuration"
+        file: "config/_default/hugo.toml"
+        fields:
+          - name: "baseURL"
+            label: "Base URL"
+            widget: "string"
+            default: "{{ .Site.BaseURL }}"
+            required: true
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL"
+              ]
+            hint: "Enter the base URL of your site (e.g., {{ .Site.BaseURL }})."
+
+          - name: "defaultContentLanguage"
+            label: "Default Content Language"
+            widget: "select"
+            default: "{{ .Site.Language.Lang }}"
+            options: [
+              { label: "English", value: "en" },
+              { label: "Arabic", value: "ar" },
+              { label: "Bulgarian", value: "bg" },
+              { label: "Bengali", value: "bn" },
+              { label: "Catalan", value: "ca" },
+              { label: "German", value: "de" },
+              { label: "Spanish", value: "es" },
+              { label: "Finnish", value: "fi" },
+              { label: "French", value: "fr" },
+              { label: "Hebrew", value: "he" },
+              { label: "Croatian", value: "hr" },
+              { label: "Hungarian", value: "hu" },
+              { label: "Indonesian", value: "id" },
+              { label: "Italian", value: "it" },
+              { label: "Japanese", value: "ja" },
+              { label: "Korean", value: "ko" },
+              { label: "Polish", value: "pl" },
+              { label: "Portuguese (Brazil)", value: "pt-BR" },
+              { label: "Portuguese (Portugal)", value: "pt-PT" },
+              { label: "Romanian", value: "ro" },
+              { label: "Russian", value: "ru" },
+              { label: "Turkish", value: "tr" },
+              { label: "Vietnamese", value: "vi" },
+              { label: "Chinese (Simplified)", value: "zh-CN" },
+              { label: "Chinese (Traditional)", value: "zh-TW" }
+            ]
+            hint: "Select the default language for your site's content."
+
+          - name: "theme"
+            label: "Theme"
+            widget: "string"
+            required: false
+            default: "blowfish"
+            hint: "Speacify the theme name to use for your Hugo site."
+
+          - name: "enableRobotsTXT"
+            label: "Enable Robots.txt"
+            widget: "boolean"
+            default: true
+            hint: "Enable or disable the generation of robots.txt file for your site."
+
+          - name: "pagination"
+            label: "Paginate"
+            widget: object
+            collapsed: true
+            fields:
+              - label: "pagerSize"
+                name: "pagerSize"
+                widget: "number"
+                default: 10
+                value_type: "int"
+                min: 0
+                max: 50
+                hint: "Set the number of items to display per page in paginated lists."
+
+          - name: "summaryLength"
+            label: "Summary Length"
+            widget: "number"
+            default: 10
+            value_type: "int"
+            min: 0
+            max: 50
+            hint: "Set the number of words to include in the summary of content items."
+
+          - name: "pluralizeListTitles"
+            label: "Pluralize List Titles"
+            widget: "boolean"
+            default: true
+            required: false
+            hint: "Enable or disable the pluralization of list titles for non-English languages."
+
+          - name: "buildDrafts"
+            label: "Build Drafts Posts"
+            widget: "boolean"
+            default: false
+            required: false
+            hint: "Enable this to include draft content in the build process. Typically used for previewing drafts before publishing."
+
+          - name: "buildFuture"
+            label: "Build Future Posts"
+            widget: "boolean"
+            default: false
+            required: false
+            hint: "Enable this to include future-dated content in the build. This is useful for previewing content scheduled to be published later."
+
+          - name: "enableEmoji"
+            label: "Enable Emoji Support"
+            widget: "boolean"
+            default: true
+            hint: "Enable or disable emoji support in your content. When enabled, emojis will be rendered correctly in your site."
+
+          - name: "googleAnalytics"
+            label: "Google Analytics Tracking ID"
+            widget: "string"
+            required: false
+            hint: "Enter your Google Analytics Tracking ID (e.g., G-XXXXXXXXX) to enable analytics tracking for your site. Leave blank if you do not wish to use Google Analytics."
+
+          - label: imaging
+            name: imaging
+            widget: object
+            collapsed: true
+            fields:
+              - label: "Anchor"
+                name: "anchor"
+                widget: "string"
+                hint: "Set the default anchor point for image processing. This determines how images are cropped or resized. Common values include 'Center', 'Top', 'Bottom', 'Left', 'Right'."
+
+          - name: "taxonomies"
+            label: "Taxonomies"
+            widget: "object"
+            collapsed: true
+            hint: "Define the taxonomies used in your Hugo site. Taxonomies are used to categorize and organize content, such as tags and categories."
+            fields:
+              - name: "author"
+                label: "Authors"
+                widget: "string"
+                default: "authors"
+
+              - name: "category"
+                label: "Categories"
+                widget: "string"
+                default: "categories"
+
+              - name: "tag"
+                label: "Tag"
+                widget: "string"
+                default: "tags"
+
+              - name: "keywords"
+                label: "Keywords"
+                widget: "string"
+                default: "keywords"
+
+              - name: "series"
+                label: "Series"
+                widget: "string"
+                default: "series"
+
+          - label: sitemap
+            name: sitemap
+            widget: object
+            collapsed: true
+            fields:
+              - label: "changefreq"
+                name: "changefreq"
+                widget: "select"
+                options: ["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"]
+                required: false
+                hint: "Specify how frequently the content at the URL is expected to change. This helps search engines decide how often to crawl the page."
+
+              - label: "filename"
+                name: "filename"
+                widget: "string"
+                required: false
+                hint: "Provide the filename for your sitemap. The default is usually 'sitemap.xml'."
+
+              - label: "priority"
+                name: "priority"
+                widget: "number"
+                required: false
+                default: 0.5
+                value_type: "int"
+                min: 0.0
+                max: 100
+                hint: "Set the priority of the URL relative to other URLs on your site. Values range from 0.0 to 1.0, with 1.0 being the highest priority."
+
+          - name: "outputs"
+            label: "Outputs"
+            widget: "object"
+            collapsed: true
+            hint: "Define the output formats for your Hugo site. This allows you to specify which formats (e.g., HTML, RSS, JSON) should be generated for different types of content."
+            fields:
+              - name: "home"
+                label: "Home Page Outputs"
+                widget: "list"
+                default: ["HTML", "RSS", "JSON"]
+
+          - name: "outputFormats"
+            label: "Output Formats"
+            widget: "object"
+            collapsed: true
+            hint: "Configure the output formats available for your Hugo site. This allows you to define custom output formats and their properties."
+            fields:
+              - name: "config"
+                label: "Configuration"
+                widget: "object"
+                fields:
+                  - { name: "baseName", label: "Base Name", widget: "string" }
+                  - { name: "isPlainText", label: "Is Plain Text", widget: "boolean" }
+                  - { name: "mediaType", label: "Media Type", widget: "string" }
+                  - { name: "notAlternative", label: "Not Alternative", widget: "boolean" }
+
+          - name: "mediaTypes"
+            label: "Media Types"
+            widget: "object"
+            collapsed: true
+            hint: "Define custom media types for your Hugo site. This allows you to specify how different file types should be handled and served."
+            fields:
+              - name: "application/yaml"
+                label: "application/yaml"
+                widget: "object"
+                fields:
+                  - name: "suffixes"
+                    label: "Suffixes"
+                    widget: "list"
+                    field: { name: "value", label: "Suffix", widget: "string" }
+
+          - name: "related"
+            label: "Related"
+            widget: "object"
+            collapsed: true
+            hint: "Configure related content settings for your Hugo site. This allows you to define how related content is determined and displayed."
+            fields:
+              - { name: "threshold", label: "Threshold", widget: "number", value_type: "int" }
+              - { name: "toLower", label: "To Lower", widget: "boolean" }
+              - name: "indices"
+                label: "Indices"
+                widget: "list"
+                fields:
+                  - { name: "name", label: "Name", widget: "string" }
+                  - { name: "weight", label: "Weight", widget: "number", value_type: "int" }
+                  - { name: "type", label: "Type", widget: "string", required: false }
+                  - { name: "applyFilter", label: "Apply Filter", widget: "boolean", required: false }

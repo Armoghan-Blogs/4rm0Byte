@@ -86,3 +86,10 @@ sortable_fields: ['commit_date', 'title', 'commit_author' ]
 
 # Collections configuration for the CMS
 collections:
+  - name: "settings"
+    label: "Site Settings"
+    create: false
+    delete: false
+    files:
+      {{ partial "collections/hugo.yml" . }}
+
