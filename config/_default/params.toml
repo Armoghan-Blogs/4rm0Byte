@@ -211,6 +211,7 @@ disclaimer = "Unsubscribe anytime."
 
 # Decap CMS Config
 [DecapCMS]
+colorScheme = "blowfish"
 PublishMode = "editorial_workflow"
 branch = "main"
 media = "/static/img"

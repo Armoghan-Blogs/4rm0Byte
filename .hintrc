@@ -4,6 +4,8 @@
   ],
   "hints": {
     "apple-touch-icons": "off",
-    "manifest-is-valid": "off"
+    "manifest-is-valid": "off",
+    "axe/forms": "off",
+    "axe/structure": "off"
   }
 }

@@ -29,6 +29,22 @@
         }
       });
     </script>
+
+  {{/* Custom Css  */}}
+  {{ $alg := .Site.Params.fingerprintAlgorithm | default "sha512" }}
+  {{ $cssResources := slice }}
+  {{ $schemeName := .Site.Params.DecapCMS.colorScheme | default "blowfish" }}
+  {{ $cssScheme := resources.Get (printf "css/schemes/%s.css" (lower $schemeName)) | default (resources.Get "css/schemes/blowfish.css") }}
+  {{ $cssResources = $cssResources | append $cssScheme }}
+  {{ with resources.Get "css/decap-dark.css" }}
+    {{ $cssResources = $cssResources | append . }}
+  {{ end }}
+  {{ $bundleCSS := $cssResources | resources.Concat "css/decap.bundle.css" | resources.Minify | resources.Fingerprint $alg }}
+    <link
+    type="text/css"
+    rel="stylesheet"
+    href="{{ $bundleCSS.RelPermalink }}"
+    integrity="{{ $bundleCSS.Data.Integrity }}">
   </head>
   <body>
     {{/* Decap CMS Injects here */}}
