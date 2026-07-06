@@ -1,0 +1,165 @@
+      # languages.en.toml
+      - name: "Language and Author Configuration"
+        label: "Language and Author Configuration"
+        file: "config/_default/languages.en.toml"
+        fields:
+          - name: "disabled"
+            label: "Disable Language"
+            widget: "boolean"
+            default: false
+            required: false
+            hint: "Check this box to disable this language. Disabled languages will not be available on the site."
+
+          - name: "locale"
+            label: "Language Code"
+            widget: "select"
+            default: "{{ .Site.Language.Lang }}"
+            options: [
+              { label: "English", value: "en" },
+              { label: "Arabic", value: "ar" },
+              { label: "Bulgarian", value: "bg" },
+              { label: "Bengali", value: "bn" },
+              { label: "Catalan", value: "ca" },
+              { label: "German", value: "de" },
+              { label: "Spanish", value: "es" },
+              { label: "Finnish", value: "fi" },
+              { label: "French", value: "fr" },
+              { label: "Hebrew", value: "he" },
+              { label: "Croatian", value: "hr" },
+              { label: "Hungarian", value: "hu" },
+              { label: "Indonesian", value: "id" },
+              { label: "Italian", value: "it" },
+              { label: "Japanese", value: "ja" },
+              { label: "Korean", value: "ko" },
+              { label: "Polish", value: "pl" },
+              { label: "Portuguese (Brazil)", value: "pt-BR" },
+              { label: "Portuguese (Portugal)", value: "pt-PT" },
+              { label: "Romanian", value: "ro" },
+              { label: "Russian", value: "ru" },
+              { label: "Turkish", value: "tr" },
+              { label: "Vietnamese", value: "vi" },
+              { label: "Chinese (Simplified)", value: "zh-CN" },
+              { label: "Chinese (Traditional)", value: "zh-TW" }
+            ]
+            hint: "Select the language code for your site. This will determine the default language and locale settings."
+
+          - name: "label"
+            label: "Language Name"
+            widget: "string"
+            default: "{{ .Site.Language.LanguageName }}"
+            hint: "Enter the name of the language for your site. This will be displayed in the site's language switcher and other relevant areas."
+
+          - name: "title"
+            label: "Site Title"
+            widget: "string"
+            default: "{{ .Site.Title }}"
+            hint: "Enter the title of your site. This will be used in the site's header and other relevant areas."
+
+          - name: "weight"
+            label: "Language Weight"
+            widget: "number"
+            value_type: "int"
+            default: 1
+            hint: "Enter the weight of the language. This will determine the order in which languages are displayed in the language switcher."
+
+          - name: "params"
+            label: "Language Parameters"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "dateFormat"
+                label: "Date Format"
+                widget: "string"
+                hint: "Enter the date format for this language. This will be used to format dates in the site's content."
+
+              - name: "description"
+                label: "Description"
+                widget: "string"
+                hint: "Enter a description for this language. This will be used in the site's metadata and other relevant areas."
+
+              - name: "displayName"
+                label: "Display Name"
+                widget: "string"
+                hint: "Enter the display name for this language. This will be used in the site's language switcher and other relevant areas."
+
+              - name: "isoCode"
+                label: "ISO Code"
+                widget: "string"
+                hint: "Enter the ISO code for this language. This will be used in the site's metadata and other relevant areas."
+
+              - name: "logo"
+                label: "Language Logo URL"
+                widget: "image"
+                default: "img/Logo.png"
+                required: false
+                allow_multiple: false
+                choose_url: false
+                hint: "Enter the URL for the logo of this language. This will be used in the site's header and other relevant areas."
+
+              - name: "rtl"
+                label: "Right-to-Left Language"
+                widget: "boolean"
+                default: false
+                required: false
+                hint: "Check this box if this language is read from right to left."
+
+              - name: "secondaryLogo"
+                label: "Secondary Logo URL"
+                widget: "image"
+                default: "img/Logo-alt.png"
+                required: false
+                allow_multiple: false
+                choose_url: false
+                hint: "Enter the URL for the secondary logo of this language. This will be used in the site's header and other relevant areas."
+
+              - name: "author"
+                label: "Author"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "headline"
+                    label: "Headline"
+                    widget: "string"
+                    hint: "Enter the headline for the author. This will be used in the author's profile and other relevant areas."
+
+                  - name: "image"
+                    label: "Author Image URL"
+                    widget: "image"
+                    default: "img/armoghan.png"
+                    required: false
+                    allow_multiple: false
+                    choose_url: false
+                    hint: "Enter the URL for the author's image. This will be used in the author's profile and other relevant areas."
+
+                  - name: "imageQuality"
+                    label: "Author Image Quality"
+                    widget: "number"
+                    value_type: "int"
+                    default: 96
+                    min: 1
+                    max: 100
+                    hint: "Enter the quality of the author's image. This will be used to determine the quality of the image when it is displayed on the site."
+
+                  - name: "name"
+                    label: "Name"
+                    widget: "string"
+                    hint: "Enter the name of the author. This will be used in the author's profile and other relevant areas."
+
+                  - name: "bio"
+                    label: "Bio"
+                    widget: "text"
+                    hint: "Enter a brief biography for the author. This will be used in the author's profile and other relevant areas."
+
+                  - name: "links"
+                    label: "Social Links"
+                    widget: "list"
+                    hint: "Add social links for the author. These will be displayed in the author's profile and other relevant areas."
+                    fields:
+                      - { name: "email", label: "Email", widget: "string", required: false }
+                      - { name: "discord", label: "Discord", widget: "string", required: false }
+                      - { name: "facebook", label: "Facebook", widget: "string", required: false }
+                      - { name: "github", label: "GitHub", widget: "string", required: false }
+                      - { name: "gitlab", label: "GitLab", widget: "string", required: false }
+                      - { name: "instagram", label: "Instagram", widget: "string", required: false }
+                      - { name: "linkedin", label: "LinkedIn", widget: "string", required: false }
+                      - { name: "twitter", label: "Twitter", widget: "string", required: false }

@@ -92,4 +92,5 @@ collections:
     delete: false
     files:
       {{ partial "collections/hugo.yml" . }}
+      {{ partial "collections/languages.en.yml" . }}
 
