@@ -1,0 +1,14 @@
+{{- $uniqueCategories := slice -}}
+{{- range .Site.RegularPages -}}
+  {{- with .Params.categories -}}
+    {{- range . -}}
+      {{- if and (ne . nil) (not (in $uniqueCategories .)) -}}
+        {{- $uniqueCategories = $uniqueCategories | append . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- range $index, $category := $uniqueCategories -}}
+  {{- if $index }},{{ end -}}"{{ replace $category "\"" "\\\"" }}"
+{{- end -}}

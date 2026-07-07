@@ -1,0 +1,14 @@
+{{- $uniqueTags := slice -}}
+{{- range .Site.RegularPages -}}
+  {{- with .Params.tags -}}
+    {{- range . -}}
+      {{- if and (ne . nil) (not (in $uniqueTags .)) -}}
+        {{- $uniqueTags = $uniqueTags | append . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- range $index, $tag := $uniqueTags -}}
+  {{- if $index }},{{ end -}}"{{ replace $tag "\"" "\\\"" }}"
+{{- end -}}

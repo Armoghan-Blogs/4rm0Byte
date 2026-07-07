@@ -1,0 +1,14 @@
+{{- $uniqueSeries := slice -}}
+{{- range .Site.RegularPages -}}
+  {{- with .Params.series -}}
+    {{- range . -}}
+      {{- if and (ne . nil) (not (in $uniqueSeries .)) -}}
+        {{- $uniqueSeries = $uniqueSeries | append . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- range $index, $serie := $uniqueSeries -}}
+  {{- if $index }},{{ end -}}"{{ replace $serie "\"" "\\\"" }}"
+{{- end -}}

@@ -1,0 +1,31 @@
+{{- $authors := slice -}}
+{{- $dataAuthors :=  hugo.Data.authors -}}
+
+{{- /* Check if the authors directory exists and has files */ -}}
+{{- with $dataAuthors -}}
+  {{- range $file, $author := . -}}
+    {{- $authors = $authors | append $author.name -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* If no authors found in data files, use .Site.Params.author.name as fallback */ -}}
+{{- if not (len $authors) -}}
+  {{- $authors = slice -}}
+{{- end -}}
+
+{{- /* Add .Site.Params.author.name to the authors list */ -}}
+{{- $authors = $authors | append .Site.Params.author.name -}}
+
+{{- /* Remove duplicate author names */ -}}
+{{- $uniqueAuthors := slice -}}
+{{- range $authors -}}
+  {{- if not (in $uniqueAuthors .) -}}
+    {{- $uniqueAuthors = $uniqueAuthors | append . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- with $uniqueAuthors -}}
+  {{- range $index, $author := . -}}
+    {{- if $index }},{{ end }}"{{ $author }}"
+  {{- end -}}
+{{- end -}}

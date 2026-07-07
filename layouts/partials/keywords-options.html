@@ -1,0 +1,14 @@
+{{- $uniqueKeywords := slice -}}
+{{- range .Site.RegularPages -}}
+  {{- with .Params.keywords -}}
+    {{- range . -}}
+      {{- if and (ne . nil) (not (in $uniqueKeywords .)) -}}
+        {{- $uniqueKeywords = $uniqueKeywords | append . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- range $index, $keyword := $uniqueKeywords -}}
+  {{- if $index }},{{ end -}}"{{ replace $keyword "\"" "\\\"" }}"
+{{- end -}}
