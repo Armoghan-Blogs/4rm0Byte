@@ -1,0 +1,212 @@
+  # content/cheatsheet
+  - name: "cheatsheet"
+    label: "Cheatsheet"
+    editor:
+      preview: true
+    folder: "content/cheatsheet"
+    create: true
+    nested:
+      depth: 100
+    fields:
+      - name: "title"
+        label: "Title"
+        widget: "string"
+        required: true
+        hint: "The title of the cheatsheet. This is required and will be used as the main heading of the article."
+
+      - name: "date"
+        label: "Date"
+        widget: "datetime"
+        required: true
+        hint: "Publish date and time for the cheatsheet. This is required and will be used to determine when the cheatsheet goes live."
+
+      - name: "featuredimage"
+        label: "Featured Image"
+        widget: "image"
+        required: true
+        choose_url: false
+        allow_multiple: false
+        media_folder: "./"
+        public_folder: "./"
+        hint: "Upload only PNG/JPG/JPEG/SVG and keep the filename as featured.<ext>."
+
+      - name: "description"
+        label: "Description"
+        widget: "text"
+        required: false
+        hint: "A short description of the cheatsheet. This is optional and can be used for SEO purposes or as a summary in lists."
+
+      - name: "summary"
+        label: "Summary"
+        widget: "text"
+        required: false
+        hint: "A brief summary of the cheatsheet. This is optional and can be displayed in lists or previews."
+
+      - name: "showSummary"
+        label: "Show Summary"
+        widget: "boolean"
+        default: false
+        required: false
+        hint: "Whether to display the summary on the cheatsheet page."
+
+      - name: "showTableOfContents"
+        label: "Show Table of Contents"
+        widget: "boolean"
+        default: true
+        required: false
+        hint: "Whether to display Table of Content in cheatsheet."
+
+      - name: "showWordCount"
+        label: "Show Word Count"
+        widget: "boolean"
+        default: true
+        required: false
+        hint: "Whether to display word count in cheatsheet."
+
+      - name: "showComments"
+        label: "Show Comments"
+        widget: "boolean"
+        default: false
+        required: false
+        hint: "Enable or disable comments for this cheatsheet."
+
+      - name: "showNewsletter"
+        label: "Newsletter"
+        widget: "boolean"
+        default: false
+        required: false
+        hint: "Enable or disable newsletter subscription form for this cheatsheet."
+
+      - name: "showDate"
+        label: "Show Date"
+        widget: "boolean"
+        default: true
+        required: false
+        hint: "Whether to display the publish date on the cheatsheet page."
+
+      - name: "showDateUpdated"
+        label: "Show Date Updated"
+        widget: "boolean"
+        default: false
+        required: false
+        hint: "Whether to display the updated date on the cheatsheet page."
+
+      - name: "showHeadingAnchors"
+        label: "Show Heading Anchors"
+        widget: "boolean"
+        default: true
+        required: false
+        hint: "Whether to display heading anchors on the cheatsheet page."
+
+      - name: "showPagination"
+        label: "Show Pagination"
+        widget: "boolean"
+        default: true
+        required: false
+        hint: "Whether to display pagination links to the next and previous cheatsheets."
+
+      - name: "showReadingTime"
+        label: "Show Reading Time"
+        widget: "boolean"
+        default: true
+        required: false
+        hint: "Whether to display reading time for the cheatsheet."
+
+      - name: "showTaxonomies"
+        label: "Show Taxonomies"
+        widget: "boolean"
+        default: true
+        required: false
+        hint: "Whether to display taxonomies (tags, categories, etc.) for the cheatsheet."
+
+      - name: "replyByEmail"
+        widget: "boolean"
+        default: false
+        required: false
+        hint: "Display a 'Reply by Email' button for the cheatsheet. This is optional and can be used to allow readers to reply to the cheatsheet via email."
+
+      - name: "showZenMode"
+        widget: "boolean"
+        default: false
+        required: false
+        hint: "Enable or disable Zen Mode for the cheatsheet."
+
+      - name: "showAuthorBottom"
+        widget: "boolean"
+        default: false
+        required: false
+        hint: "Whether to display the author information at the bottom of the cheatsheet."
+
+      - name: "showRelatedContent"
+        widget: "boolean"
+        default: false
+        required: false
+        hint: "Whether to display related content for the cheatsheet."
+
+      - name: "showDateOnlyInArticle"
+        widget: "boolean"
+        default: false
+        required: false
+        hint: "Whether to display the date only in the article."
+
+      - name: "tags"
+        label: "Tags"
+        widget: "create-select"
+        allow_create: true
+        multiple: true
+        required: false
+        options: [{{ partial "tags-options.html" . }}]
+
+      - name: "categories"
+        label: "Categories"
+        widget: "create-select"
+        allow_create: true
+        multiple: true
+        required: false
+        options: [{{ partial "categories-options.html" . }}]
+
+      - name: "keywords"
+        label: "Keywords"
+        widget: "create-select"
+        allow_create: true
+        multiple: true
+        required: false
+        options: [{{ partial "keywords-options.html" . }}]
+
+      - name: "series"
+        label: "Series"
+        widget: "create-select"
+        allow_create: true
+        multiple: true
+        required: false
+        options: [{{ partial "series-options.html" . }}]
+
+      - name: "series_order"
+        label: "Series Order"
+        widget: "select"
+        multiple: true
+        required: false
+        min: 1
+        options: [{{- range $idx, $n := seq 0 50 -}}{{- if $idx }},{{ end -}}"{{ $n }}"{{- end -}}]
+
+      - name: "author"
+        label: "Author"
+        widget: "select"
+        multiple: true
+        required: true
+        min: 1
+        options: [{{ partial "authors-options.html" . }}]
+        default: "{{ .Site.Params.author.name }}"
+
+      - name: "draft"
+        label: "Draft"
+        widget: "boolean"
+        default: false
+        required: true
+        hint: "Whether the cheatsheet is a draft. Draft cheatsheet will not be published."
+
+      - name: "body"
+        label: "Body"
+        widget: "markdown"
+
+    meta: { path: { widget: string, label: "Path", index_file: "index", hint: "Name for the folder to save cheatsheet" } }

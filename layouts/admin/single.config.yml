@@ -99,6 +99,9 @@ collections:
   # Posts Collection
   {{ partial "collections/posts.yml" . }}
 
+  # Cheatsheet Collection
+  {{ partial "collections/cheatsheet.yml" . }}
+
   # Data Folder Collection
   {{ partial "collections/author-data.yml" . }}
 
