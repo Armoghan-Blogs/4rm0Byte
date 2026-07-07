@@ -1,0 +1,103 @@
+      # menus.en.toml
+      - name: "menu_configuration"
+        label: "Menu Configuration"
+        file: "config/_default/menus.en.toml"
+        fields:
+          - name: "main"
+            label: "Main Menu"
+            widget: "list"
+            fields:
+              - name: "name"
+                label: "Menu Item Name"
+                widget: "string"
+                hint: "The display name of the menu item. This is what users will see in the navigation."
+
+              - name: "pageRef"
+                label: "Page Reference"
+                widget: "string"
+                required: false
+                hint: "Preferred for internal pages (e.g., posts, tags, categories)"
+
+              - name: "url"
+                label: "Menu Item URL"
+                widget: "string"
+                required: false
+                hint: "Use relative paths for internal links (e.g., /about/) and full URLs for external links (e.g., https://example.com)."
+
+              - name: "parent"
+                label: "Parent Item"
+                widget: "string"
+                required: false
+                hint: "Leave empty for top-level items. Use exact parent name for dropdown."
+
+              - name: "pre"
+                label: "Icon (pre)"
+                widget: "string"
+                required: false
+                hint: "Optional icon name (e.g., github)"
+
+              - name: "title"
+                label: "Title Attribute"
+                widget: "string"
+                required: false
+                hint: "Tooltip text"
+
+              - name: "weight"
+                label: "Menu Item Weight"
+                widget: "number"
+                value_type: "int"
+                hint: "Lower numbers appear first. Use negative values for higher priority."
+
+          - name: "subnavigation"
+            label: "Subnavigation Menu"
+            widget: "list"
+            fields:
+              - name: "name"
+                label: "Subnavigation Item Name"
+                widget: "string"
+                hint: "The display name of the subnavigation item."
+
+              - name: "pageRef"
+                label: "Page Reference"
+                widget: "string"
+                required: false
+                hint: "Use relative paths for internal links (e.g., tags/interesting-topic) and full URLs for external links (e.g., https://example.com)."
+
+              - name: "pre"
+                widget: "string"
+                required: false
+
+              - name: "title"
+                widget: "string"
+                required: false
+
+              - name: "weight"
+                label: "Subnavigation Item Weight"
+                widget: "number"
+                value_type: "int"
+                hint: "Lower numbers appear first. Use negative values for higher priority."
+
+          - name: "footer"
+            label: "Footer Menu"
+            widget: "list"
+            fields:
+              - name: "name"
+                label: "Footer Item Name"
+                widget: "string"
+                hint: "The display name of the footer item."
+
+              - name: "pageRef"
+                widget: "string"
+                required: false
+
+              - name: "url"
+                label: "Footer Item URL"
+                widget: "string"
+                required: false
+                hint: "Use relative paths for internal links (e.g., /about/) and full URLs for external links (e.g., https://example.com)."
+
+              - name: "weight"
+                label: "Footer Item Weight"
+                widget: "number"
+                value_type: "int"
+                hint: "Lower numbers appear first. Use negative values for higher priority."

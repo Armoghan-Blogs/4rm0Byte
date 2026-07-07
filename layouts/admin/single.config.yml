@@ -93,7 +93,8 @@ collections:
     files:
       {{ partial "collections/hugo.yml" . }}
       {{ partial "collections/languages.en.yml" . }}
+      {{ partial "collections/menus.en.yml" . }}
+      {{ partial "collections/params.yml" . }}
       {{ partial "collections/markup.yml" . }}
       {{ partial "collections/module.yml" . }}
-      {{ partial "collections/params.yml" . }}
 
