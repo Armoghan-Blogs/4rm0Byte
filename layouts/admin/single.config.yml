@@ -86,6 +86,10 @@ sortable_fields: ['commit_date', 'title', 'commit_author' ]
 
 # Collections configuration for the CMS
 collections:
+  # Data Folder
+  {{ partial "collections/author-data.yml" . }}
+
+  # Site Settings
   - name: "settings"
     label: "Site Settings"
     create: false
@@ -97,4 +101,3 @@ collections:
       {{ partial "collections/params.yml" . }}
       {{ partial "collections/markup.yml" . }}
       {{ partial "collections/module.yml" . }}
-

@@ -1,0 +1,225 @@
+  # Data Folder
+  - label: "Authors Data"
+    name: "authors"
+    folder: "data/authors"
+    create: true
+    format: json
+    identifier_field: "name"
+    editor:
+      preview: false
+    fields:
+      - {
+          label: "Name",
+          name: "name",
+          widget: "string",
+          required: true,
+          hint: "Enter the name for the author or contributor."
+        }
+      - {
+          label: "Image",
+          name: "image",
+          widget: "image",
+          choose_url: true,
+          allow_multiple: false,
+          required: true,
+          hint: "Upload or select an image for the author or contributor."
+        }
+      - {
+          label: "Bio",
+          name: "bio",
+          widget: "text",
+          required: true,
+          hint: "Provide a short biography or description for the author or contributor."
+        }
+      - label: Social
+        name: social
+        widget: object
+        collapsed: true
+        fields:
+        - {
+            label: "email",
+            name: "email",
+            widget: "string",
+            pattern:
+              [
+                '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                "Must be a valid email address",
+              ],
+            required: false,
+          }
+        - {
+            label: "link",
+            name: "link",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "discord",
+            name: "discord",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "facebook",
+            name: "facebook",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "github",
+            name: "github",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "gitlab",
+            name: "gitlab",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "google",
+            name: "google",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "instagram",
+            name: "instagram",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "linkedin",
+            name: "linkedin",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "reddit",
+            name: "reddit",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "slack",
+            name: "slack",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "snapchat",
+            name: "snapchat",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "stack-overflow",
+            name: "stack-overflow",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "twitter",
+            name: "twitter",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "x-twitter",
+            name: "x-twitter",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "whatsapp",
+            name: "whatsapp",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }
+        - {
+            label: "youtube",
+            name: "youtube",
+            widget: "string",
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL",
+              ],
+            required: false,
+          }

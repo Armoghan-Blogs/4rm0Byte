@@ -131,11 +131,11 @@
             default: false
             hint: "Enable or disable hotlinking for featured images. If enabled, the featured image will be directly linked from its source."
 
-          - name: "thumbnailAspectRatio"
-            label: "Thumbnail Aspect Ratio"
-            widget: "string"
-            default: "1.5"
-            hint: "Set the aspect ratio for thumbnails (e.g., "1.5", "1.0", "1.777")."
+          # - name: "thumbnailAspectRatio"
+          #   label: "Thumbnail Aspect Ratio"
+          #   widget: "string"
+          #   default: "1.5"
+          #   hint: "Set the aspect ratio for thumbnails (e.g., "1.5", "1.0", "1.777")."
 
           - name: "imagePosition"
             label: "Image Position"
