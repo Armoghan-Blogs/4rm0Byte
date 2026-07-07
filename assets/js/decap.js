@@ -1,4 +1,7 @@
 import CMS from "decap-cms-app";
+import CreateSelect from "../widgets/Create-Select";
+
+CMS.registerWidget(CreateSelect.Widget());
 
 CMS.init();
 
