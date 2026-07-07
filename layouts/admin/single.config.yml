@@ -94,4 +94,5 @@ collections:
       {{ partial "collections/hugo.yml" . }}
       {{ partial "collections/languages.en.yml" . }}
       {{ partial "collections/markup.yml" . }}
+      {{ partial "collections/module.yml" . }}
 

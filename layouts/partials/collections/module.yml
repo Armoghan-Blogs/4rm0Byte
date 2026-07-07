@@ -1,0 +1,29 @@
+      # module.toml
+      - name: "Modules and Integrations"
+        label: "Modules and Integrations"
+        file: "config/_default/module.toml"
+        fields:
+          - name: "hugoVersion"
+            label: "Hugo Version"
+            widget: "object"
+            fields:
+              - name: "extended"
+                label: "Extended Version"
+                widget: "boolean"
+                default: true
+                hint: "Indicates whether the extended version of Hugo is required."
+
+              - name: "min"
+                label: "Minimum Version"
+                widget: "string"
+                default: "0.116.0"
+                hint: "Specifies the minimum required version of Hugo for this site."
+
+          - name: "imports"
+            label: "Imports"
+            widget: "list"
+            fields:
+              - name: "path"
+                label: "Module Path"
+                widget: "string"
+                hint: "The path to the module to be imported."
