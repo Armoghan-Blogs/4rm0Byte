@@ -1,0 +1,1098 @@
+      # Params.toml
+      - name: "Site Parameters"
+        label: "Site Parameters"
+        file: "config/_default/params.toml"
+        fields:
+          - name: "autoSwitchAppearance"
+            label: "Auto Switch Appearance"
+            widget: "boolean"
+            default: true
+            hint: "Automatically switch between light and dark mode based on system preferences."
+
+          - name: "colorScheme"
+            label: "Color Scheme"
+            widget: "select"
+            options: ["blowfish", "autumn", "avocado", "bloody", "congo", "fire", "forest", "github", "marvel", "neon", "noir", "princess", "slate", "terminal"]
+            default: "blowfish"
+            hint: "Choose a color scheme for the site. This will affect the overall look and feel of the website."
+
+          - name: "defaultAppearance"
+            label: "Default Appearance"
+            widget: "select"
+            options: ["light", "dark", "auto"]
+            default: "light"
+            hint: "Set the default appearance of the site. 'Auto' will follow the user's system preferences."
+
+          - name: "enableA11y"
+            label: "Enable Accessibility Features"
+            widget: "boolean"
+            default: false
+            hint: "Enable accessibility features for better usability for all users."
+
+          - name: "enableCodeCopy"
+            label: "enableCodeCopy Button"
+            widget: "boolean"
+            default: true
+            hint: "Enable a button to copy code snippets to the clipboard."
+
+          - name: "enableSearch"
+            label: "enableSearch Button"
+            widget: "boolean"
+            default: true
+            hint: "Enable a search button to allow users to search the site content."
+
+          - name: "enableStyledScrollbar"
+            label: "enableStyledScrollbar "
+            widget: "boolean"
+            default: true
+            hint: "Enable a styled scrollbar for better aesthetics and user experience."
+
+          - name: "enableStructuredBreadcrumbs"
+            label: "enableStructuredBreadcrumbs"
+            widget: "boolean"
+            default: true
+            hint: "Enable structured breadcrumbs for better navigation and SEO."
+
+          - name: "mainSections"
+            label: "Main Sections"
+            widget: "select"
+            options: ["posts", "categories", "tutorials", "cheatsheets", "tools", "resources", "writeups", "tutorials", "tags", "keywords", "series"]
+            multiple: true
+            required: false
+            hint: "Select the main sections of the site that will be prominently displayed in the navigation."
+
+          - name: "robots"
+            label: "Robots Meta Tag"
+            widget: "string"
+            required: false
+            hint: "Set the content of the robots meta tag to control how search engines index your site (e.g., 'index, follow', 'noindex, nofollow')."
+
+          - name: "replyByEmail"
+            label: "Reply By Email"
+            widget: "boolean"
+            default: false
+            hint: "Enable or disable the reply by email feature for in posts."
+
+          - name: "disableImageOptimization"
+            label: "Disable Image Optimization"
+            widget: "boolean"
+            default: false
+            hint: "Disable image optimization for all images on the site. This may affect performance and loading times."
+
+          - name: "disableImageOptimizationMD "
+            label: "Disable Image Optimization for Markdown"
+            widget: "boolean"
+            default: false
+            hint: "Disable image optimization for images in Markdown files. This may affect performance and loading times."
+
+          - name: "disableTextInHeader"
+            label: "Disable Text in Header"
+            widget: "boolean"
+            default: false
+            hint: "Disable the display of text in the header section of the site."
+
+          - name: "backgroundImageWidth"
+            label: "Background Image Width"
+            widget: "number"
+            value_type: "int"
+            required: false
+            hint: "Set the width of the background image in pixels. Leave empty for default behavior."
+
+          - name: "defaultBackgroundImage"
+            label: "Default Background Image URL"
+            widget: "image"
+            default: "/img/background.svg"
+            allow_multiple: false
+            choose_url: false
+            required: false
+            hint: "Set the default background image for the site. This image will be used if no other background image is specified."
+
+          - name: "defaultFeaturedImage"
+            label: "Default Featured Image URL"
+            widget: "image"
+            default: "/img/background-alt.svg"
+            allow_multiple: false
+            choose_url: false
+            required: false
+            hint: "Set the default featured image for posts. This image will be used if no other featured image is specified."
+
+          - name: "defaultSocialImage"
+            label: "Default Social Image URL"
+            widget: "image"
+            default: "/img/armoghan.png"
+            allow_multiple: false
+            choose_url: false
+            required: false
+            hint: "Set the default social image for sharing on social media platforms. This image will be used if no other social image is specified."
+
+          - name: "hotlinkFeatureImage"
+            label: "Hotlink Featured Image"
+            widget: "boolean"
+            default: false
+            hint: "Enable or disable hotlinking for featured images. If enabled, the featured image will be directly linked from its source."
+
+          - name: "imagePosition"
+            label: "Image Position"
+            widget: "string"
+            default: "50% 50%"
+            hint: "Set the position of images using CSS background-position values (e.g., 'center', 'top left', '50% 50%')."
+
+          - name: "highlightCurrentMenuArea"
+            label: "Highlight Current Menu Area"
+            widget: "boolean"
+            default: true
+            hint: "Enable or disable highlighting of the current menu area in the navigation bar."
+
+          - name: "smartTOC"
+            label: "Smart Table of Contents"
+            widget: "boolean"
+            default: true
+            hint: "Enable or disable the smart table of contents feature, which provides an interactive and dynamic table of contents for posts."
+
+          - name: "smartTOCHideUnfocusedChildren "
+            label: "Smart Table of Contents - Hide Unfocused Children"
+            widget: "boolean"
+            default: true
+            hint: "Enable or disable hiding of unfocused children in the smart table of contents. When enabled, only the relevant sections will be displayed."
+
+          - name: "fingerprintAlgorithm"
+            label: "Fingerprint Algorithm"
+            widget: "select"
+            options: ["sha512", "sha384", "sha256"]
+            default: "sha512"
+            required: false
+            hint: "Select the algorithm used for generating fingerprints for assets. This affects how assets are cached and validated."
+
+          - name: "giteaDefaultServer"
+            label: "Gitea Default Server URL"
+            widget: "string"
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL"
+              ]
+            required: false
+            hint: "Set the default Gitea server URL for integration with Gitea repositories. This is used for authentication and repository management."
+
+          - name: "forgejoDefaultServer"
+            label: "Forgejo Default Server URL"
+            widget: "string"
+            pattern:
+              [
+                '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                "Must be a valid URL"
+              ]
+            required: false
+            hint: "Set the default Forgejo server URL for integration with Forgejo repositories. This is used for authentication and repository management."
+
+          - name: "seo"
+            label: "Search Engine Optimization (SEO) Settings"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "metaDescriptionOrder"
+                label: "Meta Description Order"
+                widget: "select"
+                options: ["summary", "description", "site"]
+                required: false
+                hint: "Set the order of preference for meta descriptions. Options include 'summary', 'description', and 'site'. This determines which content is used for the meta description tag."
+
+          - name: "header"
+            label: "Header Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "layout"
+                label: "Header Layout"
+                widget: "select"
+                options: [ "basic", "fixed", "fixed-fill", "fixed-gradient", "fixed-fill-blur"]
+                default: "fixed-fill-blur"
+                hint: "Choose the layout style for the header. Options include basic, fixed, fixed-fill, fixed-gradient, and fixed-fill-blur."
+
+          - name: "footer"
+            label: "Footer Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "showAppearanceSwitcher"
+                label: "Show Appearance Switcher"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the appearance switcher in the footer, allowing users to toggle between light and dark modes."
+
+              - name: "showCopyright"
+                label: "Show Copyright"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of copyright information in the footer."
+
+              - name: "showMenu"
+                label: "Show Menu"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of the footer menu, which may include links to important pages or sections of the site."
+
+              - name: "showScrollToTop"
+                label: "Show Scroll to Top"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the scroll to top button in the footer, allowing users to quickly return to the top of the page."
+
+              - name: "showThemeAttribution"
+                label: "Show Theme Attribution"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of theme attribution in the footer, giving credit to the theme's creator."
+
+          - name: "homepage"
+            label: "Homepage Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "cardView"
+                label: "Card View"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the card view layout for the homepage, which displays content in a card-based format."
+
+              - name: "cardViewScreenWidth"
+                label: "Card View Screen Width Threshold"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the card view layout based on screen width. When enabled, the card view will only be used on screens wider than a specified threshold."
+
+              - name: "homepageImage"
+                label: "Homepage Image URL"
+                widget: "image"
+                default: "/img/background.png"
+                allow_multiple: false
+                choose_url: false
+                required: false
+                hint: "used in: hero, and card"
+
+              - name: "layout"
+                label: "Homepage Layout"
+                widget: "select"
+                options: [ "page", "profile", "hero", "card", "background", "custom"]
+                default: "background"
+                hint: "Choose the layout style for the homepage. Options include page, profile, hero, card, background, and custom."
+
+              - name: "layoutBackgroundBlur"
+                label: "Homepage Layout Background Blur"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable background blur for the homepage layout when using the background layout style."
+
+              - name: "showMoreLink"
+                label: "Show More Link"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the 'Show More' link on the homepage, which allows users to view additional content."
+
+              - name: "showMoreLinkDest"
+                label: "Show More Link Destination"
+                widget: "string"
+                default: "/posts"
+                hint: "Set the destination URL for the 'Show More' link on the homepage. This is where users will be directed when they click the link."
+
+              - name: "showRecent"
+                label: "Show Recent Posts"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of recent posts on the homepage."
+
+              - name: "disableHeroImageFilter"
+                label: "Disable Hero Image Filter"
+                widget: "boolean"
+                default: true
+                required: false
+                hint: "Enable or disable the filter effect on the hero image. When enabled, the hero image will not have any filter applied."
+
+              - name: "showRecentItems"
+                label: "Number of Recent Posts to Show"
+                widget: "number"
+                value_type: "int"
+                default: 6
+                min: 1
+                max: 9
+                hint: "Set the number of recent posts to display on the homepage. This controls how many posts are shown in the recent posts section."
+
+          - name: "article"
+            label: "Article Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "editAppendPath"
+                label: "Edit Append Path"
+                widget: "boolean"
+                default: "true"
+                hint: "Append the path of the article to the edit URL for easier editing of specific articles."
+
+              - name: "editURL"
+                label: "Edit URL"
+                widget: "string"
+                default: "https://github.com/Armoghan-Blogs/4rm0Byte/tree/main/content"
+                pattern:
+                  [
+                    '^(https?|http):\/\/[^\s/$.?#].[^\s]*$',
+                    "Must be a valid URL"
+                  ]
+                required: false
+                hint: "Set the base URL for editing articles. This is typically the URL of the repository where the content is stored."
+
+              - name: "heroStyle"
+                label: "Hero Style"
+                widget: "select"
+                options: ["basic", "big", "background", "thumbAndBackground"]
+                default: "background"
+                hint: "Choose the style of the hero section for articles. Options include basic, big, background, and thumbAndBackground."
+
+              - name: "invertPagination"
+                label: "Invert Pagination Order"
+                widget: "boolean"
+                default: false
+                hint: "Invert the order of pagination for articles. When enabled, the pagination will display in reverse order."
+
+              - name: "layoutBackgroundBlur"
+                label: "Article Layout Background Blur"
+                widget: "boolean"
+                default: true
+                required: false
+                hint: "only used when heroStyle equals background or thumbAndBackground"
+
+              - name: "layoutBackgroundHeaderSpace"
+                label: "Article Layout Background Header Space"
+                widget: "boolean"
+                default: true
+                required: false
+                hint: "only used when heroStyle equals background"
+
+              - name: "newsletter"
+                label: "Show Newsletter"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the newsletter subscription feature in articles. When enabled, users can subscribe to a newsletter directly from the article page."
+
+              - name: "relatedContentLimit"
+                label: "Related Content Limit"
+                widget: "number"
+                value_type: "int"
+                default: 3
+                min: 0
+                max: 10
+                hint: "Set the maximum number of related content items to display in articles. This controls how many related posts or articles are shown."
+
+              - name: "seriesOpened"
+                label: "Series Opened by Default"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the series section to be opened by default in articles. When enabled, the series section will be expanded when the article is loaded."
+
+              - name: "sharingLinks"
+                label: "Sharing Links"
+                widget: "select"
+                multiple: true
+                options: ["linkedin", "twitter", "reddit", "pinterest", "facebook", "email", "whatsapp", "telegram", "reddit"]
+                hint: "Select the social media platforms for which sharing links will be displayed in articles. Users can share the article on the selected platforms."
+
+              - name: "showAuthor"
+                label: "Show Author"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of author information in articles. When enabled, the author's name and details will be shown."
+
+              - name: "showAuthorBottom"
+                label: "Show Author Info at the Bottom"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of author information at the bottom of articles. When enabled, the author's details will be shown at the end of the article."
+
+              - name: "showAuthorsBadges"
+                label: "Show Author Badges"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of author badges in articles. When enabled, badges representing the author's achievements or roles will be shown."
+
+              - name: "showBreadcrumbs"
+                label: "Show Breadcrumbs"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of breadcrumbs in articles. When enabled, a breadcrumb navigation trail will be shown to help users understand their location within the site."
+
+              - name: "showDate"
+                label: "Show Date"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of the publication date in articles. When enabled, the date the article was published will be shown."
+
+              - name: "showDateOnlyInArticle"
+                label: "Show Date in Articles"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the display of the publication date only within the article content. When enabled, the date will not be shown in other sections like previews or lists."
+
+              - name: "showDateUpdated"
+                label: "Show updated Date"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the display of the last updated date in articles. When enabled, the date the article was last modified will be shown."
+
+              - name: "showDraftLabel"
+                label: "Show Draft Lable"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of a draft label in articles. When enabled, a label indicating that the article is a draft will be shown."
+
+              - name: "showEdit"
+                label: "Show Edit Link"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of an edit link in articles. When enabled, a link allowing users to edit the article will be shown."
+
+              - name: "showHeadingAnchors"
+                label: "Show Heading Anchors"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the display of anchor links for headings in articles. When enabled, users can easily link to specific sections of the article."
+
+              - name: "showHero"
+                label: "Show Hero Section"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of the hero section in articles. When enabled, a prominent hero image or section will be shown at the top of the article."
+
+              - name: "showLikes"
+                label: "Show Likes"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of a like button in articles. When enabled, users can like the article."
+
+              - name: "showPagination"
+                label: "Show Pagination"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of pagination controls in articles. When enabled, users can navigate between different pages of content."
+
+              - name: "showReadingTime"
+                label: "Show Reading Time"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of estimated reading time in articles. When enabled, an estimate of how long it will take to read the article will be shown."
+
+              - name: "showRelatedContent"
+                label: "Show Related Content"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of related content in articles. When enabled, links to related posts or articles will be shown."
+
+              - name: "showTableOfContents"
+                label: "Show Table of Contents"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the display of a table of contents in articles. When enabled, a list of headings and sections will be shown for easy navigation."
+
+              - name: "showTaxonomies"
+                label: "Show Taxonomies"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the display of taxonomies (categories, tags) in articles. When enabled, the taxonomies associated with the article will be shown."
+
+              - name: "showViews"
+                label: "Show Views"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of view counts in articles. When enabled, the number of times the article has been viewed will be shown."
+
+              - name: "showWordCount"
+                label: "Show Word Count"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the display of word count in articles. When enabled, the total number of words in the article will be shown."
+
+              - name: "showZenMode"
+                label: "Show Zen Mode"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of a zen mode button in articles. When enabled, users can enter a distraction-free reading mode."
+
+              - name: "externalLinkForceNewTab"
+                label: "External Links Open in New Tab"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable forcing external links to open in a new tab. When enabled, clicking on external links will open them in a new browser tab."
+
+          - name: "list"
+            label: "List Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "cardView"
+                label: "Card View"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the card view layout for lists, which displays content in a card-based format."
+
+              - name: "cardViewScreenWidth"
+                label: "Card View Screen Width Threshold"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the card view layout based on screen width. When enabled, the card view will only be used on screens wider than a specified threshold."
+
+              - name: "constrainItemsWidth"
+                label: "Constrain Items Width"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable constraining the width of items in lists. When enabled, items will have a maximum width for better readability."
+
+              - name: "groupByYear"
+                label: "Group By Year"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable grouping of list items by year. When enabled, items will be organized into sections based on their publication year."
+
+              - name: "heroStyle"
+                label: "Hero Style"
+                widget: "select"
+                options: ["basic", "big", "background", "thumbAndBackground"]
+                default: "background"
+                hint: "Choose the style of the hero section for lists. Options include basic, big, background, and thumbAndBackground."
+
+              - name: "layoutBackgroundBlur"
+                label: "List Layout Background Blur"
+                widget: "boolean"
+                default: true
+                required: false
+                hint: "only used when heroStyle equals background or thumbAndBackground"
+
+              - name: "layoutBackgroundHeaderSpace"
+                label: "List Layout Background Header Space"
+                widget: "boolean"
+                default: true
+                required: false
+                hint: "only used when heroStyle equals background"
+
+              - name: "orderByWeight"
+                label: "Order By Weight"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable ordering of list items by weight. When enabled, items will be sorted based on their assigned weight value."
+
+              - name: "showBreadcrumbs"
+                label: "Show Breadcrumbs"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of breadcrumbs in lists. When enabled, a breadcrumb navigation trail will be shown to help users understand their location within the site."
+
+              - name: "showCards"
+                label: "Show Cards"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of cards in lists. When enabled, items will be displayed in a card-based format."
+
+              - name: "showHero"
+                label: "Show Hero Section"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of the hero section in lists. When enabled, a prominent hero image or section will be shown at the top of the list."
+
+              - name: "showLikes"
+                label: "Show Likes"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of a like button in lists. When enabled, users can like items in the list."
+
+              - name: "showViews "
+                label: "Show Views"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of view counts in lists. When enabled, the number of times each item has been viewed will be shown."
+
+              - name: "showSummary"
+                label: "Show Summary"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of summaries in lists. When enabled, a brief summary of each item will be shown."
+
+              - name: "showTableOfContents"
+                label: "Show Table of Contents"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of a table of contents in lists. When enabled, a list of headings and sections will be shown for easy navigation."
+
+          - name: "sitemap"
+            label: "Sitemap Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "excludedKinds"
+                label: "Excluded Kinds"
+                widget: "select"
+                options: ["taxonomy", "term"]
+                default: ["taxonomy", "term"]
+                hint: "Exclude specific page kinds from the sitemap (e.g., 'taxonomy', 'term')."
+
+          - name: "taxonomy"
+            label: "Taxonomy Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "cardView"
+                label: "Card View"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the card view layout for taxonomies, which displays content in a card-based format."
+
+              - name: "heroStyle"
+                label: "Hero Style"
+                widget: "select"
+                options: ["basic", "big", "background", "thumbAndBackground"]
+                default: "background"
+                hint: "Choose the style of the hero section for taxonomies. Options include basic, big, background, and thumbAndBackground."
+
+              - name: "showBreadcrumbs"
+                label: "Show Breadcrumbs"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of breadcrumbs in taxonomies. When enabled, a breadcrumb navigation trail will be shown to help users understand their location within the site."
+
+              - name: "showHero"
+                label: "Show Hero Section"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of the hero section in taxonomies. When enabled, a prominent hero image or section will be shown at the top of the taxonomy page."
+
+              - name: "showLikes"
+                label: "Show Likes"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of a like button in taxonomies. When enabled, users can like items in the taxonomy."
+
+              - name: "showTableOfContents"
+                label: "Show Table of Contents"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of a table of contents in taxonomies. When enabled, a list of headings and sections will be shown for easy navigation."
+
+              - name: "showTermCount"
+                label: "Show Term Count"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of term counts in taxonomies. When enabled, the number of items associated with each term will be shown."
+
+              - name: "showViews"
+                label: "Show Views"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of view counts in taxonomies. When enabled, the number of times each item has been viewed will be shown."
+
+          - name: "term"
+            label: "Term Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "cardView"
+                label: "Card View"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the card view layout for terms, which displays content in a card-based format."
+
+              - name: "cardViewScreenWidth"
+                label: "Card View Screen Width Threshold"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the card view layout based on screen width. When enabled, the card view will only be used on screens wider than a specified threshold."
+
+              - name: "groupByYear"
+                label: "Group By Year"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable grouping of term items by year. When enabled, items will be organized into sections based on their publication year."
+
+              - name: "heroStyle"
+                label: "Hero Style"
+                widget: "select"
+                options: ["basic", "big", "background", "thumbAndBackground"]
+                default: "thumbAndBackground"
+                hint: "Choose the style of the hero section for terms. Options include basic, big, background, and thumbAndBackground."
+
+              - name: "showBreadcrumbs"
+                label: "Show Breadcrumbs"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of breadcrumbs in terms. When enabled, a breadcrumb navigation trail will be shown to help users understand their location within the site."
+
+              - name: "showHero"
+                label: "Show Hero Section"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of the hero section in terms. When enabled, a prominent hero image or section will be shown at the top of the term page."
+
+              - name: "showLikes"
+                label: "Show Likes"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of a like button in terms. When enabled, users can like items in the term."
+
+              - name: "showTableOfContents"
+                label: "Show Table of Contents"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of a table of contents in terms. When enabled, a list of headings and sections will be shown for easy navigation."
+
+              - name: "showViews"
+                label: "Show Views"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of view counts in terms. When enabled, the number of times each item has been viewed will be shown."
+
+          - name: DecapCMS
+            label: "DecapCMS Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "PublishMode"
+                label: "Publish Mode"
+                widget: "select"
+                options: ["simple", "editorial_workflow"]
+                default: "editorial_workflow"
+                hint: "Choose the publish mode for DecapCMS. Options include 'simple' for direct publishing and 'editorial_workflow' for a more controlled publishing process."
+
+              - name: "branch"
+                label: "Git Branch"
+                widget: "string"
+                default: "main"
+                hint: "Set the default Git branch for DecapCMS. This is the branch where content changes will be committed."
+
+              - name: "media"
+                label: "Media Folder"
+                widget: "string"
+                default: "static/img"
+                hint: "Set the default media folder for DecapCMS. This is where uploaded media files will be stored."
+
+              - name: "public"
+                label: "Public Folder"
+                widget: "string"
+                default: "/img"
+                hint: "Set the public folder for DecapCMS. This is the folder that will be publicly accessible for media files."
+
+              - name: "logo"
+                label: "Custom Logo URL"
+                widget: "image"
+                required: false
+                choose_url: false
+                allow_multiple: false
+                default: "/img/CMS-Logo.png"
+                hint: "Set a custom logo URL for DecapCMS. This logo will be displayed in the CMS interface."
+
+              - name: "search"
+                label: "Enable Search"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the search functionality in DecapCMS. When enabled, users can search for content within the CMS."
+
+              - name: "preview"
+                label: "Show Preview Links"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the display of preview links in DecapCMS. When enabled, users can preview content before publishing."
+
+          - name: firebase
+            label: "Firebase Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "apiKey"
+                label: "API Key"
+                widget: "string"
+                required: false
+                hint: "Set the API key for Firebase integration. This key is used to authenticate requests to Firebase services."
+
+              - name: "appId"
+                label: "App ID"
+                widget: "string"
+                required: false
+                hint: "Set the App ID for Firebase integration. This ID is used to identify the Firebase application."
+
+              - name: "authDomain"
+                label: "Auth Domain"
+                widget: "string"
+                required: false
+                hint: "Set the authentication domain for Firebase integration. This domain is used for user authentication and authorization."
+
+              - name: "measurementId"
+                label: "Measurement ID"
+                widget: "string"
+                required: false
+                hint: "Set the measurement ID for Firebase integration. This ID is used for analytics and tracking purposes."
+
+              - name: "messagingSenderId"
+                label: "Messaging Sender ID"
+                widget: "string"
+                required: false
+                hint: "Set the messaging sender ID for Firebase integration. This ID is used for sending messages and notifications through Firebase Cloud Messaging."
+
+              - name: "projectId"
+                label: "Project ID"
+                widget: "string"
+                required: false
+                hint: "Set the project ID for Firebase integration. This ID is used to identify the Firebase project."
+
+              - name: "storageBucket"
+                label: "Storage Bucket"
+                widget: "string"
+                required: false
+                hint: "Set the storage bucket for Firebase integration. This bucket is used for storing files and media in Firebase Storage."
+
+          - name: "fathomAnalytics"
+            label: "Fathom Analytics Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "site"
+                label: "Fathom Site ID"
+                widget: "string"
+                required: false
+                hint: "Set the Fathom site ID for analytics tracking. This ID is used to identify the site in Fathom Analytics."
+
+              - name: "domain"
+                label: "Fathom Domain"
+                widget: "string"
+                required: false
+                hint: "Set the Fathom domain for analytics tracking. This domain is used to specify which domain the analytics data is associated with."
+
+          - name: "umamiAnalytics"
+            label: "Umami Analytics Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "websiteid"
+                label: "Umami Website ID"
+                widget: "string"
+                required: false
+                hint: "Set the Umami website ID for analytics tracking. This ID is used to identify the website in Umami Analytics."
+
+              - name: "domain"
+                label: "Umami Domain"
+                widget: "string"
+                required: false
+                hint: "Set the Umami domain for analytics tracking. This domain is used to specify which domain the analytics data is associated with."
+
+              - name: "dataDomains"
+                label: "Umami Data Domains"
+                widget: "string"
+                required: false
+                hint: "Set the Umami data domains for analytics tracking. This is a comma-separated list of domains that are allowed to send data to Umami Analytics."
+
+              - name: "enableTrackEvent"
+                label: "Enable Track Event"
+                widget: "boolean"
+                required: false
+                hint: "Enable or disable the tracking of custom events in Umami Analytics. When enabled, you can track specific user interactions on your site."
+
+          - name: "selineAnalytics"
+            label: "Seline Analytics Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "token"
+                label: "Seline Token"
+                widget: "string"
+                required: false
+                hint: "Set the Seline token for analytics tracking. This token is used to authenticate requests to Seline Analytics."
+
+              - name: "enableTrackEvent"
+                label: "Enable Track Event"
+                widget: "boolean"
+                required: false
+                hint: "Enable or disable the tracking of custom events in Seline Analytics. When enabled, you can track specific user interactions on your site."
+
+          - name: "buymeacoffee"
+            label: "Buy Me A Coffee Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "identifier"
+                label: "Buy Me A Coffee Identifier"
+                widget: "string"
+                required: false
+                hint: "Set the identifier for Buy Me A Coffee integration. This identifier is used to link to your Buy Me A Coffee page."
+
+              - name: "globalWidget"
+                label: "Enable Global Widget"
+                widget: "boolean"
+                required: false
+                hint: "Enable or disable the global Buy Me A Coffee widget. When enabled, a widget will be displayed on your site allowing users to support you."
+
+              - name: "globalWidgetMessage"
+                label: "Global Widget Message"
+                widget: "string"
+                required: false
+                hint: "Set the message displayed in the global Buy Me A Coffee widget. This message will be shown to users who see the widget."
+
+              - name: "globalWidgetColor"
+                label: "Global Widget Color"
+                widget: "color"
+                required: false
+                default: "#FFDD00"
+                hint: "Set the color of the global Buy Me A Coffee widget. This color will be used for the widget's background and elements."
+
+              - name: "globalWidgetPosition"
+                label: "Global Widget Position"
+                widget: "select"
+                options: ["Right", "Left", "bottom-right", "bottom-left", "top-right", "top-left"]
+                default: "Right"
+                required: false
+                hint: "Set the position of the global Buy Me A Coffee widget on the page. Options include right, left, bottom-right, bottom-left, top-right, and top-left."
+
+          - name: "verification"
+            label: "Site Verification Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "google"
+                label: "Google Site Verification"
+                widget: "string"
+                required: false
+                hint: "Set the Google site verification code. This code is used to verify ownership of your site with Google Search Console."
+
+              - name: "bing"
+                label: "Bing Site Verification"
+                widget: "string"
+                required: false
+                hint: "Set the Bing site verification code. This code is used to verify ownership of your site with Bing Webmaster Tools."
+
+              - name: "yandex"
+                label: "Yandex Site Verification"
+                widget: "string"
+                required: false
+                hint: "Set the Yandex site verification code. This code is used to verify ownership of your site with Yandex Webmaster Tools."
+
+              - name: "pinterest"
+                label: "Pinterest Site Verification"
+                widget: "string"
+                required: false
+                hint: "Set the Pinterest site verification code. This code is used to verify ownership of your site with Pinterest."
+
+          - name: "rssnext"
+            label: "RSS Next Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "feedId"
+                label: "RSS Next Feed ID"
+                widget: "string"
+                required: false
+                hint: "Set the RSS Next feed ID. This ID is used to identify the specific RSS feed for your site."
+
+              - name: "userId"
+                label: "RSS Next User ID"
+                widget: "string"
+                required: false
+                hint: "Set the RSS Next user ID. This ID is used to identify the user associated with the RSS feed."
+
+          - name: "advertisement"
+            label: "Advertisement Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "adsense"
+                label: "Google AdSense Client ID"
+                widget: "string"
+                required: false
+                hint: "Set the Google AdSense client ID for displaying ads. This ID is used to link your site to your AdSense account."
+
+          - name: "comments"
+            label: "Comments Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "enabled"
+                label: "Enable Comments"
+                widget: "boolean"
+                default: true
+                hint: "Enable or disable the comments section on articles. When enabled, users can leave comments on articles."
+
+              - name: "repo"
+                label: "Repository"
+                widget: "string"
+                default: "Armoghan-Blogs/Comments"
+                hint: "GitHub repository in format 'owner/repo'"
+
+              - name: "issueTerm"
+                label: "Issue Term"
+                widget: "select"
+                options: ["pathname", "url", "title", "og:title"]
+                default: "pathname"
+                hint: "How to map issues to pages"
+
+              - name: "label"
+                label: "Label"
+                widget: "string"
+                default: "Comments"
+                hint: "Label for issues created by comments"
+
+              - name: "theme"
+                label: "Theme"
+                widget: "select"
+                options: ["light", "dark", "icy-dark", "github-light", "github-dark"]
+                default: "icy-dark"
+                hint: "Theme for comments section"
+
+              - name: "crossorigin"
+                label: "Crossorigin"
+                widget: "string"
+                default: "anonymous"
+                hint: "Cross-origin setting for comments section"
+
+          - name: "newsletter"
+            label: "Newsletter Configuration"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "enabled"
+                label: "Enable Newsletter"
+                widget: "boolean"
+                default: true
+                required: false
+                hint: "Enable or disable the newsletter subscription feature. When enabled, users can subscribe to receive updates via email."
+
+              - name: "provider"
+                label: "Provider"
+                widget: "select"
+                options: ["buttondown", "mailchimp", "convertkit", "substack"]
+                required: false
+                hint: "Select the newsletter service provider. Options include Buttondown, Mailchimp, ConvertKit, and Substack."
+
+              - name: "title"
+                label: "Newsletter Title"
+                widget: "string"
+                default: "Get New Posts in Your Inbox"
+                required: false
+                hint: "The title for the newsletter subscription form."
+
+              - name: "description"
+                label: "Newsletter Description"
+                widget: "string"
+                default: "No spam. Only practical posts and cybersecurity insights."
+                required: false
+                hint: "A brief description for the newsletter subscription form."
+
+              - name: "action"
+                label: "Form Action URL"
+                widget: "string"
+                required: false
+                hint: "The URL to which the newsletter subscription form will submit data. This is typically provided by the newsletter service provider."
+
+              - name: "buttonText"
+                label: "Button Text"
+                widget: "string"
+                default: "Subscribe"
+                required: false
+                hint: "The text displayed on the newsletter subscription button."
+
+              - name: "disclaimer"
+                label: "Disclaimer"
+                widget: "string"
+                default: "Unsubscribe anytime."
+                required: false
+                hint: "A disclaimer message displayed below the newsletter subscription form, informing users that they can unsubscribe at any time."
