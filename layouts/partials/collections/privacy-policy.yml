@@ -1,0 +1,87 @@
+      # Privacy Policy Page
+      - name: "privacy_policy"
+        label: "Privacy Policy Page"
+        file: "content/privacy-policy/index.md"
+        fields:
+          - name: "title"
+            label: "Title"
+            widget: "string"
+
+          - name: "description"
+            label: "Description"
+            widget: "text"
+            required: false
+
+          - name: "heroStyle"
+            label: "Hero Style"
+            widget: "string"
+            required: false
+
+          - name: "showWordCount"
+            label: "Show Word Count"
+            widget: "boolean"
+            default: false
+
+          - name: "showViews"
+            label: "Show Views"
+            widget: "boolean"
+            default: false
+
+          - name: "showLikes"
+            label: "Show Likes"
+            widget: "boolean"
+            default: false
+
+          - name: "showBreadcrumbs"
+            label: "Show Breadcrumbs"
+            widget: "boolean"
+            default: false
+
+          - name: "showTableOfContents"
+            label: "Show TOC"
+            widget: "boolean"
+            default: false
+
+          - name: "showReadingTime"
+            label: "Show Reading Time"
+            widget: "boolean"
+            default: false
+
+          - name: "showPagination"
+            label: "Show Pagination"
+            widget: "boolean"
+            default: false
+
+          - name: "showEdit"
+            label: "Show Edit Button"
+            widget: "boolean"
+            default: false
+
+          - name: "showRelatedContent"
+            label: "Show Related Content"
+            widget: "boolean"
+            default: false
+
+          - name: "showDate"
+            label: "Show Date"
+            widget: "boolean"
+            default: false
+
+          - name: "showDateOnlyInArticle"
+            label: "Show Date Only In Article"
+            widget: "boolean"
+            default: false
+
+          - name: "showDateUpdated"
+            label: "Show Updated Date"
+            widget: "boolean"
+            default: false
+
+          - name: "replyByEmail"
+            label: "Reply By Email"
+            widget: "boolean"
+            default: false
+
+          - name: "body"
+            label: "Content"
+            widget: "richtext"
