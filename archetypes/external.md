@@ -4,7 +4,7 @@ date: {{ .Date }}
 summary: ""
 description: ""
 externalUrl: ""
-image: ""
+featuredimage: ""
 showSummary: true
 showTableOfContents: true
 showWordCount: true

@@ -86,6 +86,7 @@ sortable_fields: ['commit_date', 'title', 'commit_author' ]
 
 # Collections configuration for the CMS
 collections:
+  # Static Pages Collection
   - name: Static Pages
     label: "Static Pages"
     create: false
@@ -95,10 +96,13 @@ collections:
       {{ partial "collections/disclaimer.yml" . }}
       {{ partial "collections/privacy-policy.yml" . }}
 
-  # Data Folder
+  # Posts Collection
+  {{ partial "collections/posts.yml" . }}
+
+  # Data Folder Collection
   {{ partial "collections/author-data.yml" . }}
 
-  # Site Settings
+  # Site Settings Collection
   - name: "settings"
     label: "Site Settings"
     create: false

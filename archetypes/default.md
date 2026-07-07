@@ -3,7 +3,7 @@ title: "{{ replace .Name "-" " " | title }}"
 date: {{ .Date }}
 summary: ""
 description: ""
-image: ""
+featuredimage: ""
 showSummary: true
 showTableOfContents: true
 showWordCount: true
