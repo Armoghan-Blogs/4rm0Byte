@@ -5,6 +5,45 @@ CMS.registerWidget(CreateSelect.Widget());
 
 CMS.init();
 
+CMS.registerEventListener({
+  name: "preSave",
+  handler: ({ entry }) => {
+    const data = entry.get("data");
+
+    const image = data.get("featuredimage"); // <-- change if needed
+
+    if (!image) return;
+
+    let filename = "";
+
+    // Case 1: string path
+    if (typeof image === "string") {
+      filename = image.split("/").pop();
+    }
+
+    // Case 2: file object (upload)
+    else if (image && image.name) {
+      filename = image.name;
+    }
+
+    // Case 3: unknown type (fail safe)
+    else {
+      console.warn("Unknown image format:", image);
+      return;
+    }
+
+    console.log("Checking filename:", filename); // DEBUG
+
+    const isValid = /^featured\.(png|jpg|jpeg|svg)$/i.test(filename);
+
+    if (!isValid) {
+      throw new Error(
+        `Invalid filename: "${filename}"\n\nMust be: featured.png|jpg|jpeg|svg`
+      );
+    }
+  },
+});
+
 const SELECTORS = [
   '[class*="SettingsWrapper"]',
   '[class*="ToolbarSectionMeta"]'
