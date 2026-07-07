@@ -102,6 +102,12 @@ collections:
   # Cheatsheet Collection
   {{ partial "collections/cheatsheet.yml" . }}
 
+  # Tutorial Collection
+  {{ partial "collections/tutorials.yml" . }}
+
+  # Writeup Collection
+  {{ partial "collections/writeups.yml" . }}
+
   # Data Folder Collection
   {{ partial "collections/author-data.yml" . }}
 
