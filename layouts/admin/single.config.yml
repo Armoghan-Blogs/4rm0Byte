@@ -108,6 +108,9 @@ collections:
   # Writeup Collection
   {{ partial "collections/writeups.yml" . }}
 
+  # Tools Collection
+  {{ partial "collections/tools.yml" . }}
+
   # Data Folder Collection
   {{ partial "collections/author-data.yml" . }}
 
