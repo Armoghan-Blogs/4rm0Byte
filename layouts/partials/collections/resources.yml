@@ -1,0 +1,98 @@
+  # content/resource
+  - name: "resource"
+    label: "resource"
+    editor:
+      preview: false
+    folder: "content/resource"
+    create: true
+    nested:
+      depth: 100
+    fields:
+      - name: "title"
+        label: "Title"
+        widget: "string"
+        required: true
+        hint: "The title of the resource. This is required and will be used as the main heading of the article."
+
+      - name: "date"
+        label: "Date"
+        widget: "datetime"
+        required: true
+        hint: "Publish date and time for the resource. This is required and will be used to determine when the resource goes live."
+
+      - name: "externalUrl"
+        label: "External URL"
+        widget: "string"
+        required: true
+        hint: "The URL of the external resource. This is required and will be used to link to the resource."
+
+      - name: "featuredimage"
+        label: "Featured Image"
+        widget: "image"
+        required: true
+        choose_url: false
+        allow_multiple: false
+        media_folder: "./"
+        public_folder: "./"
+        hint: "Upload only PNG/JPG/JPEG/SVG and keep the filename as featured.<ext>."
+
+      - name: "description"
+        label: "Description"
+        widget: "text"
+        required: false
+        hint: "A short description of the resource. This is optional and can be used for SEO purposes or as a summary in lists."
+
+      - name: "summary"
+        label: "Summary"
+        widget: "text"
+        required: false
+        hint: "A brief summary of the resource. This is optional and can be displayed in lists or previews."
+
+      - name: "tags"
+        label: "Tags"
+        widget: "create-select"
+        allow_create: true
+        multiple: true
+        required: false
+        options: [{{ partial "tags-options.html" . }}]
+
+      - name: "categories"
+        label: "Categories"
+        widget: "create-select"
+        allow_create: true
+        multiple: true
+        required: false
+        options: [{{ partial "categories-options.html" . }}]
+
+      - name: "keywords"
+        label: "Keywords"
+        widget: "create-select"
+        allow_create: true
+        multiple: true
+        required: false
+        options: [{{ partial "keywords-options.html" . }}]
+
+      - name: "series"
+        label: "Series"
+        widget: "create-select"
+        allow_create: true
+        multiple: true
+        required: false
+        options: [{{ partial "series-options.html" . }}]
+
+      - name: "series_order"
+        label: "Series Order"
+        widget: "select"
+        multiple: true
+        required: false
+        min: 1
+        options: [{{- range $idx, $n := seq 0 50 -}}{{- if $idx }},{{ end -}}"{{ $n }}"{{- end -}}]
+
+      - name: "draft"
+        label: "Draft"
+        widget: "boolean"
+        default: false
+        required: true
+        hint: "Whether the resource is a draft. Draft resource will not be published."
+
+    meta: { path: { widget: string, label: "Path", index_file: "index", hint: "Name for the folder to save resource" } }

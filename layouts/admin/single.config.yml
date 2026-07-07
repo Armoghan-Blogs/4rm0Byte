@@ -111,6 +111,9 @@ collections:
   # Tools Collection
   {{ partial "collections/tools.yml" . }}
 
+  # Resources Collection
+  {{ partial "collections/resources.yml" . }}
+
   # Data Folder Collection
   {{ partial "collections/author-data.yml" . }}
 
