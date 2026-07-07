@@ -1,0 +1,107 @@
+      # markup.toml
+      - name: "Markup Configuration"
+        label: "Markup Configuration"
+        file: "config/_default/markup.toml"
+        fields:
+          - name: "goldmark"
+            label: "Goldmark"
+            widget: "object"
+            fields:
+              - name: "parser"
+                label: "Parser"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "wrapStandAloneImageWithinParagraph"
+                    label: "Wrap Standalone Images within Paragraph"
+                    widget: "boolean"
+                    default: false
+                    hint: "If true, standalone images will be wrapped within a paragraph tag. If false, they will be rendered as standalone elements."
+
+                  - name: "attribute"
+                    label: "Attribute"
+                    widget: "object"
+                    collapsed: true
+                    fields:
+                      - name: "block"
+                        label: "Block"
+                        widget: "boolean"
+                        default: true
+                        hint: "If true, block-level elements can have attributes. If false, block-level elements cannot have attributes."
+
+              - name: "renderer"
+                label: "Renderer"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "unsafe"
+                    label: "Unsafe"
+                    widget: "boolean"
+                    default: true
+                    hint: "If true, allows rendering of raw HTML in Markdown content. If false, raw HTML will be escaped."
+
+              - name: "extensions"
+                label: "Extensions"
+                widget: "object"
+                fields:
+                  - name: "passthrough"
+                    label: "Passthrough"
+                    widget: "object"
+                    collapsed: true
+                    fields:
+                      - name: "enable"
+                        label: "Enable"
+                        widget: "boolean"
+                        default: true
+                        hint: "If true, allows passthrough of certain elements in Markdown content. If false, passthrough is disabled."
+
+                      - name: "delimiters"
+                        label: "Delimiters"
+                        widget: "object"
+                        collapsed: true
+                        fields:
+                          - name: "block"
+                            label: "Block Delimiters"
+                            widget: "list"
+                            default: [["\\[", "\\]"], ["$$", "$$"]]
+                            hint: "If true, allows passthrough of certain elements in Markdown content. If false, passthrough is disabled."
+
+                          - name: "inline"
+                            label: "Inline Delimiters"
+                            widget: "list"
+                            default: [["\\(", "\\)"]]
+                            hint: "If true, allows passthrough of certain elements in Markdown content. If false, passthrough is disabled."
+
+          - name: "highlight"
+            label: "Highlight"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "noClasses"
+                label: "No Classes"
+                widget: "boolean"
+                default: false
+                hint: "If true, disables the use of CSS classes for syntax highlighting. If false, uses CSS classes for syntax highlighting."
+
+          - name: "tableOfContents"
+            label: "Table of Contents"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "startLevel"
+                label: "Start Level"
+                widget: "number"
+                value_type: "int"
+                default: 2
+                min: 1
+                max: 6
+                hint: "The starting level for the table of contents. For example, if set to 2, the table of contents will include headings from level 2 and below."
+
+              - name: "endLevel"
+                label: "End Level"
+                widget: "number"
+                value_type: "int"
+                default: 4
+                min: 1
+                max: 6
+                hint: "The ending level for the table of contents. For example, if set to 4, the table of contents will include headings up to level 4."
