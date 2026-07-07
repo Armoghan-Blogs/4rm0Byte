@@ -27,3 +27,8 @@
                 label: "Module Path"
                 widget: "string"
                 hint: "The path to the module to be imported."
+
+              - name: "version"
+                label: "Module Version"
+                widget: "string"
+                hint: "Specifies the version of the module to be imported."

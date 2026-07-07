@@ -79,7 +79,7 @@
             default: false
             hint: "Disable image optimization for all images on the site. This may affect performance and loading times."
 
-          - name: "disableImageOptimizationMD "
+          - name: "disableImageOptimizationMD"
             label: "Disable Image Optimization for Markdown"
             widget: "boolean"
             default: false
@@ -131,6 +131,12 @@
             default: false
             hint: "Enable or disable hotlinking for featured images. If enabled, the featured image will be directly linked from its source."
 
+          - name: "thumbnailAspectRatio"
+            label: "Thumbnail Aspect Ratio"
+            widget: "string"
+            default: "1.5"
+            hint: "Set the aspect ratio for thumbnails (e.g., "1.5", "1.0", "1.777")."
+
           - name: "imagePosition"
             label: "Image Position"
             widget: "string"
@@ -149,7 +155,7 @@
             default: true
             hint: "Enable or disable the smart table of contents feature, which provides an interactive and dynamic table of contents for posts."
 
-          - name: "smartTOCHideUnfocusedChildren "
+          - name: "smartTOCHideUnfocusedChildren"
             label: "Smart Table of Contents - Hide Unfocused Children"
             widget: "boolean"
             default: true
@@ -496,6 +502,24 @@
                 widget: "boolean"
                 default: false
                 hint: "Enable or disable the display of taxonomies (categories, tags) in articles. When enabled, the taxonomies associated with the article will be shown."
+
+              - name: "showCategories"
+                label: "Show Categories"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the display of categories in articles. When enabled, the categories associated with the article will be shown."
+
+              - name: "showCategoriesInSecondaryColor"
+                label: "Show Categories in Secondary Color"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the display of categories in a secondary color. When enabled, the categories will be displayed with a different color for better visual distinction."
+
+              - name: "showTags"
+                label: "Show Tags"
+                widget: "boolean"
+                default: false
+                hint: "Enable or disable the display of tags in articles. When enabled, the tags associated with the article will be shown."
 
               - name: "showViews"
                 label: "Show Views"
