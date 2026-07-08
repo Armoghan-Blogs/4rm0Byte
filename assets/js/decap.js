@@ -10,7 +10,7 @@ CMS.registerEventListener({
   handler: ({ entry }) => {
     const data = entry.get("data");
 
-    const image = data.get("featureimage"); // <-- change if needed
+    const image = data.get("featureimage");
 
     if (!image) return;
 

@@ -7,6 +7,7 @@
 
 <div align="center">
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/6c090d85-840d-4ecc-baaa-00535023e217/deploy-status)](https://app.netlify.com/projects/4rm0byte/deploys)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
 [![Hugo Version](https://img.shields.io/static/v1?label=HUGO&message=0.157.0&color=blue&logo=hugo&style=for-the-badge)](https://github.com/gohugoio/hugo/releases/tag/0.157.0)
