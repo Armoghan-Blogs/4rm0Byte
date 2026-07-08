@@ -20,7 +20,7 @@
         required: true
         hint: "Publish date and time for the cheatsheet. This is required and will be used to determine when the cheatsheet goes live."
 
-      - name: "featuredimage"
+      - name: "featureimage"
         label: "Featured Image"
         widget: "image"
         required: true
