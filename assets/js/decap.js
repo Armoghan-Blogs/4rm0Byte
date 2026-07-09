@@ -1,5 +1,8 @@
+window.CMS_MANUAL_INIT = true
 import CMS from "decap-cms-app";
 import CreateSelect from "../widgets/Create-Select";
+
+window.CMS = CMS;
 
 CMS.registerWidget(CreateSelect.Widget());
 
