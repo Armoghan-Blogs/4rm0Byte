@@ -35,7 +35,7 @@
   {{/* ============ */}}
   {{/* Report JS file */}}
   {{/* ============ */}}
-  {{- with resources.Get "Js/report.js" }}
+  {{- with resources.Get "js/report.js" }}
     {{- if eq hugo.Environment "development" }}
       {{- with . | js.Build }}
         <script src="{{ .RelPermalink }}"></script>
@@ -52,8 +52,8 @@
   {{/* Hugo Variables and dynamic things */}}
   {{/* ================================= */}}
 
-  {{- $allPages := where .Site.RegularPages "Type" "ne" "authors" -}}
-  {{- $allPages = where $allPages "Section" "not in" (slice "report" "admin") -}}
+  {{- $allPages := where .Site.RegularPages "Type" "ne" (slice "authors" "disclaimer" "privacy-policy") -}}
+  {{- $allPages = where $allPages "Section" "not in" (slice "report" "admin" "disclaimer" "privacy-policy") -}}
   {{- $allPages = where $allPages "RelPermalink" "not in" (slice "/offline.html" "/404.html") -}}
 
   {{- $publishedPages := where $allPages "Draft" false -}}
@@ -197,7 +197,7 @@
         class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
         <p class="text-[11px] uppercase tracking-wide text-neutral-500">Generated</p>
         <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
-          {{ now.Format "2006-01-02 15:04" }}
+          {{ now.Format "2 January 2006 03:04 PM" }}
         </h3>
       </div>
 
@@ -224,7 +224,7 @@
         class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
         <p class="text-[11px] uppercase tracking-wide text-neutral-500">Total Content</p>
         <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
-          {{ sub (len $allPages) 1 }}
+          {{ len $allPages }}
         </h3>
       </div>
 
@@ -233,7 +233,7 @@
         class="px-3 py-2 border rounded-xl border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800/60">
         <p class="text-[11px] uppercase tracking-wide text-neutral-500">Published</p>
         <h3 class="py-2 my-2 text-sm font-semibold text-neutral-900 dark:text-white">
-          {{ sub (len (where $allPages "Draft" false)) 1 }}
+          {{ len (where $allPages "Draft" false) }}
         </h3>
       </div>
 
