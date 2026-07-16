@@ -36,7 +36,7 @@
   "devDependencies": {
     "concurrently": "^10.0.3",
     "depcheck": "^1.4.7",
-    "prettier": "^3.8.4",
+    "prettier": "^3.9.5",
     "prettier-plugin-go-template": "^0.0.15",
     "prettier-plugin-toml": "^2.0.6",
     "rimraf": "^6.1.3",
