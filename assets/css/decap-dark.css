@@ -192,6 +192,11 @@
   opacity: 1;
 }
 
+[class*="DropdownList-dropdownList-DropdownList"] {
+  max-height: 295px !important;
+  overflow-y: auto !important;
+}
+
 .dark {
   body {
     background-color: var(--body-bg-color) !important;
