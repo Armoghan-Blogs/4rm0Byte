@@ -14,9 +14,8 @@ summaryLength = 20
 buildDrafts = false
 buildFuture = false
 
+googleAnalytics = "G-X4JNJ74TRN"
 enableEmoji = true
-
-# googleAnalytics = "G-XXXXXXXXX"
 
 [pagination]
 pagerSize = 10
