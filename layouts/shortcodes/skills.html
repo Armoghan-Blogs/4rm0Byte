@@ -1,0 +1,132 @@
+<style>
+.skills-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:1.75rem;
+  margin:2rem 0;
+}
+
+.skill-category{
+  position:relative;
+  isolation:isolate;
+  border-radius:1.1rem;
+  overflow:hidden;
+  background:rgb(var(--color-neutral-50));
+  border:1px solid rgb(var(--color-neutral-200));
+  box-shadow:0 1px 3px rgb(var(--color-neutral-900) / .06);
+  padding:1.5rem;
+  transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease;
+}
+html.dark .skill-category{background:rgb(var(--color-neutral-800));border-color:rgb(var(--color-neutral-700));}
+
+.skill-category::before{
+  content:"";
+  position:absolute;
+  top:-45%;right:-15%;
+  width:60%;height:60%;
+  background:radial-gradient(circle,rgb(var(--color-primary-500) / .3),transparent 70%);
+  filter:blur(35px);
+  opacity:0;
+  transition:opacity .45s ease;
+  z-index:0;
+  pointer-events:none;
+}
+.skill-category:hover::before{opacity:1;}
+.skill-category > *{position:relative;z-index:1;}
+
+.skill-category:hover{
+  transform:translateY(-4px);
+  box-shadow:0 20px 35px -14px rgb(var(--color-primary-500) / .3);
+  border-color:rgb(var(--color-primary-400));
+}
+html.dark .skill-category:hover{border-color:rgb(var(--color-primary-600));}
+
+.skill-category-header{
+  display:flex;align-items:center;gap:.75rem;
+  margin-bottom:1.35rem;
+}
+
+.skill-category-icon{
+  flex-shrink:0;width:2.4rem;height:2.4rem;border-radius:.7rem;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgb(var(--color-primary-400) / .18),rgb(var(--color-primary-600) / .18));
+  color:rgb(var(--color-primary-600));
+}
+html.dark .skill-category-icon{color:rgb(var(--color-primary-300));}
+.skill-category-icon svg{width:1.2rem;height:1.2rem;}
+
+.skill-category-title{
+  font-size:1rem;font-weight:700;margin:0;
+  color:rgb(var(--color-neutral-900));
+}
+html.dark .skill-category-title{color:rgb(var(--color-neutral-100));}
+
+.skill-item{margin-bottom:1.1rem;}
+.skill-item:last-child{margin-bottom:0;}
+
+.skill-item-top{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:.4rem;
+}
+.skill-name{font-size:.85rem;font-weight:600;color:rgb(var(--color-neutral-700));}
+html.dark .skill-name{color:rgb(var(--color-neutral-300));}
+.skill-level{font-size:.7rem;font-weight:600;color:rgb(var(--color-neutral-400));}
+
+.skill-bar-track{
+  height:.4rem;border-radius:9999px;overflow:hidden;
+  background:rgb(var(--color-neutral-200));
+}
+html.dark .skill-bar-track{background:rgb(var(--color-neutral-700));}
+
+.skill-bar-fill{
+  height:100%;border-radius:9999px;
+  background:linear-gradient(90deg,rgb(var(--color-primary-400)),rgb(var(--color-primary-600)));
+  width:0%;
+  transition:width 1.1s cubic-bezier(.16,1,.3,1);
+}
+</style>
+
+<div class="skills-grid" id="skills-grid">
+  {{ range $.Site.Data.skills }}
+  <div class="skill-category">
+    <div class="skill-category-header">
+      {{ with .icon }}
+      <span class="skill-category-icon">{{ $.Page.RenderString (printf "{{< icon %q >}}" .) }}</span>
+      {{ end }}
+      <h4 class="skill-category-title">{{ .category }}</h4>
+    </div>
+    {{ range .items }}
+    <div class="skill-item">
+      <div class="skill-item-top">
+        <span class="skill-name">{{ .name }}</span>
+        {{ if .level }}<span class="skill-level">{{ .level }}%</span>{{ end }}
+      </div>
+      <div class="skill-bar-track">
+        <div class="skill-bar-fill" data-level="{{ .level | default 100 }}"></div>
+      </div>
+    </div>
+    {{ end }}
+  </div>
+  {{ end }}
+</div>
+
+<script>
+(function () {
+  var grid = document.getElementById('skills-grid');
+  if (!grid) return;
+
+  var fills = grid.querySelectorAll('.skill-bar-fill');
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        var el = entry.target;
+        el.style.width = el.dataset.level + '%';
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  fills.forEach(function (el) { observer.observe(el); });
+})();
+</script>

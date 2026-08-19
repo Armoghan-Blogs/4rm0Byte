@@ -1,0 +1,45 @@
+<div class="project-card{{ if eq (.Get "featured") "true" }} project-card-featured{{ end }}">
+  <div class="project-card-top"></div>
+
+  {{ with .Get "image" }}
+  <div class="project-cover">
+    <img src="{{ . | relURL }}" alt="{{ $.Get "title" }}" loading="lazy">
+  </div>
+  {{ end }}
+
+  <div class="project-card-header">
+    <div class="project-title-row">
+      {{ with .Get "icon" }}
+      <span class="project-icon">{{ $.Page.RenderString (printf "{{< icon %q >}}" .) }}</span>
+      {{ end }}
+      <h3 class="project-title">{{ .Get "title" }}</h3>
+    </div>
+    <div class="project-meta">
+      {{ with .Get "status" }}<span class="project-status">{{ . }}</span>{{ end }}
+      {{ with .Get "period" }}<span class="project-period">{{ . }}</span>{{ end }}
+    </div>
+  </div>
+
+  {{ with .Get "tags" }}
+  <div class="project-tags">
+    {{ range split . "," }}<span class="project-tag">{{ trim . " " }}</span>{{ end }}
+  </div>
+  {{ end }}
+
+  <div class="project-body">
+    {{ .Inner | markdownify }}
+    <br>
+  </div>
+
+  {{ if or (.Get "repo") (.Get "link") }}
+  <div class="project-footer">
+    {{ with .Get "repo" }}
+      {{ $.Page.RenderString (printf "{{< github repo=%q showThumbnail=false >}}" .) }}
+    {{ end }}
+    {{ with .Get "link" }}
+      {{ $label := .Get "linkLabel" | default "View Project" }}
+      {{ $.Page.RenderString (printf "{{< button href=%q target=\"_blank\" >}}%s{{< /button >}}" . $label) }}
+    {{ end }}
+  </div>
+  {{ end }}
+</div>

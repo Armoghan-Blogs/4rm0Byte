@@ -1,0 +1,252 @@
+<style>
+.cert-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0 1.75rem;}
+.cert-filter-btn{
+  font-size:.8rem;font-weight:600;padding:.4rem 1rem;border-radius:9999px;cursor:pointer;
+  border:1px solid rgb(var(--color-neutral-300));
+  background:rgb(var(--color-neutral-50));
+  color:rgb(var(--color-neutral-600));
+  transition:all .2s ease;
+}
+html.dark .cert-filter-btn{border-color:rgb(var(--color-neutral-700));background:rgb(var(--color-neutral-800));color:rgb(var(--color-neutral-400));}
+.cert-filter-btn:hover{border-color:rgb(var(--color-primary-400));color:rgb(var(--color-primary-600));}
+.cert-filter-btn.active{
+  background:rgb(var(--color-primary-500));
+  border-color:rgb(var(--color-primary-500));
+  color:rgb(var(--color-neutral-50));
+}
+
+.cert-count{font-size:.8rem;color:rgb(var(--color-neutral-500));margin-bottom:1rem;}
+html.dark .cert-count{color:rgb(var(--color-neutral-400));}
+
+.cert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.75rem;margin:0 0 2rem;}
+
+.cert-card{
+  position:relative;border-radius:1rem;overflow:hidden;
+  background:rgb(var(--color-neutral-50));
+  border:1px solid rgb(var(--color-neutral-200));
+  box-shadow:0 1px 3px rgb(var(--color-neutral-900) / .06),0 1px 2px rgb(var(--color-neutral-900) / .04);
+  transition:transform .35s ease,box-shadow .35s ease,opacity .25s ease;
+  display:flex;flex-direction:column;
+}
+html.dark .cert-card{background:rgb(var(--color-neutral-800));border-color:rgb(var(--color-neutral-700));}
+.cert-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 35px -10px rgb(var(--color-primary-500) / .25),0 8px 15px -6px rgb(var(--color-neutral-900) / .15);
+  border-color:rgb(var(--color-primary-400));
+}
+html.dark .cert-card:hover{border-color:rgb(var(--color-primary-600));}
+
+.cert-card.cert-hidden{display:none;}
+
+.cert-image-wrap{
+  position:relative;
+  width:100%;
+  aspect-ratio:4/3;
+  overflow:hidden;
+  cursor:zoom-in;
+  background:rgb(var(--color-neutral-900));
+  margin:0;
+  padding:0;
+  line-height:0;
+}
+.cert-image-wrap img{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:none !important;
+  max-height:none !important;
+  object-fit:cover !important;
+  object-position:center !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  transition:transform .5s ease;
+}
+.cert-card{ padding:0; }
+.cert-card > .cert-image-wrap:first-child{ margin-top:0; }
+.cert-card:hover .cert-image-wrap img{transform:scale(1.08);}
+.cert-card:hover .cert-image-wrap img{transform:scale(1.08);}
+.cert-image-wrap::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 40%,rgb(var(--color-neutral-900) / .55) 100%);
+  opacity:0;transition:opacity .35s ease;
+}
+.cert-card:hover .cert-image-wrap::after{opacity:1;}
+
+.cert-zoom-hint{
+  position:absolute;top:.6rem;right:.6rem;
+  background:rgb(var(--color-neutral-900) / .55);color:rgb(var(--color-neutral-50));
+  width:2rem;height:2rem;border-radius:9999px;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transform:scale(.8);transition:all .3s ease;font-size:.85rem;
+}
+.cert-card:hover .cert-zoom-hint{opacity:1;transform:scale(1);}
+
+.cert-body{padding:1.1rem 1.25rem 1.35rem;flex:1;display:flex;flex-direction:column;gap:.35rem;}
+
+.cert-date{
+  align-self:flex-start;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  padding:.2rem .55rem;border-radius:9999px;margin-bottom:.3rem;
+  background:rgb(var(--color-primary-500) / .12);color:rgb(var(--color-primary-600));
+}
+html.dark .cert-date{background:rgb(var(--color-primary-400) / .15);color:rgb(var(--color-primary-300));}
+
+.cert-title{font-size:1rem;font-weight:700;line-height:1.35;margin:0;color:rgb(var(--color-neutral-900));}
+html.dark .cert-title{color:rgb(var(--color-neutral-100));}
+.cert-title a{color:inherit;text-decoration:none;}
+.cert-title a:hover{color:rgb(var(--color-primary-600));}
+html.dark .cert-title a:hover{color:rgb(var(--color-primary-400));}
+
+.cert-issuer{font-size:.85rem;margin:0;color:rgb(var(--color-neutral-500));}
+html.dark .cert-issuer{color:rgb(var(--color-neutral-400));}
+
+.cert-desc{font-size:.85rem;line-height:1.5;margin-top:.25rem;color:rgb(var(--color-neutral-600));}
+html.dark .cert-desc{color:rgb(var(--color-neutral-400));}
+
+.cert-loadmore-wrap{display:flex;justify-content:center;margin-top:-.5rem;}
+.cert-loadmore{
+  font-size:.85rem;font-weight:600;padding:.6rem 1.5rem;border-radius:9999px;cursor:pointer;
+  background:rgb(var(--color-primary-500));color:rgb(var(--color-neutral-50));border:none;
+  transition:background .2s ease,transform .2s ease;
+}
+.cert-loadmore:hover{background:rgb(var(--color-primary-600));transform:translateY(-2px);}
+
+.cert-lightbox{
+  position:fixed;inset:0;background:rgb(var(--color-neutral-900) / .9);
+  display:flex;align-items:center;justify-content:center;z-index:9999;padding:2rem;
+  opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.cert-lightbox.active{opacity:1;pointer-events:auto;}
+.cert-lightbox img{max-width:90vw;max-height:85vh;border-radius:.5rem;box-shadow:0 25px 50px -12px rgb(var(--color-neutral-900) / .5);}
+.cert-lightbox-close{
+  position:absolute;top:1.5rem;right:1.5rem;color:rgb(var(--color-neutral-50));
+  width:2.5rem;height:2.5rem;border-radius:9999px;background:rgb(var(--color-neutral-50) / .1);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.25rem;
+}
+.cert-zoom-hint{
+  position:absolute;top:.6rem;right:.6rem;
+  background:rgb(var(--color-neutral-900) / .55);color:rgb(var(--color-neutral-50));
+  width:2rem;height:2rem;border-radius:9999px;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transform:scale(.8);transition:all .3s ease;font-size:.85rem;
+}
+.cert-card:hover .cert-zoom-hint{opacity:1;transform:scale(1);}
+</style>
+
+{{ $certs := $.Site.Data.certifications }}
+{{ $pageSize := 9 }}
+
+{{ $categories := slice }}
+{{ range $certs }}
+  {{ if .category }}
+    {{ $categories = $categories | append .category }}
+  {{ end }}
+{{ end }}
+{{ $categories = $categories | uniq | sort }}
+
+<div class="cert-controls" id="cert-filters">
+  <button class="cert-filter-btn active" data-filter="all">All ({{ len $certs }})</button>
+  {{ range $categories }}
+  <button class="cert-filter-btn" data-filter="{{ . }}">{{ . }}</button>
+  {{ end }}
+</div>
+
+<p class="cert-count" id="cert-count"></p>
+
+<div class="cert-grid" id="cert-grid" data-page-size="{{ $pageSize }}">
+  {{ range $certs }}
+  <div class="cert-card" data-category="{{ .category | default "General" }}">
+    {{ if .image }}
+    <div class="cert-image-wrap">
+      <img src="{{ .image | relURL }}" alt="{{ .title }}" loading="lazy">
+      <div class="cert-zoom-hint">&#128269;</div>
+    </div>
+    {{ end }}
+    <div class="cert-body">
+      {{ if .date }}<span class="cert-date">{{ .date }}</span>{{ end }}
+      <h4 class="cert-title">
+        {{ if .url }}<a href="{{ .url }}" target="_blank" rel="noopener">{{ .title }}</a>{{ else }}{{ .title }}{{ end }}
+      </h4>
+      {{ if .issuer }}<p class="cert-issuer">{{ .issuer }}</p>{{ end }}
+      {{ if .description }}<p class="cert-desc">{{ .description }}</p>{{ end }}
+    </div>
+  </div>
+  {{ end }}
+</div>
+
+<div class="cert-loadmore-wrap">
+  <button class="cert-loadmore" id="cert-loadmore">Show more certifications</button>
+</div>
+
+<div class="cert-lightbox" id="cert-lightbox">
+  <div class="cert-lightbox-close">&#10005;</div>
+  <img id="cert-lightbox-img" src="" alt="Certificate">
+</div>
+
+<script>
+(function () {
+  var grid = document.getElementById('cert-grid');
+  var cards = Array.prototype.slice.call(grid.querySelectorAll('.cert-card'));
+  var pageSize = parseInt(grid.dataset.pageSize, 10) || 9;
+  var loadMoreBtn = document.getElementById('cert-loadmore');
+  var countLabel = document.getElementById('cert-count');
+  var filterBtns = document.querySelectorAll('.cert-filter-btn');
+
+  var activeFilter = 'all';
+  var visibleCount = pageSize;
+
+  function matches(card) {
+    return activeFilter === 'all' || card.dataset.category === activeFilter;
+  }
+
+  function render() {
+    var matched = cards.filter(matches);
+    matched.forEach(function (card, i) {
+      card.classList.toggle('cert-hidden', i >= visibleCount);
+    });
+    cards.filter(function (c) { return !matches(c); }).forEach(function (c) {
+      c.classList.add('cert-hidden');
+    });
+
+    var shown = Math.min(visibleCount, matched.length);
+    countLabel.textContent = 'Showing ' + shown + ' of ' + matched.length + ' certifications';
+    loadMoreBtn.style.display = visibleCount >= matched.length ? 'none' : 'inline-block';
+  }
+
+  loadMoreBtn.addEventListener('click', function () {
+    visibleCount += pageSize;
+    render();
+  });
+
+  filterBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      filterBtns.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      visibleCount = pageSize;
+      render();
+    });
+  });
+
+  document.addEventListener('click', function (e) {
+    var trigger = e.target.closest('.cert-image-wrap');
+    if (trigger) {
+      var img = trigger.querySelector('img');
+      document.getElementById('cert-lightbox-img').src = img.src;
+      document.getElementById('cert-lightbox').classList.add('active');
+      return;
+    }
+    if (e.target.closest('.cert-lightbox')) {
+      document.getElementById('cert-lightbox').classList.remove('active');
+    }
+  });
+
+  render();
+})();
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') {
+    document.getElementById('cert-lightbox').classList.remove('active');
+  }
+});
+</script>
