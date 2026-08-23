@@ -1,0 +1,930 @@
+{{ define "main" }}
+  <style>
+    .contact-shell {
+      max-width: 72rem;
+    }
+
+    .contact-card {
+      border-radius: 1.75rem;
+      overflow: hidden;
+      box-shadow: 0 20px 45px -20px rgb(var(--color-neutral-900) / 0.18);
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 1024px) {
+      .contact-card {
+        grid-template-columns: 2fr 3fr;
+      }
+    }
+
+    /* ---------- Left info panel ---------- */
+    .contact-info {
+      position: relative;
+      overflow: hidden;
+      background: rgb(var(--color-neutral-100));
+      padding: 2.75rem 1.9rem;
+    }
+    html.dark .contact-info {
+      background: rgb(var(--color-neutral-800) / 0.8);
+    }
+    @media (min-width: 1024px) {
+      .contact-info {
+        padding: 3.75rem 3.25rem;
+      }
+    }
+
+    .contact-blob {
+      position: absolute;
+      width: 16rem;
+      height: 16rem;
+      border-radius: 9999px;
+      background: rgb(var(--color-primary-500) / 0.1);
+      filter: blur(70px);
+      pointer-events: none;
+    }
+    .contact-blob-1 {
+      top: -6rem;
+      right: -6rem;
+    }
+    .contact-blob-2 {
+      bottom: -6rem;
+      left: -6rem;
+      background: rgb(var(--color-primary-500) / 0.06);
+    }
+
+    .contact-info-inner {
+      position: relative;
+    }
+
+    .contact-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .contact-eyebrow-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 9999px;
+      background: rgb(var(--color-primary-500));
+    }
+    .contact-eyebrow-text {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgb(var(--color-primary-700));
+    }
+    html.dark .contact-eyebrow-text {
+      color: rgb(var(--color-primary-400));
+    }
+
+    .contact-heading {
+      max-width: 26rem;
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: rgb(var(--color-neutral-900));
+    }
+    @media (min-width: 640px) {
+      .contact-heading {
+        font-size: 2.75rem;
+      }
+    }
+    html.dark .contact-heading {
+      color: rgb(var(--color-neutral-50));
+    }
+
+    .contact-lead {
+      max-width: 26rem;
+      margin-top: 1.5rem;
+      font-size: 0.98rem;
+      line-height: 1.75;
+      color: rgb(var(--color-neutral-600));
+    }
+    html.dark .contact-lead {
+      color: rgb(var(--color-neutral-300));
+    }
+
+    .contact-reasons {
+      margin-top: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+    .contact-reason {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .contact-reason-icon {
+      flex-shrink: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgb(var(--color-neutral-50));
+      color: rgb(var(--color-primary-600));
+      box-shadow: 0 1px 2px rgb(var(--color-neutral-900) / 0.06);
+    }
+    html.dark .contact-reason-icon {
+      background: rgb(var(--color-neutral-700));
+      color: rgb(var(--color-primary-400));
+    }
+    .contact-reason-icon svg {
+      width: 1.15rem;
+      height: 1.15rem;
+    }
+
+    .contact-reason-title {
+      font-weight: 600;
+      color: rgb(var(--color-neutral-900));
+      margin: 0;
+    }
+    html.dark .contact-reason-title {
+      color: rgb(var(--color-neutral-100));
+    }
+    .contact-reason-text {
+      margin: 0.25rem 0 0;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: rgb(var(--color-neutral-600));
+    }
+    html.dark .contact-reason-text {
+      color: rgb(var(--color-neutral-400));
+    }
+
+    /* ---------- Right form panel ---------- */
+    .contact-form-panel {
+      background: rgb(var(--color-neutral-50));
+      padding: 2.75rem 1.9rem;
+    }
+    html.dark .contact-form-panel {
+      background: rgb(var(--color-neutral-900));
+    }
+    @media (min-width: 1024px) {
+      .contact-form-panel {
+        padding: 3.75rem 3.5rem;
+      }
+    }
+
+    .contact-form-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: rgb(var(--color-neutral-900));
+      margin: 0;
+    }
+    html.dark .contact-form-title {
+      color: rgb(var(--color-neutral-100));
+    }
+
+    .contact-form {
+      margin-top: 2.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .contact-form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .contact-form-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .contact-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: rgb(var(--color-neutral-800));
+    }
+    html.dark .contact-label {
+      color: rgb(var(--color-neutral-200));
+    }
+    .contact-label-req {
+      color: rgb(var(--color-primary-600));
+    }
+    html.dark .contact-label-req {
+      color: rgb(var(--color-primary-400));
+    }
+    .contact-label-optional {
+      margin-left: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: rgb(var(--color-neutral-500));
+    }
+
+    .contact-input,
+    .contact-select,
+    .contact-textarea {
+      width: 100%;
+      border-radius: 0.85rem;
+      border: 1px solid rgb(var(--color-neutral-300));
+      background: rgb(var(--color-neutral-50));
+      padding: 0.8rem 1.05rem;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: rgb(var(--color-neutral-900));
+      box-shadow: 0 1px 2px rgb(var(--color-neutral-900) / 0.04);
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+    html.dark .contact-input,
+    html.dark .contact-select,
+    html.dark .contact-textarea {
+      border-color: rgb(var(--color-neutral-600));
+      background: rgb(var(--color-neutral-800));
+      color: rgb(var(--color-neutral-100));
+    }
+    .contact-input::placeholder,
+    .contact-textarea::placeholder {
+      color: rgb(var(--color-neutral-400));
+    }
+    .contact-input:hover,
+    .contact-select:hover,
+    .contact-textarea:hover {
+      border-color: rgb(var(--color-neutral-400));
+    }
+    html.dark .contact-input:hover,
+    html.dark .contact-select:hover,
+    html.dark .contact-textarea:hover {
+      border-color: rgb(var(--color-neutral-500));
+    }
+    .contact-input:focus,
+    .contact-select:focus,
+    .contact-textarea:focus {
+      outline: none;
+      border-color: rgb(var(--color-primary-500));
+      box-shadow: 0 0 0 4px rgb(var(--color-primary-500) / 0.1);
+    }
+    .contact-textarea {
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .contact-form-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      border-top: 1px solid rgb(var(--color-neutral-200));
+      padding-top: 1.5rem;
+    }
+    html.dark .contact-form-footer {
+      border-color: rgb(var(--color-neutral-700));
+    }
+    @media (min-width: 640px) {
+      .contact-form-footer {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .contact-required-note {
+      font-size: 0.75rem;
+      line-height: 1.4;
+      color: rgb(var(--color-neutral-500));
+      margin: 0;
+    }
+    html.dark .contact-required-note {
+      color: rgb(var(--color-neutral-400));
+    }
+
+    .contact-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border-radius: 0.85rem;
+      border: none;
+      cursor: pointer;
+      background: rgb(var(--color-primary-600));
+      color: #ffffff;
+      padding: 0.8rem 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgb(var(--color-neutral-900) / 0.06);
+      transition: all 0.2s ease;
+    }
+    .contact-submit:hover {
+      background: rgb(var(--color-primary-700));
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -10px rgb(var(--color-primary-600) / 0.4);
+    }
+    .contact-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .contact-submit svg {
+      width: 1rem;
+      height: 1rem;
+      transition: transform 0.2s ease;
+    }
+    .contact-submit:hover svg {
+      transform: translateX(2px);
+    }
+
+    .contact-status {
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.85rem 1.1rem;
+      border-radius: 0.75rem;
+      display: none;
+    }
+    .contact-status.success {
+      display: block;
+      background: rgb(34 197 94 / 0.12);
+      color: rgb(21 128 61);
+    }
+    .contact-status.error {
+      display: block;
+      background: rgb(239 68 68 / 0.12);
+      color: rgb(185 28 28);
+    }
+  </style>
+
+  <div class="contact-shell">
+    <div class="contact-card">
+      <!-- LEFT SIDE -->
+      <div class="contact-info">
+        <div class="contact-blob contact-blob-1"></div>
+        <div class="contact-blob contact-blob-2"></div>
+
+        <div class="contact-info-inner">
+          <div class="contact-eyebrow">
+            <span class="contact-eyebrow-dot"></span>
+            <span class="contact-eyebrow-text">Get in touch</span>
+          </div>
+
+          <h1 class="contact-heading">We'd love to hear from you.</h1>
+
+          <p class="contact-lead">
+            Have a question, suggestion, or something you'd like to share? Send a message and I'll get back to
+            you as soon as I can.
+          </p>
+
+          <div class="contact-reasons">
+            <div class="contact-reason">
+              <div class="contact-reason-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 20.25c4.556 0 8.25-3.694 8.25-8.25S16.556 3.75 12 3.75 3.75 7.444 3.75 12c0 1.746.542 3.365 1.47 4.686L4.5 20.25l3.564-.72A8.21 8.21 0 0 0 12 20.25Z" />
+                </svg>
+              </div>
+              <div>
+                <p class="contact-reason-title">Have a question?</p>
+                <p class="contact-reason-text">I'm happy to help with anything you need.</p>
+              </div>
+            </div>
+
+            <div class="contact-reason">
+              <div class="contact-reason-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M3 12h18" />
+                </svg>
+              </div>
+              <div>
+                <p class="contact-reason-title">Have an idea?</p>
+                <p class="contact-reason-text">Suggest a topic you'd like to see on the blog.</p>
+              </div>
+            </div>
+
+            <div class="contact-reason">
+              <div class="contact-reason-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12.75 11.25 15 15 9.75M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9Z" />
+                </svg>
+              </div>
+              <div>
+                <p class="contact-reason-title">Found something wrong?</p>
+                <p class="contact-reason-text">Let me know about errors or anything that needs fixing.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE — FORM -->
+      <div class="contact-form-panel">
+        <h2 class="contact-form-title">Send a message</h2>
+
+        <form class="contact-form" id="contact-form">
+          <p style="display:none">
+            <input name="bot-field" id="contact-bot-field" />
+            <input name="website" tabindex="-1" autocomplete="off" class="hidden" />
+          </p>
+
+          <div class="contact-form-grid">
+            <div>
+              <label for="contact-name" class="contact-label"
+                >Name <span class="contact-label-req">*</span></label
+              >
+              <input
+                type="text"
+                id="contact-name"
+                name="name"
+                autocomplete="name"
+                required
+                placeholder="John Doe"
+                class="contact-input" />
+            </div>
+            <div>
+              <label for="contact-email" class="contact-label"
+                >Email <span class="contact-label-req">*</span></label
+              >
+              <input
+                type="email"
+                id="contact-email"
+                name="email"
+                autocomplete="email"
+                required
+                placeholder="john@example.com"
+                class="contact-input" />
+            </div>
+          </div>
+
+          <div class="contact-form-grid">
+            <div>
+              <label for="contact-phone" class="contact-label"
+                >Phone <span class="contact-label-optional">Optional</span></label
+              >
+              <input
+                type="tel"
+                id="contact-phone"
+                name="phone"
+                autocomplete="tel"
+                placeholder="+92 300 1234567"
+                class="contact-input" />
+            </div>
+            <div>
+              <label for="contact-subject" class="contact-label"
+                >Subject <span class="contact-label-req">*</span></label
+              >
+              <select id="contact-subject" name="subject" required class="contact-select">
+                <option value="" disabled selected>Choose a subject</option>
+                <option value="Suggest Blog topic">Suggest Blog Topic</option>
+                <option value="Help Needed">Help Needed</option>
+                <option value="Feedback">Feedback</option>
+                <option value="Inquiry">Inquiry</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="contact-message" class="contact-label"
+              >Message <span class="contact-label-req">*</span></label
+            >
+            <textarea
+              id="contact-message"
+              name="message"
+              rows="7"
+              required
+              placeholder="Tell me what's on your mind..."
+              class="contact-textarea"></textarea>
+          </div>
+
+          <p class="contact-status" id="contact-status"></p>
+
+          <div class="contact-form-footer">
+            <button type="submit" class="contact-submit" id="contact-submit-btn">
+              Send Message
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fill-rule="evenodd"
+                  d="M3.105 2.289a.75.75 0 0 1 .826-.137l13.5 7a.75.75 0 0 1 0 1.326l-13.5 7A.75.75 0 0 1 2.06 16.5l1.64-5.18a.75.75 0 0 1 .46-.477L10.5 9 4.16 7.157a.75.75 0 0 1-.46-.477L2.06 1.5a.75.75 0 0 1 1.045-.211ZM4.05 3.15l1.09 3.45L12.73 9 5.14 11.4l-1.09 3.45L15.47 10 4.05 3.15Z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var form = document.getElementById("contact-form");
+      if (!form) return;
+
+      var fields = {
+        name: form.querySelector("#contact-name"),
+        email: form.querySelector("#contact-email"),
+        phone: form.querySelector("#contact-phone"),
+        subject: form.querySelector("#contact-subject"),
+        message: form.querySelector("#contact-message"),
+      };
+
+      var submitBtn = document.getElementById("contact-submit-btn");
+      var status = document.getElementById("contact-status");
+
+      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      var phonePattern = /^[+()\d\s-]{7,20}$/;
+
+      /*
+       * ---------------------------------------------------------
+       * Validation helpers
+       * ---------------------------------------------------------
+       */
+
+      function clearState(field) {
+        field.classList.remove(
+          "border-red-500",
+          "focus:border-red-500",
+          "focus:ring-red-500/10",
+          "border-emerald-500",
+          "dark:border-red-500",
+          "dark:border-emerald-500",
+        );
+      }
+
+      function showError(field) {
+        clearState(field);
+
+        field.classList.add("border-red-500", "focus:border-red-500", "focus:ring-red-500/10");
+
+        /*
+         * Native browser validation message.
+         * This keeps your existing markup unchanged.
+         */
+        field.setCustomValidity("Please check this field.");
+      }
+
+      function showValid(field) {
+        clearState(field);
+
+        /*
+         * Only show green when the field actually contains something.
+         * Optional phone remains neutral when empty.
+         */
+        if (field.value.trim()) {
+          field.classList.add("border-emerald-500");
+        }
+
+        field.setCustomValidity("");
+      }
+
+      function checkField(field, silent) {
+        var value = field.value.trim();
+        var result = {
+          ok: true,
+          message: "",
+        };
+
+        switch (field.name) {
+          case "name":
+            if (!value) {
+              result = {
+                ok: false,
+                message: "Please enter your name.",
+              };
+            } else if (value.length < 2) {
+              result = {
+                ok: false,
+                message: "Name looks too short.",
+              };
+            }
+            break;
+
+          case "email":
+            if (!value) {
+              result = {
+                ok: false,
+                message: "Please enter your email address.",
+              };
+            } else if (!emailPattern.test(value)) {
+              result = {
+                ok: false,
+                message: "Please enter a valid email address.",
+              };
+            }
+            break;
+
+          case "phone":
+            /*
+             * Phone is optional.
+             * Empty = valid.
+             */
+            if (value && !phonePattern.test(value)) {
+              result = {
+                ok: false,
+                message: "Please enter a valid phone number.",
+              };
+            }
+            break;
+
+          case "subject":
+            if (!value) {
+              result = {
+                ok: false,
+                message: "Please choose a subject.",
+              };
+            }
+            break;
+
+          case "message":
+            if (!value) {
+              result = {
+                ok: false,
+                message: "Please enter a message.",
+              };
+            } else if (value.length < 10) {
+              result = {
+                ok: false,
+                message: "Message should be at least 10 characters.",
+              };
+            }
+            break;
+        }
+
+        /*
+         * Silent validation is used for determining
+         * whether the submit button should be enabled.
+         */
+        if (silent) {
+          return result.ok;
+        }
+
+        if (!result.ok) {
+          showError(field);
+        } else {
+          showValid(field);
+        }
+
+        return result.ok;
+      }
+
+      /*
+       * ---------------------------------------------------------
+       * Debounce
+       * ---------------------------------------------------------
+       */
+
+      function debounce(fn, delay) {
+        var timer = null;
+
+        return function () {
+          var args = arguments;
+
+          clearTimeout(timer);
+
+          timer = setTimeout(function () {
+            fn.apply(null, args);
+          }, delay);
+        };
+      }
+
+      /*
+       * ---------------------------------------------------------
+       * Submit button state
+       * ---------------------------------------------------------
+       */
+
+      function updateSubmitState() {
+        var allOk =
+          checkField(fields.name, true) &&
+          checkField(fields.email, true) &&
+          checkField(fields.phone, true) &&
+          checkField(fields.subject, true) &&
+          checkField(fields.message, true);
+
+        submitBtn.disabled = !allOk;
+      }
+
+      /*
+       * ---------------------------------------------------------
+       * Field events
+       * ---------------------------------------------------------
+       */
+
+      Object.keys(fields).forEach(function (key) {
+        var field = fields[key];
+
+        var debouncedCheck = debounce(function () {
+          checkField(field);
+          updateSubmitState();
+        }, 350);
+
+        field.addEventListener("input", function () {
+          /*
+           * Remove browser's custom error once
+           * the user starts correcting the field.
+           */
+          field.setCustomValidity("");
+
+          debouncedCheck();
+        });
+
+        field.addEventListener("change", function () {
+          checkField(field);
+          updateSubmitState();
+        });
+
+        field.addEventListener("blur", function () {
+          checkField(field);
+          updateSubmitState();
+        });
+      });
+
+      /*
+       * Initial button state.
+       *
+       * Because required fields start empty,
+       * Send Message starts disabled.
+       */
+      updateSubmitState();
+
+      /*
+       * ---------------------------------------------------------
+       * Form submission
+       * ---------------------------------------------------------
+       */
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        /*
+         * Validate everything.
+         */
+        var isValid = true;
+        var firstInvalid = null;
+
+        Object.keys(fields).forEach(function (key) {
+          var field = fields[key];
+
+          var ok = checkField(field);
+
+          if (!ok) {
+            isValid = false;
+
+            if (!firstInvalid) {
+              firstInvalid = field;
+            }
+          }
+        });
+
+        /*
+         * Stop submission if anything is invalid.
+         */
+        if (!isValid) {
+          if (firstInvalid) {
+            firstInvalid.focus();
+          }
+
+          return;
+        }
+
+        /*
+         * -------------------------------------------------------
+         * Build payload
+         * -------------------------------------------------------
+         */
+
+        var data = {
+          name: fields.name.value.trim(),
+          email: fields.email.value.trim(),
+          phone: fields.phone.value.trim(),
+          subject: fields.subject.value,
+          message: fields.message.value.trim(),
+        };
+
+        /*
+         * -------------------------------------------------------
+         * YOUR GOOGLE SHEETS ENDPOINT
+         * -------------------------------------------------------
+         */
+
+        var GOOGLE_SHEET_ENDPOINT =
+          "https://script.google.com/macros/s/AKfycbxVNfhmth9B2nwTkBpL6sOJ4ALP0yLAmcm4G4HBytLmP27nmIo9fJEAtk3puFR5rGrrxQ/exec";
+
+        var API_TOKEN = "4rm0Byte_Contact_iQ]FrN&hj6t5moq+O7T<j1I@j#Vk])4qp@/QPH];G[pA:hhHX4)[ny];UO41[U";
+
+        /*
+         * Disable button while sending.
+         */
+        submitBtn.disabled = true;
+
+        var originalButtonHTML = submitBtn.innerHTML;
+
+        submitBtn.innerHTML = `
+        <svg
+          class="h-4 w-4 animate-spin"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+            class="opacity-25">
+          </circle>
+          <path
+            d="M21 12a9 9 0 0 1-9 9"
+            class="opacity-90">
+          </path>
+        </svg>
+
+        Sending...
+      `;
+
+        /*
+         * Hide previous status.
+         */
+        status.className = "contact-status";
+        status.textContent = "";
+
+        /*
+         * Add token + honeypot to payload.
+         */
+        var payload = {
+          token: API_TOKEN,
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          subject: data.subject,
+          message: data.message,
+          "bot-field": form.querySelector('[name="bot-field"]').value,
+        };
+
+        /*
+         * -------------------------------------------------------
+         * Send request
+         * -------------------------------------------------------
+         */
+
+        fetch(GOOGLE_SHEET_ENDPOINT, {
+          method: "POST",
+          body: JSON.stringify(payload),
+        })
+          .then(function (res) {
+            return res.json();
+          })
+
+          .then(function (json) {
+            if (!json.success) {
+              throw new Error(json.error || "Failed to send message.");
+            }
+
+            /*
+             * SUCCESS
+             */
+
+            status.textContent = "Thanks! Your message has been sent — I'll get back to you soon.";
+
+            status.className = "contact-status success";
+
+            /*
+             * Reset form.
+             */
+            form.reset();
+
+            /*
+             * Clear all validation states.
+             */
+            Object.keys(fields).forEach(function (key) {
+              clearState(fields[key]);
+              fields[key].setCustomValidity("");
+            });
+          })
+
+          .catch(function (error) {
+            console.error("Contact form error:", error);
+
+            status.textContent =
+              "Something went wrong sending your message. Please try again or email me directly.";
+
+            status.className = "contact-status error";
+          })
+
+          .finally(function () {
+            /*
+             * Restore button.
+             */
+            submitBtn.innerHTML = originalButtonHTML;
+
+            /*
+             * Recalculate whether it should be enabled.
+             * After reset this will disable it again.
+             */
+            updateSubmitState();
+          });
+      });
+    })();
+  </script>
+{{ end }}

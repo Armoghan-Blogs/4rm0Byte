@@ -61,19 +61,8 @@ weight = 7
 
 [[main]]
 name = "Contact"
+url = "/contact/"
 weight = 8
-
-[[main]]
-parent = "Contact"
-name = "Portfolio"
-url = "https://armoghan.netlify.app/"
-weight = 1
-
-[[main]]
-parent = "Contact"
-name = "Hire Me"
-url = "https://armoghan.netlify.app/contact/"
-weight = 2
 
 # -- Footer Menu --
 # The footer menu is displayed at the bottom of the page, just before

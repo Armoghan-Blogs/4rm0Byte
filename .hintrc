@@ -6,6 +6,7 @@
     "apple-touch-icons": "off",
     "manifest-is-valid": "off",
     "axe/forms": "off",
-    "axe/structure": "off"
+    "axe/structure": "off",
+    "no-inline-styles": "off"
   }
 }
