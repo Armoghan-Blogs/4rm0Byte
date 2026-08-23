@@ -1,0 +1,329 @@
+name: SEO & Accessibility Audit
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: seo-accessibility-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "21.7.3"
+  HUGO_VERSION: "0.157.0"
+  GO_VERSION: "1.26.0"
+
+  SITE_URL: "https://4rm0byte.netlify.app"
+  LOCAL_URL: "http://127.0.0.1:4173"
+
+  REPORT_DIR: ".github/seo-reports"
+
+jobs:
+  audit:
+    name: Build & Audit Website
+    runs-on: ubuntu-latest
+
+    steps:
+      # ------------------------------------------------------------
+      # CHECKOUT
+      # ------------------------------------------------------------
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # ------------------------------------------------------------
+      # NODE
+      # ------------------------------------------------------------
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      # ------------------------------------------------------------
+      # GO
+      # ------------------------------------------------------------
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      # ------------------------------------------------------------
+      # HUGO
+      # ------------------------------------------------------------
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: ${{ env.HUGO_VERSION }}
+          extended: true
+
+      # ------------------------------------------------------------
+      # DEPENDENCIES
+      # ------------------------------------------------------------
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Prepare Hugo modules
+        run: |
+          hugo mod tidy
+          hugo mod get
+
+      # ------------------------------------------------------------
+      # BUILD
+      # ------------------------------------------------------------
+
+      - name: Build production website
+        run: npm run build
+
+      - name: Verify production build
+        run: |
+          test -d public
+          test -f public/index.html
+
+          echo "Build directory:"
+          du -sh public
+
+          echo "Generated files:"
+          find public -type f | wc -l
+
+      # ------------------------------------------------------------
+      # PREPARE REPORT DIRECTORY
+      # ------------------------------------------------------------
+
+      - name: Prepare report directory
+        run: |
+          rm -rf "${REPORT_DIR}"
+          mkdir -p "${REPORT_DIR}"
+
+      # ------------------------------------------------------------
+      # LOCAL SERVER
+      # ------------------------------------------------------------
+
+      - name: Start local production server
+        run: |
+          nohup python3 -m http.server 4173 \
+            --bind 127.0.0.1 \
+            --directory public \
+            > .github/local-server.log 2>&1 &
+
+          echo $! > .github/local-server.pid
+
+      - name: Wait for local website
+        run: |
+          for i in {1..30}; do
+            if curl --fail --silent "${LOCAL_URL}" > /dev/null; then
+              echo "Local production build is ready."
+              exit 0
+            fi
+
+            sleep 2
+          done
+
+          echo "Local production server failed to start."
+          cat .github/local-server.log
+          exit 1
+
+      # ------------------------------------------------------------
+      # TEMPORARY NETLIFY DEPLOYMENT
+      # ------------------------------------------------------------
+
+      - name: Install Netlify CLI
+        run: npm install --global netlify-cli
+
+      - name: Deploy production build to temporary Netlify URL
+        id: netlify-deploy
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          netlify deploy \
+            --dir=public \
+            --auth="${NETLIFY_AUTH_TOKEN}" \
+            --json \
+            > .github/netlify-deploy.json
+
+          cat .github/netlify-deploy.json
+
+          DEPLOY_URL="$(node -e "
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('.github/netlify-deploy.json', 'utf8'));
+            process.stdout.write(data.deploy_url || data.url || '');
+          ")"
+
+          if [ -z "${DEPLOY_URL}" ]; then
+            echo "Could not determine Netlify deploy URL."
+            exit 1
+          fi
+
+          echo "Temporary Netlify URL: ${DEPLOY_URL}"
+          echo "deploy_url=${DEPLOY_URL}" >> "${GITHUB_OUTPUT}"
+
+      - name: Wait for temporary Netlify deployment
+        env:
+          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
+        run: |
+          for i in {1..30}; do
+            if curl \
+              --fail \
+              --silent \
+              --location \
+              "${DEPLOY_URL}" \
+              > /dev/null; then
+
+              echo "Temporary Netlify deployment is ready."
+              exit 0
+            fi
+
+            sleep 3
+          done
+
+          echo "Temporary Netlify deployment failed to become available."
+          exit 1
+
+      # ------------------------------------------------------------
+      # TOOLING
+      # ------------------------------------------------------------
+
+      - name: Install audit tools
+        run: |
+          npm install --global \
+            lighthouse \
+            pa11y \
+            @axe-core/cli
+
+      # ------------------------------------------------------------
+      # LIGHTHOUSE - LOCAL
+      # ------------------------------------------------------------
+
+      - name: Lighthouse - Local production build
+        run: |
+          lighthouse "${LOCAL_URL}" \
+            --output=json \
+            --output-path="${REPORT_DIR}/lighthouse-offline.json" \
+            --only-categories=seo,accessibility \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
+
+      # ------------------------------------------------------------
+      # LIGHTHOUSE - ONLINE
+      # ------------------------------------------------------------
+
+      - name: Lighthouse - Temporary Netlify deployment
+        env:
+          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
+        run: |
+          lighthouse "${DEPLOY_URL}" \
+            --output=json \
+            --output-path="${REPORT_DIR}/lighthouse-online.json" \
+            --only-categories=seo,accessibility \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
+
+      # ------------------------------------------------------------
+      # PA11Y - LOCAL
+      # ------------------------------------------------------------
+
+      - name: Pa11y - Local production build
+        run: |
+          pa11y "${LOCAL_URL}" \
+            --reporter json \
+            > "${REPORT_DIR}/pa11y-offline.json"
+
+      # ------------------------------------------------------------
+      # PA11Y - ONLINE
+      # ------------------------------------------------------------
+
+      - name: Pa11y - Temporary Netlify deployment
+        env:
+          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
+        run: |
+          pa11y "${DEPLOY_URL}" \
+            --reporter json \
+            > "${REPORT_DIR}/pa11y-online.json"
+
+      # ------------------------------------------------------------
+      # AXE - LOCAL
+      # ------------------------------------------------------------
+
+      - name: axe-core - Local production build
+        run: |
+          axe "${LOCAL_URL}" \
+            --save "${REPORT_DIR}/axe-offline.json"
+
+      # ------------------------------------------------------------
+      # AXE - ONLINE
+      # ------------------------------------------------------------
+
+      - name: axe-core - Temporary Netlify deployment
+        env:
+          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
+        run: |
+          axe "${DEPLOY_URL}" \
+            --save "${REPORT_DIR}/axe-online.json"
+
+      # ------------------------------------------------------------
+      # CREATE HUMAN-READABLE SUMMARIES
+      # ------------------------------------------------------------
+
+      - name: Generate audit summary
+        env:
+          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
+          COMMIT_SHA: ${{ github.sha }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          node .github/scripts/create-audit-summary.mjs
+
+      # ------------------------------------------------------------
+      # UPLOAD REPORTS TO GITHUB
+      # ------------------------------------------------------------
+
+      - name: Upload complete audit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-accessibility-audit-${{ github.run_number }}
+          path: |
+            .github/seo-reports/
+            .github/netlify-deploy.json
+            .github/local-server.log
+          retention-days: 30
+          if-no-files-found: warn
+
+      # ------------------------------------------------------------
+      # SEND DISCORD REPORT
+      # ------------------------------------------------------------
+
+      - name: Send audit results to Discord
+        if: always()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_SEO_ACCESSIBILITY_WEBHOOK }}
+          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
+          GITHUB_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          node .github/scripts/send-audit-discord.mjs
+
+      # ------------------------------------------------------------
+      # CLEANUP
+      # ------------------------------------------------------------
+
+      - name: Stop local production server
+        if: always()
+        run: |
+          if [ -f .github/local-server.pid ]; then
+            kill "$(cat .github/local-server.pid)" 2>/dev/null || true
+          fi
+
+      - name: Remove temporary files
+        if: always()
+        run: |
+          rm -f .github/local-server.pid
+          rm -f .github/local-server.log
+          rm -f .github/netlify-deploy.json
