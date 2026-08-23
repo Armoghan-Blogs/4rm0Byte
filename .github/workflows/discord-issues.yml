@@ -1,0 +1,1049 @@
+name: Discord Issue Logging
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - closed
+      - reopened
+      - labeled
+      - unlabeled
+      - deleted
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  discord-issue-log:
+    name: Send Issue Events to Discord
+    runs-on: ubuntu-latest
+
+    steps:
+      # ------------------------------------------------------------
+      # Determine the category webhook.
+      #
+      # Category routing is based on GitHub issue labels:
+      #
+      # bug           -> Bug Reports
+      # enhancement   -> Feature Requests
+      # blog/content  -> Blog Suggestions
+      # no category   -> General Issues
+      #
+      # The audit webhook is ALWAYS required.
+      # ------------------------------------------------------------
+
+      - name: Determine Discord Webhooks
+        id: webhook
+        env:
+          ISSUE_LABELS: ${{ join(github.event.issue.labels.*.name, ',') }}
+
+          BUG_WEBHOOK: ${{ secrets.DISCORD_BUG_REPORTS_WEBHOOK }}
+          FEATURE_WEBHOOK: ${{ secrets.DISCORD_FEATURE_REQUESTS_WEBHOOK }}
+          BLOG_WEBHOOK: ${{ secrets.DISCORD_BLOG_SUGGESTIONS_WEBHOOK }}
+          GENERAL_WEBHOOK: ${{ secrets.DISCORD_GENERAL_ISSUES_WEBHOOK }}
+
+          ISSUE_UPDATES_WEBHOOK: ${{ secrets.DISCORD_ISSUE_UPDATES_WEBHOOK }}
+
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          category_webhook=""
+          labels=",${ISSUE_LABELS},"
+
+          # --------------------------------------------------------
+          # Category priority:
+          #
+          # bug
+          # enhancement
+          # blog/content
+          # general fallback
+          # --------------------------------------------------------
+
+          if [[ "$labels" == *,bug,* ]]; then
+            category_webhook="$BUG_WEBHOOK"
+            echo "Issue category: bug"
+
+          elif [[ "$labels" == *,enhancement,* ]]; then
+            category_webhook="$FEATURE_WEBHOOK"
+            echo "Issue category: feature"
+
+          elif [[ "$labels" == *,blog,* || "$labels" == *,content,* ]]; then
+            category_webhook="$BLOG_WEBHOOK"
+            echo "Issue category: blog"
+
+          else
+            category_webhook="$GENERAL_WEBHOOK"
+            echo "Issue category: general"
+          fi
+
+          # Category webhook is optional.
+          if [[ -n "$category_webhook" ]]; then
+            echo "::add-mask::$category_webhook"
+          else
+            echo "::warning::No category webhook configured."
+          fi
+
+          # Audit webhook is mandatory.
+          if [[ -z "$ISSUE_UPDATES_WEBHOOK" ]]; then
+            echo "::error::DISCORD_ISSUE_UPDATES_WEBHOOK is not configured."
+            exit 1
+          fi
+
+          echo "::add-mask::$ISSUE_UPDATES_WEBHOOK"
+
+          {
+            echo "category_webhook=$category_webhook"
+            echo "update_webhook=$ISSUE_UPDATES_WEBHOOK"
+          } >> "$GITHUB_OUTPUT"
+
+
+      # ------------------------------------------------------------
+      # Send category-specific notification.
+      #
+      # This is the user-friendly notification shown in:
+      #
+      # Bug Reports
+      # Feature Requests
+      # Blog Suggestions
+      # General Issues
+      #
+      # Every issue event is sent here when a category webhook exists.
+      # ------------------------------------------------------------
+
+      - name: Send Category Notification
+        if: steps.webhook.outputs.category_webhook != ''
+        env:
+          DISCORD_WEBHOOK: ${{ steps.webhook.outputs.category_webhook }}
+
+          ACTION: ${{ github.event.action }}
+
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+
+          ISSUE_STATE: ${{ github.event.issue.state }}
+
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+          ISSUE_AUTHOR_URL: ${{ github.event.issue.user.html_url }}
+
+          REPOSITORY: ${{ github.repository }}
+          REPOSITORY_URL: ${{ github.event.repository.html_url }}
+
+          LABELS: ${{ join(github.event.issue.labels.*.name, ', ') }}
+
+          CREATED_AT: ${{ github.event.issue.created_at }}
+          UPDATED_AT: ${{ github.event.issue.updated_at }}
+
+          EVENT_SENDER: ${{ github.actor }}
+
+          LABEL_NAME: ${{ github.event.label.name }}
+
+          CHANGES_TITLE_FROM: ${{ github.event.changes.title.from }}
+          CHANGES_BODY_FROM: ${{ github.event.changes.body.from }}
+
+        shell: bash
+        run: |
+          python3 <<'PY'
+          import json
+          import os
+          import re
+          import urllib.request
+
+
+          # ----------------------------------------------------------
+          # Environment
+          # ----------------------------------------------------------
+
+          webhook = os.environ["DISCORD_WEBHOOK"]
+
+          action = os.environ.get("ACTION", "")
+          title = os.environ.get("ISSUE_TITLE", "Untitled Issue")
+          body = os.environ.get("ISSUE_BODY") or ""
+
+          number = os.environ.get("ISSUE_NUMBER", "?")
+          issue_url = os.environ.get("ISSUE_URL", "")
+
+          state = os.environ.get("ISSUE_STATE", "unknown")
+
+          author = os.environ.get("ISSUE_AUTHOR", "unknown")
+          author_url = os.environ.get("ISSUE_AUTHOR_URL", "")
+
+          repository = os.environ.get("REPOSITORY", "")
+          repository_url = os.environ.get("REPOSITORY_URL", "")
+
+          labels = os.environ.get("LABELS", "").strip()
+
+          created_at = os.environ.get("CREATED_AT", "")
+          updated_at = os.environ.get("UPDATED_AT", "")
+
+          event_sender = os.environ.get("EVENT_SENDER", "unknown")
+
+          label_name = os.environ.get("LABEL_NAME", "")
+
+          title_from = os.environ.get("CHANGES_TITLE_FROM", "")
+          body_from = os.environ.get("CHANGES_BODY_FROM", "")
+
+
+          # ----------------------------------------------------------
+          # Helpers
+          # ----------------------------------------------------------
+
+          def truncate(value, limit):
+              value = value or ""
+
+              if len(value) <= limit:
+                  return value
+
+              return value[:limit - 20].rstrip() + "\n…truncated."
+
+
+          def discord_link(label, url):
+              if url:
+                  return f"[{label}]({url})"
+
+              return label
+
+
+          def clean_issue_form_body(raw_body):
+              """
+              Convert GitHub Issue Forms' generated Markdown into
+              readable Discord fields.
+
+              Example:
+
+              ### Proposed post title
+              Hugo optimization
+
+              ### Target audience
+              Hugo users
+
+              becomes:
+
+              Proposed post title: Hugo optimization
+              Target audience: Hugo users
+              """
+
+              if not raw_body.strip():
+                  return []
+
+              lines = raw_body.splitlines()
+
+              fields = []
+              current_label = None
+              current_value = []
+
+              def flush():
+                  nonlocal current_label, current_value
+
+                  if current_label is None:
+                      return
+
+                  value = "\n".join(current_value).strip()
+
+                  if not value:
+                      value = "Not provided."
+
+                  fields.append(
+                      (
+                          current_label,
+                          truncate(value, 1000)
+                      )
+                  )
+
+                  current_label = None
+                  current_value = []
+
+              for line in lines:
+                  match = re.match(
+                      r"^\s*###\s+(.+?)\s*$",
+                      line
+                  )
+
+                  if match:
+                      flush()
+                      current_label = match.group(1).strip()
+                  else:
+                      if current_label is not None:
+                          current_value.append(line)
+
+              flush()
+
+              return fields
+
+
+          # ----------------------------------------------------------
+          # Action presentation
+          # ----------------------------------------------------------
+
+          action_titles = {
+              "opened": "Issue Opened",
+              "edited": "Issue Updated",
+              "closed": "Issue Closed",
+              "reopened": "Issue Reopened",
+              "labeled": "Issue Label Added",
+              "unlabeled": "Issue Label Removed",
+              "deleted": "Issue Deleted",
+          }
+
+          action_emojis = {
+              "opened": "🟢",
+              "edited": "📝",
+              "closed": "🔴",
+              "reopened": "🔄",
+              "labeled": "🏷️",
+              "unlabeled": "🏷️",
+              "deleted": "🗑️",
+          }
+
+          action_colors = {
+              "opened": 0x57F287,
+              "edited": 0x5865F2,
+              "closed": 0xED4245,
+              "reopened": 0xFEE75C,
+              "labeled": 0x9B59B6,
+              "unlabeled": 0xE67E22,
+              "deleted": 0x2C2F33,
+          }
+
+          action_title = action_titles.get(
+              action,
+              "Issue Activity"
+          )
+
+          emoji = action_emojis.get(
+              action,
+              "📋"
+          )
+
+          color = action_colors.get(
+              action,
+              0x5865F2
+          )
+
+
+          # ----------------------------------------------------------
+          # Determine issue category
+          # ----------------------------------------------------------
+
+          label_set = {
+              item.strip().lower()
+              for item in labels.split(",")
+              if item.strip()
+          }
+
+          if "bug" in label_set:
+              category = "Bug Report"
+              category_icon = "🐛"
+
+          elif "enhancement" in label_set:
+              category = "Feature Request"
+              category_icon = "✨"
+
+          elif "blog" in label_set or "content" in label_set:
+              category = "Blog Suggestion"
+              category_icon = "📝"
+
+          else:
+              category = "General Issue"
+              category_icon = "📋"
+
+
+          # ----------------------------------------------------------
+          # Common fields
+          # ----------------------------------------------------------
+
+          fields = [
+              {
+                  "name": "Issue",
+                  "value": discord_link(
+                      f"#{number} — {title}",
+                      issue_url
+                  ),
+                  "inline": False,
+              },
+              {
+                  "name": "Author",
+                  "value": discord_link(
+                      author,
+                      author_url
+                  ),
+                  "inline": True,
+              },
+              {
+                  "name": "Status",
+                  "value": state.upper(),
+                  "inline": True,
+              },
+              {
+                  "name": "Category",
+                  "value": f"{category_icon} {category}",
+                  "inline": True,
+              },
+              {
+                  "name": "Labels",
+                  "value": labels or "None",
+                  "inline": True,
+              },
+              {
+                  "name": "Repository",
+                  "value": discord_link(
+                      repository,
+                      repository_url
+                  ),
+                  "inline": True,
+              },
+          ]
+
+
+          # ----------------------------------------------------------
+          # Event-specific information
+          # ----------------------------------------------------------
+
+          if action in ("labeled", "unlabeled") and label_name:
+              verb = "Added" if action == "labeled" else "Removed"
+
+              fields.append(
+                  {
+                      "name": f"Label {verb}",
+                      "value": f"`{label_name}`",
+                      "inline": True,
+                  }
+              )
+
+
+          if action == "opened":
+              form_fields = clean_issue_form_body(body)
+
+              # GitHub Issue Forms generate Markdown headings.
+              # Show the structured fields when available.
+              if form_fields:
+
+                  for field_name, field_value in form_fields[:8]:
+                      fields.append(
+                          {
+                              "name": field_name,
+                              "value": field_value,
+                              "inline": False,
+                          }
+                      )
+
+              else:
+
+                  fields.append(
+                      {
+                          "name": "Description",
+                          "value": truncate(
+                              body.strip() or "No description provided.",
+                              3500
+                          ),
+                          "inline": False,
+                      }
+                  )
+
+
+          elif action == "edited":
+
+              changes = []
+
+              if title_from:
+                  changes.append(
+                      "**Title changed from:**\n"
+                      + truncate(title_from, 1000)
+                  )
+
+              if body_from:
+                  changes.append(
+                      "**Previous description:**\n"
+                      + truncate(body_from.strip(), 2000)
+                  )
+
+              if changes:
+                  fields.append(
+                      {
+                          "name": "Previous Values",
+                          "value": "\n\n".join(changes),
+                          "inline": False,
+                      }
+                  )
+
+              else:
+                  fields.append(
+                      {
+                          "name": "Changes",
+                          "value": "Issue metadata was edited.",
+                          "inline": False,
+                      }
+                  )
+
+
+          elif action == "deleted":
+
+              fields.append(
+                  {
+                      "name": "Deleted Issue",
+                      "value": (
+                          "This issue was permanently deleted. "
+                          "Some GitHub issue information may no longer "
+                          "be available."
+                      ),
+                      "inline": False,
+                  }
+              )
+
+
+          # ----------------------------------------------------------
+          # Timestamp information
+          # ----------------------------------------------------------
+
+          if created_at:
+              fields.append(
+                  {
+                      "name": "Created",
+                      "value": created_at,
+                      "inline": True,
+                  }
+              )
+
+          if updated_at:
+              fields.append(
+                  {
+                      "name": "Updated",
+                      "value": updated_at,
+                      "inline": True,
+                  }
+              )
+
+
+          # ----------------------------------------------------------
+          # Embed
+          # ----------------------------------------------------------
+
+          embed = {
+              "title": f"{emoji} {action_title} #{number}",
+              "color": color,
+              "fields": fields,
+              "footer": {
+                  "text": f"4rm0Byte • {category}"
+              },
+          }
+
+          if issue_url:
+              embed["url"] = issue_url
+
+          if updated_at:
+              embed["timestamp"] = updated_at
+
+
+          # ----------------------------------------------------------
+          # Send Discord webhook
+          # ----------------------------------------------------------
+
+          payload = {
+              "username": "4rm0Byte • GitHub",
+              "embeds": [embed],
+              "allowed_mentions": {
+                  "parse": []
+              },
+          }
+
+          data = json.dumps(payload).encode("utf-8")
+
+          request = urllib.request.Request(
+              webhook,
+              data=data,
+              headers={
+                  "Content-Type": "application/json",
+                  "User-Agent": "4rm0Byte-GitHub-Issue-Logger",
+              },
+              method="POST",
+          )
+
+          with urllib.request.urlopen(request) as response:
+              if response.status not in (200, 204):
+                  raise RuntimeError(
+                      f"Discord returned HTTP {response.status}"
+                  )
+
+          print(
+              f"Category notification sent: "
+              f"#{number} ({action}) -> {category}"
+          )
+
+          PY
+
+
+      # ------------------------------------------------------------
+      # Send EVERY issue event to the dedicated audit channel.
+      #
+      # This webhook is independent of category routing.
+      #
+      # Even if:
+      #
+      # - no category webhook exists
+      # - issue has no labels
+      # - issue is general
+      #
+      # the audit event is still recorded.
+      # ------------------------------------------------------------
+
+      - name: Send Issue Update Audit Log
+        env:
+          DISCORD_WEBHOOK: ${{ steps.webhook.outputs.update_webhook }}
+
+          ACTION: ${{ github.event.action }}
+
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+
+          ISSUE_STATE: ${{ github.event.issue.state }}
+
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+          ISSUE_AUTHOR_URL: ${{ github.event.issue.user.html_url }}
+
+          REPOSITORY: ${{ github.repository }}
+          REPOSITORY_URL: ${{ github.event.repository.html_url }}
+
+          LABELS: ${{ join(github.event.issue.labels.*.name, ', ') }}
+
+          CREATED_AT: ${{ github.event.issue.created_at }}
+          UPDATED_AT: ${{ github.event.issue.updated_at }}
+
+          EVENT_SENDER: ${{ github.actor }}
+
+          LABEL_NAME: ${{ github.event.label.name }}
+
+          CHANGES_TITLE_FROM: ${{ github.event.changes.title.from }}
+          CHANGES_BODY_FROM: ${{ github.event.changes.body.from }}
+
+        shell: bash
+        run: |
+          python3 <<'PY'
+          import json
+          import os
+          import urllib.request
+
+
+          webhook = os.environ["DISCORD_WEBHOOK"]
+
+          action = os.environ.get("ACTION", "")
+
+          title = os.environ.get(
+              "ISSUE_TITLE",
+              "Deleted Issue"
+          )
+
+          body = os.environ.get("ISSUE_BODY") or ""
+
+          number = os.environ.get(
+              "ISSUE_NUMBER",
+              "?"
+          )
+
+          issue_url = os.environ.get(
+              "ISSUE_URL",
+              ""
+          )
+
+          state = os.environ.get(
+              "ISSUE_STATE",
+              "unknown"
+          )
+
+          author = os.environ.get(
+              "ISSUE_AUTHOR",
+              "unknown"
+          )
+
+          author_url = os.environ.get(
+              "ISSUE_AUTHOR_URL",
+              ""
+          )
+
+          repository = os.environ.get(
+              "REPOSITORY",
+              ""
+          )
+
+          repository_url = os.environ.get(
+              "REPOSITORY_URL",
+              ""
+          )
+
+          labels = os.environ.get(
+              "LABELS",
+              ""
+          ).strip()
+
+          created_at = os.environ.get(
+              "CREATED_AT",
+              ""
+          )
+
+          updated_at = os.environ.get(
+              "UPDATED_AT",
+              ""
+          )
+
+          event_sender = os.environ.get(
+              "EVENT_SENDER",
+              "unknown"
+          )
+
+          label_name = os.environ.get(
+              "LABEL_NAME",
+              ""
+          )
+
+          title_from = os.environ.get(
+              "CHANGES_TITLE_FROM",
+              ""
+          )
+
+          body_from = os.environ.get(
+              "CHANGES_BODY_FROM",
+              ""
+          )
+
+
+          # ----------------------------------------------------------
+          # Helpers
+          # ----------------------------------------------------------
+
+          def truncate(value, limit):
+              value = value or ""
+
+              if len(value) <= limit:
+                  return value
+
+              return value[:limit - 20].rstrip() + "\n…truncated."
+
+
+          def github_link(label, url):
+              if url:
+                  return f"[{label}]({url})"
+
+              return label
+
+
+          # ----------------------------------------------------------
+          # Action presentation
+          # ----------------------------------------------------------
+
+          action_titles = {
+              "opened": "Issue Created",
+              "edited": "Issue Updated",
+              "closed": "Issue Closed",
+              "reopened": "Issue Reopened",
+              "labeled": "Issue Label Added",
+              "unlabeled": "Issue Label Removed",
+              "deleted": "Issue Deleted",
+          }
+
+          action_emojis = {
+              "opened": "🟢",
+              "edited": "📝",
+              "closed": "🔴",
+              "reopened": "🔄",
+              "labeled": "🏷️",
+              "unlabeled": "🏷️",
+              "deleted": "🗑️",
+          }
+
+          action_colors = {
+              "opened": 0x57F287,
+              "edited": 0x5865F2,
+              "closed": 0xED4245,
+              "reopened": 0xFEE75C,
+              "labeled": 0x9B59B6,
+              "unlabeled": 0xE67E22,
+              "deleted": 0x2C2F33,
+          }
+
+          action_title = action_titles.get(
+              action,
+              "Issue Activity"
+          )
+
+          emoji = action_emojis.get(
+              action,
+              "📋"
+          )
+
+          color = action_colors.get(
+              action,
+              0x5865F2
+          )
+
+
+          # ----------------------------------------------------------
+          # Determine category
+          # ----------------------------------------------------------
+
+          label_set = {
+              item.strip().lower()
+              for item in labels.split(",")
+              if item.strip()
+          }
+
+          if "bug" in label_set:
+              category = "Bug"
+
+          elif "enhancement" in label_set:
+              category = "Feature"
+
+          elif "blog" in label_set or "content" in label_set:
+              category = "Blog"
+
+          else:
+              category = "General"
+
+
+          # ----------------------------------------------------------
+          # Common audit fields
+          # ----------------------------------------------------------
+
+          fields = [
+              {
+                  "name": "Issue",
+                  "value": github_link(
+                      f"#{number} — {title}",
+                      issue_url
+                  ),
+                  "inline": False,
+              },
+              {
+                  "name": "Event",
+                  "value": action.upper(),
+                  "inline": True,
+              },
+              {
+                  "name": "Status",
+                  "value": state.upper(),
+                  "inline": True,
+              },
+              {
+                  "name": "Category",
+                  "value": category,
+                  "inline": True,
+              },
+              {
+                  "name": "Actor",
+                  "value": github_link(
+                      event_sender,
+                      f"https://github.com/{event_sender}"
+                  ),
+                  "inline": True,
+              },
+              {
+                  "name": "Issue Author",
+                  "value": github_link(
+                      author,
+                      author_url
+                  ),
+                  "inline": True,
+              },
+              {
+                  "name": "Labels",
+                  "value": labels or "None",
+                  "inline": True,
+              },
+              {
+                  "name": "Repository",
+                  "value": github_link(
+                      repository,
+                      repository_url
+                  ),
+                  "inline": True,
+              },
+          ]
+
+
+          # ----------------------------------------------------------
+          # Label changes
+          # ----------------------------------------------------------
+
+          if action in ("labeled", "unlabeled") and label_name:
+
+              verb = (
+                  "Added"
+                  if action == "labeled"
+                  else "Removed"
+              )
+
+              fields.append(
+                  {
+                      "name": f"Label {verb}",
+                      "value": f"`{label_name}`",
+                      "inline": True,
+                  }
+              )
+
+
+          # ----------------------------------------------------------
+          # Edit changes
+          # ----------------------------------------------------------
+
+          if action == "edited":
+
+              changes = []
+
+              if title_from:
+                  changes.append(
+                      "**Title changed from:**\n"
+                      + truncate(title_from, 1000)
+                  )
+
+              if body_from:
+                  changes.append(
+                      "**Previous description:**\n"
+                      + truncate(body_from, 2000)
+                  )
+
+              if changes:
+
+                  fields.append(
+                      {
+                          "name": "Changes",
+                          "value": "\n\n".join(changes),
+                          "inline": False,
+                      }
+                  )
+
+              else:
+
+                  fields.append(
+                      {
+                          "name": "Changes",
+                          "value": (
+                              "Issue metadata was edited. "
+                              "GitHub did not provide detailed "
+                              "change information for this event."
+                          ),
+                          "inline": False,
+                      }
+                  )
+
+
+          # ----------------------------------------------------------
+          # Created event
+          # ----------------------------------------------------------
+
+          if action == "opened":
+
+              fields.append(
+                  {
+                      "name": "Description",
+                      "value": truncate(
+                          body.strip()
+                          or "No description provided.",
+                          3000
+                      ),
+                      "inline": False,
+                  }
+              )
+
+
+          # ----------------------------------------------------------
+          # Deleted event
+          # ----------------------------------------------------------
+
+          if action == "deleted":
+
+              fields.append(
+                  {
+                      "name": "Deleted Issue",
+                      "value": (
+                          "This issue was permanently deleted. "
+                          "Some GitHub issue fields may no longer "
+                          "be available."
+                      ),
+                      "inline": False,
+                  }
+              )
+
+
+          # ----------------------------------------------------------
+          # Dates
+          # ----------------------------------------------------------
+
+          if created_at:
+
+              fields.append(
+                  {
+                      "name": "Created",
+                      "value": created_at,
+                      "inline": True,
+                  }
+              )
+
+          if updated_at:
+
+              fields.append(
+                  {
+                      "name": "Updated",
+                      "value": updated_at,
+                      "inline": True,
+                  }
+              )
+
+
+          # ----------------------------------------------------------
+          # Audit embed
+          # ----------------------------------------------------------
+
+          embed = {
+              "title": f"{emoji} {action_title} #{number}",
+              "color": color,
+              "fields": fields,
+              "footer": {
+                  "text": "4rm0Byte • Issue Update Audit Log"
+              },
+          }
+
+          if issue_url:
+              embed["url"] = issue_url
+
+          if updated_at:
+              embed["timestamp"] = updated_at
+
+
+          payload = {
+              "username": "4rm0Byte • Issue Audit",
+              "embeds": [embed],
+              "allowed_mentions": {
+                  "parse": []
+              },
+          }
+
+
+          data = json.dumps(payload).encode("utf-8")
+
+          request = urllib.request.Request(
+              webhook,
+              data=data,
+              headers={
+                  "Content-Type": "application/json",
+                  "User-Agent": "4rm0Byte-GitHub-Issue-Audit-Logger",
+              },
+              method="POST",
+          )
+
+          with urllib.request.urlopen(request) as response:
+
+              if response.status not in (200, 204):
+                  raise RuntimeError(
+                      f"Discord returned HTTP {response.status}"
+                  )
+
+          print(
+              f"Issue audit log sent for "
+              f"#{number} ({action})."
+          )
+
+          PY
