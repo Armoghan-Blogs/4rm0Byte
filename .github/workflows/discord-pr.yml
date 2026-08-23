@@ -1,0 +1,464 @@
+name: Discord PR Logging
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - closed
+      - reopened
+      - synchronize
+      - ready_for_review
+      - converted_to_draft
+      - labeled
+      - unlabeled
+      - assigned
+      - unassigned
+      - review_requested
+      - review_request_removed
+
+  pull_request_review:
+    types:
+      - submitted
+      - edited
+      - dismissed
+
+  pull_request_review_comment:
+    types:
+      - created
+      - edited
+      - deleted
+
+jobs:
+  discord:
+    name: Send PR Update to Discord
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_PR_WEBHOOK }}
+
+          EVENT_NAME: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+
+          REPOSITORY: ${{ github.repository }}
+          REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
+
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+
+          PR_STATE: ${{ github.event.pull_request.state }}
+          PR_DRAFT: ${{ github.event.pull_request.draft }}
+
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_AUTHOR_AVATAR: ${{ github.event.pull_request.user.avatar_url }}
+
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+
+          CREATED_AT: ${{ github.event.pull_request.created_at }}
+          UPDATED_AT: ${{ github.event.pull_request.updated_at }}
+
+          MERGED: ${{ github.event.pull_request.merged }}
+          MERGED_BY: ${{ github.event.pull_request.merged_by.login }}
+
+          ADDITIONS: ${{ github.event.pull_request.additions }}
+          DELETIONS: ${{ github.event.pull_request.deletions }}
+          CHANGED_FILES: ${{ github.event.pull_request.changed_files }}
+          COMMITS: ${{ github.event.pull_request.commits }}
+
+          LABEL_NAME: ${{ github.event.label.name }}
+
+          ASSIGNEE: ${{ github.event.assignee.login }}
+
+          REVIEWER: ${{ github.event.requested_reviewer.login }}
+          REVIEW_TEAM: ${{ github.event.requested_team.name }}
+
+          REVIEW_STATE: ${{ github.event.review.state }}
+          REVIEW_BODY: ${{ github.event.review.body }}
+          REVIEW_AUTHOR: ${{ github.event.review.user.login }}
+
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_AUTHOR: ${{ github.event.comment.user.login }}
+
+          SENDER: ${{ github.actor }}
+
+        run: |
+          python3 <<'PY'
+          import json
+          import os
+          import urllib.request
+          import urllib.error
+          import re
+
+          webhook = os.environ.get("DISCORD_WEBHOOK")
+
+          if not webhook:
+              print("DISCORD_PR_WEBHOOK secret is not configured.")
+              raise SystemExit(1)
+
+          event = os.environ.get("EVENT_NAME", "")
+          action = os.environ.get("ACTION", "")
+
+          repo = os.environ.get("REPOSITORY", "")
+          repo_url = os.environ.get("REPOSITORY_URL", "")
+
+          pr_number = os.environ.get("PR_NUMBER", "")
+          pr_title = os.environ.get("PR_TITLE", "")
+          pr_url = os.environ.get("PR_URL", "")
+
+          state = os.environ.get("PR_STATE", "")
+          draft = os.environ.get("PR_DRAFT", "").lower() == "true"
+
+          author = os.environ.get("PR_AUTHOR", "")
+          avatar = os.environ.get("PR_AUTHOR_AVATAR", "")
+
+          base = os.environ.get("BASE_BRANCH", "")
+          head = os.environ.get("HEAD_BRANCH", "")
+
+          merged = os.environ.get("MERGED", "").lower() == "true"
+          merged_by = os.environ.get("MERGED_BY", "")
+
+          additions = os.environ.get("ADDITIONS", "0")
+          deletions = os.environ.get("DELETIONS", "0")
+          changed_files = os.environ.get("CHANGED_FILES", "0")
+          commits = os.environ.get("COMMITS", "0")
+
+          label = os.environ.get("LABEL_NAME", "")
+          assignee = os.environ.get("ASSIGNEE", "")
+
+          reviewer = os.environ.get("REVIEWER", "")
+          review_team = os.environ.get("REVIEW_TEAM", "")
+
+          review_state = os.environ.get("REVIEW_STATE", "")
+          review_body = os.environ.get("REVIEW_BODY", "")
+          review_author = os.environ.get("REVIEW_AUTHOR", "")
+
+          comment_body = os.environ.get("COMMENT_BODY", "")
+          comment_author = os.environ.get("COMMENT_AUTHOR", "")
+
+          sender = os.environ.get("SENDER", "")
+
+          # ---------------------------------------------------------
+          # Discord embed configuration
+          # ---------------------------------------------------------
+
+          colors = {
+              "opened": 0x57F287,
+              "reopened": 0x57F287,
+              "closed": 0xED4245,
+              "synchronize": 0x5865F2,
+              "edited": 0xFEE75C,
+              "labeled": 0x5865F2,
+              "unlabeled": 0x747F8D,
+              "assigned": 0x5865F2,
+              "unassigned": 0x747F8D,
+              "review_requested": 0xEB459E,
+              "review_request_removed": 0x747F8D,
+              "ready_for_review": 0x57F287,
+              "converted_to_draft": 0xFEE75C,
+              "submitted": 0x57F287,
+              "dismissed": 0xED4245,
+              "created": 0x5865F2,
+              "deleted": 0xED4245,
+          }
+
+          color = colors.get(action, 0x5865F2)
+
+          # ---------------------------------------------------------
+          # Human-readable event title
+          # ---------------------------------------------------------
+
+          if event == "pull_request":
+              titles = {
+                  "opened": "Pull Request Opened",
+                  "edited": "Pull Request Edited",
+                  "closed": "Pull Request Closed",
+                  "reopened": "Pull Request Reopened",
+                  "synchronize": "Pull Request Updated",
+                  "ready_for_review": "Pull Request Ready for Review",
+                  "converted_to_draft": "Pull Request Converted to Draft",
+                  "labeled": "Pull Request Label Added",
+                  "unlabeled": "Pull Request Label Removed",
+                  "assigned": "Pull Request Assigned",
+                  "unassigned": "Pull Request Unassigned",
+                  "review_requested": "Review Requested",
+                  "review_request_removed": "Review Request Removed",
+              }
+
+              title = titles.get(action, "Pull Request Update")
+
+          elif event == "pull_request_review":
+              title = {
+                  "submitted": "Pull Request Review Submitted",
+                  "edited": "Pull Request Review Edited",
+                  "dismissed": "Pull Request Review Dismissed",
+              }.get(action, "Pull Request Review Update")
+
+          elif event == "pull_request_review_comment":
+              title = {
+                  "created": "Pull Request Review Comment Added",
+                  "edited": "Pull Request Review Comment Edited",
+                  "deleted": "Pull Request Review Comment Deleted",
+              }.get(action, "Pull Request Review Comment Update")
+
+          else:
+              title = "Pull Request Update"
+
+          # ---------------------------------------------------------
+          # Event-specific description
+          # ---------------------------------------------------------
+
+          if action == "opened":
+              description = (
+                  f"**#{pr_number} {pr_title}** was opened by **{author}**."
+              )
+
+          elif action == "closed":
+              if merged:
+                  description = (
+                      f"**#{pr_number} {pr_title}** was **merged** by "
+                      f"**{merged_by or sender}**."
+                  )
+              else:
+                  description = (
+                      f"**#{pr_number} {pr_title}** was closed without merging."
+                  )
+
+          elif action == "synchronize":
+              description = (
+                  f"New commits were pushed to **#{pr_number} {pr_title}** "
+                  f"by **{sender}**."
+              )
+
+          elif action == "review_requested":
+              target = reviewer or (
+                  f"team `{review_team}`" if review_team else "a reviewer"
+              )
+
+              description = (
+                  f"**{target}** was requested to review "
+                  f"**#{pr_number} {pr_title}**."
+              )
+
+          elif action == "review_request_removed":
+              target = reviewer or (
+                  f"team `{review_team}`" if review_team else "a reviewer"
+              )
+
+              description = (
+                  f"The review request for **{target}** was removed from "
+                  f"**#{pr_number} {pr_title}**."
+              )
+
+          elif action == "labeled":
+              description = (
+                  f"Label `{label}` was added to "
+                  f"**#{pr_number} {pr_title}**."
+              )
+
+          elif action == "unlabeled":
+              description = (
+                  f"Label `{label}` was removed from "
+                  f"**#{pr_number} {pr_title}**."
+              )
+
+          elif action == "assigned":
+              description = (
+                  f"**{assignee or sender}** was assigned to "
+                  f"**#{pr_number} {pr_title}**."
+              )
+
+          elif action == "unassigned":
+              description = (
+                  f"**{assignee or sender}** was unassigned from "
+                  f"**#{pr_number} {pr_title}**."
+              )
+
+          elif action == "submitted":
+              description = (
+                  f"**{review_author or sender}** submitted a "
+                  f"**{review_state or 'review'}** on "
+                  f"**#{pr_number} {pr_title}**."
+              )
+
+          elif event == "pull_request_review_comment":
+              description = (
+                  f"**{comment_author or sender}** "
+                  f"{'added' if action == 'created' else action} a review "
+                  f"comment on **#{pr_number} {pr_title}**."
+              )
+
+          elif action == "ready_for_review":
+              description = (
+                  f"**#{pr_number} {pr_title}** is now ready for review."
+              )
+
+          elif action == "converted_to_draft":
+              description = (
+                  f"**#{pr_number} {pr_title}** was converted to draft."
+              )
+
+          else:
+              description = (
+                  f"**#{pr_number} {pr_title}** received a `{action}` update."
+              )
+
+          # ---------------------------------------------------------
+          # Review / comment content
+          # ---------------------------------------------------------
+
+          content = review_body if event == "pull_request_review" else comment_body
+
+          if content:
+              content = content.strip()
+
+              # Keep Discord embeds readable.
+              if len(content) > 900:
+                  content = content[:897] + "..."
+
+              content = re.sub(r"\s+", " ", content)
+
+          # ---------------------------------------------------------
+          # Status
+          # ---------------------------------------------------------
+
+          if merged:
+              status = "Merged"
+          elif draft:
+              status = "Draft"
+          elif state == "closed":
+              status = "Closed"
+          else:
+              status = "Open"
+
+          # ---------------------------------------------------------
+          # Embed fields
+          # ---------------------------------------------------------
+
+          fields = [
+              {
+                  "name": "📌 Status",
+                  "value": status,
+                  "inline": True
+              },
+              {
+                  "name": "👤 Author",
+                  "value": f"[@{author}](https://github.com/{author})",
+                  "inline": True
+              },
+              {
+                  "name": "🔀 Branch",
+                  "value": f"`{head}` → `{base}`",
+                  "inline": False
+              },
+              {
+                  "name": "📊 Changes",
+                  "value": (
+                      f"**{commits}** commits • "
+                      f"**{changed_files}** files • "
+                      f"+{additions} / -{deletions}"
+                  ),
+                  "inline": False
+              }
+          ]
+
+          # Event-specific fields
+
+          if label:
+              fields.append({
+                  "name": "🏷️ Label",
+                  "value": f"`{label}`",
+                  "inline": True
+              })
+
+          if assignee:
+              fields.append({
+                  "name": "👤 Assignee",
+                  "value": f"[@{assignee}](https://github.com/{assignee})",
+                  "inline": True
+              })
+
+          if reviewer:
+              fields.append({
+                  "name": "👀 Reviewer",
+                  "value": f"[@{reviewer}](https://github.com/{reviewer})",
+                  "inline": True
+              })
+
+          if review_team:
+              fields.append({
+                  "name": "👥 Review Team",
+                  "value": f"`{review_team}`",
+                  "inline": True
+              })
+
+          if review_state:
+              fields.append({
+                  "name": "📝 Review State",
+                  "value": review_state.title(),
+                  "inline": True
+              })
+
+          if content:
+              fields.append({
+                  "name": "💬 Review / Comment",
+                  "value": content,
+                  "inline": False
+              })
+
+          # ---------------------------------------------------------
+          # Discord payload
+          # ---------------------------------------------------------
+
+          payload = {
+              "username": "4rm0Byte GitHub",
+              "avatar_url": avatar,
+              "embeds": [
+                  {
+                      "title": f"🔷 {title}",
+                      "url": pr_url,
+                      "description": description,
+                      "color": color,
+                      "fields": fields,
+                      "footer": {
+                          "text": f"4rm0Byte • {repo} • PR #{pr_number}"
+                      },
+                      "timestamp": os.environ.get(
+                          "UPDATED_AT"
+                      ) or os.environ.get("CREATED_AT")
+                  }
+              ]
+          }
+
+          data = json.dumps(payload).encode("utf-8")
+
+          request = urllib.request.Request(
+              webhook,
+              data=data,
+              headers={
+                  "Content-Type": "application/json",
+                  "User-Agent": "4rm0Byte-GitHub-Actions"
+              },
+              method="POST"
+          )
+
+          try:
+              with urllib.request.urlopen(request) as response:
+                  print(
+                      f"Discord webhook delivered successfully "
+                      f"(HTTP {response.status})."
+                  )
+
+          except urllib.error.HTTPError as error:
+              body = error.read().decode("utf-8", errors="replace")
+              print(f"Discord webhook failed: HTTP {error.code}")
+              print(body)
+              raise
+
+          except urllib.error.URLError as error:
+              print(f"Discord webhook failed: {error}")
+              raise
+          PY
