@@ -64,6 +64,21 @@ name = "Contact"
 url = "/contact/"
 weight = 8
 
+#  -- Subnavigation Menu --
+# The subnavigation menu is displayed in the header at the top of the page under the main menu.
+
+[[subnavigation]]
+name = "Join Discord"
+pre = "discord"
+url = "https://discord.gg/UTdQBvMuxH"
+weight = 10
+
+[[subnavigation]]
+name = "Github Repo"
+pre = "github"
+url = "https://github.com/Armoghan-Blogs/4rm0Byte"
+weight = 20
+
 # -- Footer Menu --
 # The footer menu is displayed at the bottom of the page, just before
 # the copyright notice. Configure as per the main menu above.
