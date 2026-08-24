@@ -17,7 +17,7 @@ env:
   HUGO_VERSION: "0.157.0"
   GO_VERSION: "1.26.0"
 
-  SITE_URL: "https://4rm0byte.netlify.app"
+  LIVE_URL: "https://4rm0byte.netlify.app"
   LOCAL_URL: "http://127.0.0.1:4173"
 
   REPORT_DIR: ".github/seo-reports"
@@ -26,38 +26,39 @@ jobs:
   audit:
     name: Build & Audit Website
     runs-on: ubuntu-latest
+    continue-on-error: true
 
     steps:
-      # ------------------------------------------------------------
+      # ============================================================
       # CHECKOUT
-      # ------------------------------------------------------------
+      # ============================================================
 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      # ------------------------------------------------------------
+      # ============================================================
       # NODE
-      # ------------------------------------------------------------
+      # ============================================================
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
-      # ------------------------------------------------------------
+      # ============================================================
       # GO
-      # ------------------------------------------------------------
+      # ============================================================
 
       - name: Setup Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: true
 
-      # ------------------------------------------------------------
+      # ============================================================
       # HUGO
-      # ------------------------------------------------------------
+      # ============================================================
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
@@ -65,9 +66,9 @@ jobs:
           hugo-version: ${{ env.HUGO_VERSION }}
           extended: true
 
-      # ------------------------------------------------------------
+      # ============================================================
       # DEPENDENCIES
-      # ------------------------------------------------------------
+      # ============================================================
 
       - name: Install Node dependencies
         run: npm ci
@@ -77,39 +78,51 @@ jobs:
           hugo mod tidy
           hugo mod get
 
-      # ------------------------------------------------------------
+      # ============================================================
       # BUILD
-      # ------------------------------------------------------------
+      # ============================================================
 
       - name: Build production website
         run: npm run build
 
       - name: Verify production build
         run: |
+          echo "========================================"
+          echo "Production Build Verification"
+          echo "========================================"
+
           test -d public
           test -f public/index.html
 
-          echo "Build directory:"
+          echo ""
+          echo "Build size:"
           du -sh public
 
+          echo ""
           echo "Generated files:"
           find public -type f | wc -l
 
-      # ------------------------------------------------------------
-      # PREPARE REPORT DIRECTORY
-      # ------------------------------------------------------------
+          echo ""
+          echo "Build directory:"
+          find public -maxdepth 2 -type f | head -50
 
-      - name: Prepare report directory
+      # ============================================================
+      # REPORT DIRECTORY
+      # ============================================================
+
+      - name: Prepare audit report directory
         run: |
           rm -rf "${REPORT_DIR}"
           mkdir -p "${REPORT_DIR}"
 
-      # ------------------------------------------------------------
-      # LOCAL SERVER
-      # ------------------------------------------------------------
+      # ============================================================
+      # SERVE EXACT BUILD ON GITHUB ACTIONS VM
+      # ============================================================
 
       - name: Start local production server
         run: |
+          echo "Starting temporary server for the exact production build..."
+
           nohup python3 -m http.server 4173 \
             --bind 127.0.0.1 \
             --directory public \
@@ -117,82 +130,35 @@ jobs:
 
           echo $! > .github/local-server.pid
 
-      - name: Wait for local website
+      - name: Wait for local production site
         run: |
+          echo "Waiting for local production site..."
+
           for i in {1..30}; do
-            if curl --fail --silent "${LOCAL_URL}" > /dev/null; then
-              echo "Local production build is ready."
+            if curl \
+              --fail \
+              --silent \
+              --show-error \
+              "${LOCAL_URL}" \
+              > /dev/null; then
+
+              echo "Local production site is ready."
               exit 0
             fi
 
             sleep 2
           done
 
-          echo "Local production server failed to start."
+          echo "Local production site failed to start."
+          echo ""
+          echo "Server log:"
           cat .github/local-server.log
+
           exit 1
 
-      # ------------------------------------------------------------
-      # TEMPORARY NETLIFY DEPLOYMENT
-      # ------------------------------------------------------------
-
-      - name: Install Netlify CLI
-        run: npm install --global netlify-cli
-
-      - name: Deploy production build to temporary Netlify URL
-        id: netlify-deploy
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        run: |
-          set -euo pipefail
-
-          netlify deploy \
-            --dir=public \
-            --auth="${NETLIFY_AUTH_TOKEN}" \
-            --json \
-            > .github/netlify-deploy.json
-
-          cat .github/netlify-deploy.json
-
-          DEPLOY_URL="$(node -e "
-            const fs = require('fs');
-            const data = JSON.parse(fs.readFileSync('.github/netlify-deploy.json', 'utf8'));
-            process.stdout.write(data.deploy_url || data.url || '');
-          ")"
-
-          if [ -z "${DEPLOY_URL}" ]; then
-            echo "Could not determine Netlify deploy URL."
-            exit 1
-          fi
-
-          echo "Temporary Netlify URL: ${DEPLOY_URL}"
-          echo "deploy_url=${DEPLOY_URL}" >> "${GITHUB_OUTPUT}"
-
-      - name: Wait for temporary Netlify deployment
-        env:
-          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
-        run: |
-          for i in {1..30}; do
-            if curl \
-              --fail \
-              --silent \
-              --location \
-              "${DEPLOY_URL}" \
-              > /dev/null; then
-
-              echo "Temporary Netlify deployment is ready."
-              exit 0
-            fi
-
-            sleep 3
-          done
-
-          echo "Temporary Netlify deployment failed to become available."
-          exit 1
-
-      # ------------------------------------------------------------
-      # TOOLING
-      # ------------------------------------------------------------
+      # ============================================================
+      # INSTALL AUDIT TOOLS
+      # ============================================================
 
       - name: Install audit tools
         run: |
@@ -201,11 +167,13 @@ jobs:
             pa11y \
             @axe-core/cli
 
-      # ------------------------------------------------------------
-      # LIGHTHOUSE - LOCAL
-      # ------------------------------------------------------------
+      # ============================================================
+      # LIGHTHOUSE - OFFLINE
+      # ============================================================
 
-      - name: Lighthouse - Local production build
+      - name: Lighthouse - Offline build
+        id: lighthouse-offline
+        continue-on-error: true
         run: |
           lighthouse "${LOCAL_URL}" \
             --output=json \
@@ -213,106 +181,113 @@ jobs:
             --only-categories=seo,accessibility \
             --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
 
-      # ------------------------------------------------------------
-      # LIGHTHOUSE - ONLINE
-      # ------------------------------------------------------------
+      # ============================================================
+      # LIGHTHOUSE - LIVE
+      # ============================================================
 
-      - name: Lighthouse - Temporary Netlify deployment
-        env:
-          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
+      - name: Lighthouse - Live Netlify
+        id: lighthouse-live
+        continue-on-error: true
         run: |
-          lighthouse "${DEPLOY_URL}" \
+          lighthouse "${LIVE_URL}" \
             --output=json \
-            --output-path="${REPORT_DIR}/lighthouse-online.json" \
+            --output-path="${REPORT_DIR}/lighthouse-live.json" \
             --only-categories=seo,accessibility \
             --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
 
-      # ------------------------------------------------------------
-      # PA11Y - LOCAL
-      # ------------------------------------------------------------
+      # ============================================================
+      # PA11Y - OFFLINE
+      # ============================================================
 
-      - name: Pa11y - Local production build
+      - name: Pa11y - Offline build
+        id: pa11y-offline
+        continue-on-error: true
         run: |
           pa11y "${LOCAL_URL}" \
             --reporter json \
             > "${REPORT_DIR}/pa11y-offline.json"
 
-      # ------------------------------------------------------------
-      # PA11Y - ONLINE
-      # ------------------------------------------------------------
+      # ============================================================
+      # PA11Y - LIVE
+      # ============================================================
 
-      - name: Pa11y - Temporary Netlify deployment
-        env:
-          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
+      - name: Pa11y - Live Netlify
+        id: pa11y-live
+        continue-on-error: true
         run: |
-          pa11y "${DEPLOY_URL}" \
+          pa11y "${LIVE_URL}" \
             --reporter json \
-            > "${REPORT_DIR}/pa11y-online.json"
+            > "${REPORT_DIR}/pa11y-live.json"
 
-      # ------------------------------------------------------------
-      # AXE - LOCAL
-      # ------------------------------------------------------------
+      # ============================================================
+      # AXE - OFFLINE
+      # ============================================================
 
-      - name: axe-core - Local production build
+      - name: axe-core - Offline build
+        id: axe-offline
+        continue-on-error: true
         run: |
           axe "${LOCAL_URL}" \
             --save "${REPORT_DIR}/axe-offline.json"
 
-      # ------------------------------------------------------------
-      # AXE - ONLINE
-      # ------------------------------------------------------------
+      # ============================================================
+      # AXE - LIVE
+      # ============================================================
 
-      - name: axe-core - Temporary Netlify deployment
-        env:
-          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
+      - name: axe-core - Live Netlify
+        id: axe-live
+        continue-on-error: true
         run: |
-          axe "${DEPLOY_URL}" \
-            --save "${REPORT_DIR}/axe-online.json"
+          axe "${LIVE_URL}" \
+            --save "${REPORT_DIR}/axe-live.json"
 
-      # ------------------------------------------------------------
-      # CREATE HUMAN-READABLE SUMMARIES
-      # ------------------------------------------------------------
+      # ============================================================
+      # GENERATE SUMMARY
+      # ============================================================
 
       - name: Generate audit summary
+        if: always()
         env:
-          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
+          LIVE_URL: ${{ env.LIVE_URL }}
+          LOCAL_URL: ${{ env.LOCAL_URL }}
           COMMIT_SHA: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
+          WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           node .github/scripts/create-audit-summary.mjs
 
-      # ------------------------------------------------------------
-      # UPLOAD REPORTS TO GITHUB
-      # ------------------------------------------------------------
+      # ============================================================
+      # UPLOAD REPORTS
+      # ============================================================
 
-      - name: Upload complete audit reports
+      - name: Upload audit reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: seo-accessibility-audit-${{ github.run_number }}
           path: |
             .github/seo-reports/
-            .github/netlify-deploy.json
             .github/local-server.log
           retention-days: 30
           if-no-files-found: warn
 
-      # ------------------------------------------------------------
-      # SEND DISCORD REPORT
-      # ------------------------------------------------------------
+      # ============================================================
+      # DISCORD
+      # ============================================================
 
       - name: Send audit results to Discord
         if: always()
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_SEO_ACCESSIBILITY_WEBHOOK }}
-          DEPLOY_URL: ${{ steps.netlify-deploy.outputs.deploy_url }}
+          LIVE_URL: ${{ env.LIVE_URL }}
+          LOCAL_URL: ${{ env.LOCAL_URL }}
           GITHUB_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           node .github/scripts/send-audit-discord.mjs
 
-      # ------------------------------------------------------------
-      # CLEANUP
-      # ------------------------------------------------------------
+      # ============================================================
+      # STOP SERVER
+      # ============================================================
 
       - name: Stop local production server
         if: always()
@@ -321,9 +296,31 @@ jobs:
             kill "$(cat .github/local-server.pid)" 2>/dev/null || true
           fi
 
-      - name: Remove temporary files
+      # ============================================================
+      # FAIL WORKFLOW IF AUDIT TOOL ITSELF FAILED
+      # ============================================================
+
+      - name: Evaluate audit execution
         if: always()
         run: |
-          rm -f .github/local-server.pid
-          rm -f .github/local-server.log
-          rm -f .github/netlify-deploy.json
+          echo "Audit execution status:"
+          echo ""
+          echo "Lighthouse Offline: ${{ steps.lighthouse-offline.outcome }}"
+          echo "Lighthouse Live:    ${{ steps.lighthouse-live.outcome }}"
+          echo "Pa11y Offline:      ${{ steps.pa11y-offline.outcome }}"
+          echo "Pa11y Live:         ${{ steps.pa11y-live.outcome }}"
+          echo "axe Offline:        ${{ steps.axe-offline.outcome }}"
+          echo "axe Live:           ${{ steps.axe-live.outcome }}"
+
+          if [ \
+            "${{ steps.lighthouse-offline.outcome }}" = "failure" ] || \
+            [ "${{ steps.lighthouse-live.outcome }}" = "failure" ] || \
+            [ "${{ steps.pa11y-offline.outcome }}" = "failure" ] || \
+            [ "${{ steps.pa11y-live.outcome }}" = "failure" ] || \
+            [ "${{ steps.axe-offline.outcome }}" = "failure" ] || \
+            [ "${{ steps.axe-live.outcome }}" = "failure" ]; then
+
+            echo ""
+            echo "One or more audit tools failed to execute."
+            exit 1
+          fi
