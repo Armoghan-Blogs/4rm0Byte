@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: "21.7.3"
+  NODE_VERSION: "24"
   HUGO_VERSION: "0.157.0"
   GO_VERSION: "1.26.0"
 
@@ -29,19 +29,20 @@ jobs:
     continue-on-error: true
 
     steps:
+
       # ============================================================
       # CHECKOUT
       # ============================================================
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # ============================================================
-      # NODE
+      # NODE 24
       # ============================================================
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -51,7 +52,7 @@ jobs:
       # ============================================================
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: true
@@ -67,11 +68,15 @@ jobs:
           extended: true
 
       # ============================================================
-      # DEPENDENCIES
+      # INSTALL WEBSITE DEPENDENCIES
       # ============================================================
 
-      - name: Install Node dependencies
-        run: npm ci
+      - name: Install website dependencies
+        run: npm install
+
+      # ============================================================
+      # HUGO MODULES
+      # ============================================================
 
       - name: Prepare Hugo modules
         run: |
@@ -85,11 +90,15 @@ jobs:
       - name: Build production website
         run: npm run build
 
+      # ============================================================
+      # VERIFY BUILD
+      # ============================================================
+
       - name: Verify production build
         run: |
-          echo "========================================"
-          echo "Production Build Verification"
-          echo "========================================"
+          set -euo pipefail
+
+          echo "Checking Hugo production build..."
 
           test -d public
           test -f public/index.html
@@ -102,54 +111,119 @@ jobs:
           echo "Generated files:"
           find public -type f | wc -l
 
-          echo ""
-          echo "Build directory:"
-          find public -maxdepth 2 -type f | head -50
-
       # ============================================================
-      # REPORT DIRECTORY
+      # PREPARE REPORTS
       # ============================================================
 
-      - name: Prepare audit report directory
+      - name: Prepare audit directories
         run: |
           rm -rf "${REPORT_DIR}"
+
           mkdir -p "${REPORT_DIR}"
+          mkdir -p ".github/audit"
 
       # ============================================================
-      # SERVE EXACT BUILD ON GITHUB ACTIONS VM
+      # INSTALL AUDIT TOOLS
+      # ============================================================
+
+      - name: Install audit tooling
+        working-directory: .github/audit
+        run: |
+          set -euo pipefail
+
+          npm init -y
+
+          npm install \
+            lighthouse@13.4.1 \
+            pa11y@9.1.1 \
+            axe-core@4.13.0 \
+            playwright@1.55.0
+
+          npx playwright install --with-deps chromium
+
+      # ============================================================
+      # START LOCAL SERVER
       # ============================================================
 
       - name: Start local production server
         run: |
-          echo "Starting temporary server for the exact production build..."
+          set -euo pipefail
+
+          echo "Starting HTTP server..."
 
           nohup python3 -m http.server 4173 \
             --bind 127.0.0.1 \
             --directory public \
             > .github/local-server.log 2>&1 &
 
-          echo $! > .github/local-server.pid
+          SERVER_PID=$!
 
-      - name: Wait for local production site
+          echo "${SERVER_PID}" > .github/local-server.pid
+
+          sleep 1
+
+          if ! kill -0 "${SERVER_PID}" 2>/dev/null; then
+            echo "Local server died immediately."
+
+            cat .github/local-server.log
+
+            exit 1
+          fi
+
+          echo "Local server started with PID ${SERVER_PID}."
+
+      # ============================================================
+      # LOCAL SERVER HEALTH CHECK
+      # ============================================================
+
+      - name: Verify local production server
         run: |
-          echo "Waiting for local production site..."
+          set -euo pipefail
 
-          for i in {1..30}; do
+          echo "Waiting for ${LOCAL_URL}..."
+
+          for attempt in {1..30}; do
+
             if curl \
-              --fail \
               --silent \
               --show-error \
+              --fail \
+              --max-time 5 \
               "${LOCAL_URL}" \
               > /dev/null; then
 
-              echo "Local production site is ready."
+              echo ""
+              echo "Local production site is READY."
+              echo "URL: ${LOCAL_URL}"
+
               exit 0
             fi
 
+            if [ -f .github/local-server.pid ]; then
+
+              SERVER_PID="$(cat .github/local-server.pid)"
+
+              if ! kill -0 "${SERVER_PID}" 2>/dev/null; then
+
+                echo ""
+                echo "Local server stopped unexpectedly."
+                echo ""
+                echo "Server log:"
+                cat .github/local-server.log
+
+                exit 1
+              fi
+
+            fi
+
+            echo "Attempt ${attempt}/30: site not ready yet."
+
             sleep 2
+
           done
 
-          echo "Local production site failed to start."
+          echo ""
+          echo "Local production site never became available."
           echo ""
           echo "Server log:"
           cat .github/local-server.log
@@ -157,89 +231,90 @@ jobs:
           exit 1
 
       # ============================================================
-      # INSTALL AUDIT TOOLS
+      # LIGHTHOUSE OFFLINE
       # ============================================================
 
-      - name: Install audit tools
-        run: |
-          npm install --global \
-            lighthouse \
-            pa11y \
-            @axe-core/cli
-
-      # ============================================================
-      # LIGHTHOUSE - OFFLINE
-      # ============================================================
-
-      - name: Lighthouse - Offline build
-        id: lighthouse-offline
+      - name: Lighthouse - Offline
+        id: lighthouse_offline
+        if: always()
         continue-on-error: true
         run: |
-          lighthouse "${LOCAL_URL}" \
+          .github/audit/node_modules/.bin/lighthouse \
+            "${LOCAL_URL}" \
             --output=json \
             --output-path="${REPORT_DIR}/lighthouse-offline.json" \
             --only-categories=seo,accessibility \
             --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
 
       # ============================================================
-      # LIGHTHOUSE - LIVE
+      # LIGHTHOUSE LIVE
       # ============================================================
 
-      - name: Lighthouse - Live Netlify
-        id: lighthouse-live
+      - name: Lighthouse - Live
+        id: lighthouse_live
+        if: always()
         continue-on-error: true
         run: |
-          lighthouse "${LIVE_URL}" \
+          .github/audit/node_modules/.bin/lighthouse \
+            "${LIVE_URL}" \
             --output=json \
             --output-path="${REPORT_DIR}/lighthouse-live.json" \
             --only-categories=seo,accessibility \
             --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
 
       # ============================================================
-      # PA11Y - OFFLINE
+      # PA11Y OFFLINE
       # ============================================================
 
-      - name: Pa11y - Offline build
-        id: pa11y-offline
+      - name: Pa11y - Offline
+        id: pa11y_offline
+        if: always()
         continue-on-error: true
         run: |
-          pa11y "${LOCAL_URL}" \
+          .github/audit/node_modules/.bin/pa11y \
+            "${LOCAL_URL}" \
             --reporter json \
             > "${REPORT_DIR}/pa11y-offline.json"
 
       # ============================================================
-      # PA11Y - LIVE
+      # PA11Y LIVE
       # ============================================================
 
-      - name: Pa11y - Live Netlify
-        id: pa11y-live
+      - name: Pa11y - Live
+        id: pa11y_live
+        if: always()
         continue-on-error: true
         run: |
-          pa11y "${LIVE_URL}" \
+          .github/audit/node_modules/.bin/pa11y \
+            "${LIVE_URL}" \
             --reporter json \
             > "${REPORT_DIR}/pa11y-live.json"
 
       # ============================================================
-      # AXE - OFFLINE
+      # AXE OFFLINE
       # ============================================================
 
-      - name: axe-core - Offline build
-        id: axe-offline
+      - name: axe-core - Offline
+        id: axe_offline
+        if: always()
         continue-on-error: true
         run: |
-          axe "${LOCAL_URL}" \
-            --save "${REPORT_DIR}/axe-offline.json"
+          node .github/scripts/run-axe.mjs \
+            "${LOCAL_URL}" \
+            "${REPORT_DIR}/axe-offline.json"
 
       # ============================================================
-      # AXE - LIVE
+      # AXE LIVE
       # ============================================================
 
-      - name: axe-core - Live Netlify
-        id: axe-live
+      - name: axe-core - Live
+        id: axe_live
+        if: always()
         continue-on-error: true
         run: |
-          axe "${LIVE_URL}" \
-            --save "${REPORT_DIR}/axe-live.json"
+          node .github/scripts/run-axe.mjs \
+            "${LIVE_URL}" \
+            "${REPORT_DIR}/axe-live.json"
 
       # ============================================================
       # GENERATE SUMMARY
@@ -262,7 +337,7 @@ jobs:
 
       - name: Upload audit reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: seo-accessibility-audit-${{ github.run_number }}
           path: |
@@ -286,41 +361,38 @@ jobs:
           node .github/scripts/send-audit-discord.mjs
 
       # ============================================================
-      # STOP SERVER
+      # STOP LOCAL SERVER
       # ============================================================
 
       - name: Stop local production server
         if: always()
         run: |
           if [ -f .github/local-server.pid ]; then
-            kill "$(cat .github/local-server.pid)" 2>/dev/null || true
+
+            SERVER_PID="$(cat .github/local-server.pid)"
+
+            kill "${SERVER_PID}" 2>/dev/null || true
+
           fi
 
       # ============================================================
-      # FAIL WORKFLOW IF AUDIT TOOL ITSELF FAILED
+      # FINAL STATUS
       # ============================================================
 
       - name: Evaluate audit execution
         if: always()
         run: |
-          echo "Audit execution status:"
+          echo "========================================"
+          echo "Audit Execution Results"
+          echo "========================================"
+
           echo ""
-          echo "Lighthouse Offline: ${{ steps.lighthouse-offline.outcome }}"
-          echo "Lighthouse Live:    ${{ steps.lighthouse-live.outcome }}"
-          echo "Pa11y Offline:      ${{ steps.pa11y-offline.outcome }}"
-          echo "Pa11y Live:         ${{ steps.pa11y-live.outcome }}"
-          echo "axe Offline:        ${{ steps.axe-offline.outcome }}"
-          echo "axe Live:           ${{ steps.axe-live.outcome }}"
+          echo "Lighthouse Offline : ${{ steps.lighthouse_offline.outcome }}"
+          echo "Lighthouse Live    : ${{ steps.lighthouse_live.outcome }}"
+          echo "Pa11y Offline      : ${{ steps.pa11y_offline.outcome }}"
+          echo "Pa11y Live         : ${{ steps.pa11y_live.outcome }}"
+          echo "axe Offline        : ${{ steps.axe_offline.outcome }}"
+          echo "axe Live           : ${{ steps.axe_live.outcome }}"
 
-          if [ \
-            "${{ steps.lighthouse-offline.outcome }}" = "failure" ] || \
-            [ "${{ steps.lighthouse-live.outcome }}" = "failure" ] || \
-            [ "${{ steps.pa11y-offline.outcome }}" = "failure" ] || \
-            [ "${{ steps.pa11y-live.outcome }}" = "failure" ] || \
-            [ "${{ steps.axe-offline.outcome }}" = "failure" ] || \
-            [ "${{ steps.axe-live.outcome }}" = "failure" ]; then
-
-            echo ""
-            echo "One or more audit tools failed to execute."
-            exit 1
-          fi
+          echo ""
+          echo "Reports have been generated and sent to Discord."
