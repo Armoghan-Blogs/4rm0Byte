@@ -68,16 +68,22 @@ weight = 8
 # The subnavigation menu is displayed in the header at the top of the page under the main menu.
 
 [[subnavigation]]
-name = "Join Discord"
-pre = "discord"
-url = "https://discord.gg/UTdQBvMuxH"
-weight = 10
-
-[[subnavigation]]
 name = "Github Repo"
 pre = "github"
 url = "https://github.com/Armoghan-Blogs/4rm0Byte"
+weight = 10
+
+[[subnavigation]]
+name = "Discussion"
+pre = "worktree"
+url = "https://github.com/Armoghan-Blogs/4rm0Byte/discussions"
 weight = 20
+
+[[subnavigation]]
+name = "Join Discord"
+pre = "discord"
+url = "https://discord.gg/r48Y3esNGP"
+weight = 30
 
 # -- Footer Menu --
 # The footer menu is displayed at the bottom of the page, just before
