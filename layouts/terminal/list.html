@@ -1,0 +1,232 @@
+{{ define "main" }}
+  {{- with resources.Get "css/terminal.css" }}
+    {{- if eq hugo.Environment "development" }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}" />
+    {{- else }}
+      {{- with . | resources.Minify | fingerprint }}
+        <link
+          rel="stylesheet"
+          href="{{ .RelPermalink }}"
+          integrity="{{ .Data.Integrity }}"
+          crossorigin="anonymous" />
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
+
+  <section class="terminal-page" id="terminal-lab">
+    <div class="noise-grid" aria-hidden="true"></div>
+    <div class="aura aura-1" aria-hidden="true"></div>
+    <div class="aura aura-2" aria-hidden="true"></div>
+
+    <div class="terminal-shell">
+      <header class="hero-panel">
+        <div class="hero-copy">
+          <p class="hero-kicker">4rm0Byte Cyber Range</p>
+          <h1 class="hero-title">Digital Forensics and Cyber Operations Terminal</h1>
+          <p class="hero-subtitle">
+            Interactive investigation sandbox for SOC triage, memory and disk forensics, log hunting, IOC
+            validation, and incident response flow rehearsal.
+          </p>
+
+          <div class="hero-actions">
+            <button id="jump-to-terminal" class="hero-btn hero-btn-primary" type="button">Enter Range</button>
+            <button id="copy-ascii" class="hero-btn hero-btn-ghost" type="button">Copy Banner</button>
+          </div>
+
+          <div class="hero-stats" aria-label="Cyber training highlights">
+            <div class="hero-stat-card">
+              <p>Scenarios</p>
+              <strong>3 Full Labs</strong>
+            </div>
+            <div class="hero-stat-card">
+              <p>Investigations</p>
+              <strong>20+ Commands</strong>
+            </div>
+            <div class="hero-stat-card">
+              <p>Focus</p>
+              <strong>DFIR and SOC</strong>
+            </div>
+          </div>
+
+          <div class="scenario-switch" role="group" aria-label="Scenario selector">
+            <button class="scenario-btn active" data-scenario="soc" type="button">SOC Triage</button>
+            <button class="scenario-btn" data-scenario="forensics" type="button">Disk Forensics</button>
+            <button class="scenario-btn" data-scenario="threathunt" type="button">Threat Hunt</button>
+          </div>
+        </div>
+
+        <aside class="ascii-panel" aria-label="Terminal boot banner">
+          <div class="ascii-topbar">
+            <span></span>
+            <span></span>
+            <span></span>
+            <p>secure-shell://4rm0byte/range</p>
+          </div>
+          <pre id="ascii-banner" class="ascii-art" aria-live="polite">
+  _  _                   ___  ____        _
+ | || |  _ __ _ __ ___  / _ \| __ ) _   _| |_ ___
+ | || |_| '__| '_ ` _ \| | | |  _ \| | | | __/ _ \
+ |__   _| |  | | | | | | |_| | |_) | |_| | ||  __/
+    |_| |_|  |_| |_| |_|\___/|____/ \__, |\__\___|
+                                    |___/
+
+  [ DFIR ] [ SOC ] [ THREAT HUNT ] [ LOG ANALYSIS ] [ IOC INTELLIGENCE ]
+          </pre>
+          <div class="ascii-meta">
+            <p>Status: Active lab environment</p>
+            <p>Mode: Defensive simulation only</p>
+          </div>
+        </aside>
+      </header>
+
+      <div class="intel-ribbon" aria-label="Live intelligence indicators">
+        <span id="scenario-name">Scenario: SOC Triage</span>
+        <span id="scenario-sector">Sector: Enterprise SIEM Monitoring</span>
+        <span id="ioc-count">IOCs Confirmed: 0</span>
+      </div>
+
+      <div class="lab-grid">
+        <main class="simulator" id="simulator" aria-label="Cyber terminal simulator">
+          <div class="simulator-topbar">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-amber"></span>
+            <span class="dot dot-green"></span>
+            <p id="shell-label">analyst@4rm0byte-soc:~/case$</p>
+          </div>
+
+          <div class="terminal-output" id="terminal-output" role="log" aria-live="polite"></div>
+
+          <form id="terminal-form" class="terminal-form" autocomplete="off">
+            <label class="prompt" id="prompt-label" for="terminal-input">analyst@4rm0byte-soc:~/case$</label>
+            <input
+              id="terminal-input"
+              class="terminal-input"
+              type="text"
+              name="command"
+              spellcheck="false"
+              aria-label="Type terminal command"
+              placeholder="Try: help, mission, ls, grep, sha256sum, strings, netstat, iocs" />
+          </form>
+        </main>
+
+        <aside class="control-panel" aria-label="Mission and controls">
+          <section class="panel-card status-card">
+            <h2>Operator Profile</h2>
+            <div class="status-grid">
+              <div>
+                <p>XP</p>
+                <strong id="xp-count">0</strong>
+              </div>
+              <div>
+                <p>Solved Missions</p>
+                <strong id="solved-count">0</strong>
+              </div>
+              <div>
+                <p>Streak</p>
+                <strong id="streak-count">0</strong>
+              </div>
+              <div>
+                <p>Scenario</p>
+                <strong id="scenario-short">SOC</strong>
+              </div>
+            </div>
+            <div class="xp-bar-wrap" aria-hidden="true">
+              <span id="xp-bar" class="xp-bar"></span>
+            </div>
+            <small id="rank-label">Rank: Junior Analyst</small>
+          </section>
+
+          <section class="panel-card mission-card">
+            <h2>Active Mission</h2>
+            <p id="mission-brief">Loading mission...</p>
+            <ol id="mission-objectives" class="mission-list"></ol>
+            <div class="challenge-actions">
+              <button id="new-mission" type="button" class="mini-btn">Rotate Mission</button>
+              <button id="insert-hint" type="button" class="mini-btn mini-btn-ghost">
+                Insert Hint Command
+              </button>
+            </div>
+          </section>
+
+          <section class="panel-card ioc-card">
+            <h2>IOC Board</h2>
+            <ul id="ioc-list" class="ioc-list">
+              <li>No indicators confirmed yet.</li>
+            </ul>
+          </section>
+
+          <section class="panel-card quick-card">
+            <h2>Forensics Shortcuts</h2>
+            <ul class="quick-list">
+              <li>
+                <button class="quick-command" data-command="mission" type="button">Show active mission</button>
+              </li>
+              <li>
+                <button class="quick-command" data-command="ls -la" type="button">Enumerate files</button>
+              </li>
+              <li>
+                <button class="quick-command" data-command="grep failed auth.log" type="button">
+                  Search failed auth
+                </button>
+              </li>
+              <li>
+                <button class="quick-command" data-command="sha256sum ransom_note.txt" type="button">
+                  Hash suspicious file
+                </button>
+              </li>
+              <li>
+                <button class="quick-command" data-command="iocs" type="button">List extracted IOCs</button>
+              </li>
+            </ul>
+          </section>
+        </aside>
+      </div>
+
+      <section class="knowledge-grid" aria-label="DFIR references">
+        <article class="knowledge-card">
+          <h3>DFIR Workflow</h3>
+          <ul>
+            <li>1. Scope incident and collect triage artifacts.</li>
+            <li>2. Validate suspicious identities, endpoints, and processes.</li>
+            <li>3. Correlate logs with timeline and network telemetry.</li>
+            <li>4. Preserve evidence hash chain and draft containment notes.</li>
+          </ul>
+        </article>
+
+        <article class="knowledge-card">
+          <h3>Command Arsenal</h3>
+          <ul>
+            <li>File and evidence: ls, cat, file, strings, hexdump, sha256sum.</li>
+            <li>Log hunting: grep, cut, tail, journalctl, awk-style grep simulation.</li>
+            <li>Host triage: ps aux, whoami, uname -a, netstat -tulnp.</li>
+            <li>Case control: mission, scenario, iocs, clear, help.</li>
+          </ul>
+        </article>
+
+        <article class="knowledge-card">
+          <h3>Case Notes</h3>
+          <ul>
+            <li>This page simulates workflows safely and does not execute system commands.</li>
+            <li>Use these drills to build terminal fluency before live lab execution.</li>
+            <li>Run scenario rotation daily to reinforce command memory and analysis habits.</li>
+            <li>Combine this with your real SIEM and forensic toolset practice.</li>
+          </ul>
+        </article>
+      </section>
+    </div>
+  </section>
+
+  {{- with resources.Get "js/terminal.js" }}
+    {{- if eq hugo.Environment "development" }}
+      {{- with . | js.Build }}
+        <script src="{{ .RelPermalink }}"></script>
+      {{- end }}
+    {{- else }}
+      {{- $opts := dict "minify" true }}
+      {{- with . | js.Build $opts | fingerprint }}
+        <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous"></script>
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{ end }}
