@@ -1,0 +1,216 @@
+[
+  {
+    "file": "shot-01-ls-l.png",
+    "title": "alice@web01: /var/log",
+    "badge": "bash",
+    "width": 1000,
+    "lines": [
+      { "t": "cmd", "p": "alice@web01:/var/log$ ", "c": "ls -l /var/log" },
+      { "t": "out", "c": "total 20" },
+      { "t": "out", "c": "drwxr-xr-x  2 root   root  4096 Sep 30 09:12 apt" },
+      { "t": "out", "c": "-rw-r-----  1 syslog adm    4211 Sep 30 10:01 auth.log" },
+      { "t": "out", "c": "drwxr-x---  3 root   adm    4096 Sep 29 22:40 journal" },
+      { "t": "out", "c": "-rw-r-----  1 syslog adm   18402 Sep 30 10:03 kern.log" },
+      { "t": "blank" },
+      { "t": "note", "c": "# 10 characters at the front: type, owner, group, world" }
+    ]
+  },
+  {
+    "file": "shot-02-navigation.png",
+    "title": "alice@web01: ~",
+    "badge": "bash",
+    "width": 1000,
+    "lines": [
+      { "t": "cmd", "p": "alice@web01:~$ ", "c": "pwd" },
+      { "t": "out", "c": "/home/alice" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "alice@web01:~$ ", "c": "ls" },
+      { "t": "out", "c": "Documents  notes.txt  reports  scripts" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "alice@web01:~$ ", "c": "cd /var/log && pwd" },
+      { "t": "out", "c": "/var/log" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "alice@web01:/var/log$ ", "c": "cd .. && pwd" },
+      { "t": "out", "c": "/var" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "alice@web01:/var$ ", "c": "cd ~ && pwd" },
+      { "t": "out", "c": "/home/alice" }
+    ]
+  },
+  {
+    "file": "shot-03-files.png",
+    "title": "alice@web01: ~/notes",
+    "badge": "bash",
+    "width": 1000,
+    "lines": [
+      { "t": "cmd", "p": "alice@web01:~/notes$ ", "c": "mkdir notes && touch todo.txt" },
+      { "t": "cmd", "p": "alice@web01:~/notes$ ", "c": "cp todo.txt backup.txt && mv backup.txt old.txt" },
+      { "t": "cmd", "p": "alice@web01:~/notes$ ", "c": "ls" },
+      { "t": "out", "c": "old.txt  todo.txt" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "alice@web01:~/notes$ ", "c": "wc -l todo.txt" },
+      { "t": "out", "c": "3 todo.txt" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "alice@web01:~/notes$ ", "c": "head -n 2 todo.txt" },
+      { "t": "out", "c": "rotate logs weekly" },
+      { "t": "out", "c": "review failed logins" }
+    ]
+  },
+  {
+    "file": "shot-04-grep.png",
+    "title": "alice@web01: ~/terminal-practice",
+    "badge": "bash",
+    "width": 1100,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "alice@web01:~/terminal-practice$ ", "c": "grep \"Failed password\" auth.log" },
+      { "t": "out", "c": "Sep 30 10:01:12 host sshd[811]: Failed password for root from 203.0.113.5 port 51234 ssh2" },
+      { "t": "out", "c": "Sep 30 10:01:15 host sshd[811]: Failed password for invalid user admin from 203.0.113.5 port 51236 ssh2" },
+      { "t": "out", "c": "Sep 30 10:03:02 host sshd[831]: Failed password for root from 192.0.2.44 port 60110 ssh2" },
+      { "t": "out", "c": "Sep 30 10:03:05 host sshd[831]: Failed password for root from 203.0.113.5 port 51240 ssh2" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "alice@web01:~/terminal-practice$ ", "c": "grep -c \"Failed password\" auth.log" },
+      { "t": "out", "c": "4" },
+      { "t": "blank" },
+      { "t": "note", "c": "# -i ignores case, -n prints line numbers, -c just counts" }
+    ]
+  },
+  {
+    "file": "shot-05-pipeline.png",
+    "title": "alice@web01: ~/terminal-practice",
+    "badge": "bash",
+    "width": 1180,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "$ ", "c": "grep \"Failed password\" auth.log | awk '{print $(NF-3)}' | sort | uniq -c | sort -rn" },
+      { "t": "blank" },
+      { "t": "out", "c": "      3 203.0.113.5" },
+      { "t": "out", "c": "      1 192.0.2.44" },
+      { "t": "blank" },
+      { "t": "note", "c": "# grep  -> keep the lines that mention a failure" },
+      { "t": "note", "c": "# awk   -> print the 3rd field from the end (the source IP)" },
+      { "t": "note", "c": "# sort  -> put identical addresses next to each other" },
+      { "t": "note", "c": "# uniq  -> collapse duplicates and prefix the count" },
+      { "t": "note", "c": "# sort -rn -> biggest offender first" }
+    ]
+  },
+  {
+    "file": "shot-06-pipeline-stages.png",
+    "title": "alice@web01: ~/terminal-practice",
+    "badge": "one stage at a time",
+    "width": 1180,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "$ ", "c": "grep \"Failed password\" auth.log | wc -l" },
+      { "t": "out", "c": "4" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "$ ", "c": "grep \"Failed password\" auth.log | awk '{print $(NF-3)}'" },
+      { "t": "out", "c": "203.0.113.5" },
+      { "t": "out", "c": "203.0.113.5" },
+      { "t": "out", "c": "192.0.2.44" },
+      { "t": "out", "c": "203.0.113.5" },
+      { "t": "blank" },
+      { "t": "note", "c": "# each stage is readable on its own — that is how you find the broken one" }
+    ]
+  },
+  {
+    "file": "shot-07-permissions.png",
+    "title": "alice@web01: ~/.ssh",
+    "badge": "chmod",
+    "width": 1080,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "alice@web01:~/.ssh$ ", "c": "ls -l" },
+      { "t": "out", "c": "-rw-------  1 alice alice  1675 Sep 28 18:04 id_ed25519" },
+      { "t": "out", "c": "-rw-r--r--  1 alice alice   425 Sep 28 18:04 id_ed25519.pub" },
+      { "t": "out", "c": "-rwxr-x---  1 alice alice  1024 Sep 30 10:00 deploy.sh" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "alice@web01:~/.ssh$ ", "c": "ls -l deploy.sh" },
+      { "t": "out", "c": "-rwxr-x---  1 alice alice 1024 Sep 30 10:00 deploy.sh" },
+      { "t": "blank" },
+      { "t": "note", "c": "# owner  rwx  = 7      group  r-x  = 5      world  ---  = 0   ->  750" },
+      { "t": "note", "c": "# id_ed25519 is 600: readable only by alice, so ssh will accept it" }
+    ]
+  },
+  {
+    "file": "shot-08-network.png",
+    "title": "alice@web01: ~",
+    "badge": "ss -tuln",
+    "width": 1120,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "alice@web01:~$ ", "c": "ss -tuln" },
+      { "t": "out", "c": "Netid  State   Local Address:Port   Peer Address:Port  Process" },
+      { "t": "out", "c": "tcp    LISTEN  0.0.0.0:22            0.0.0.0:*          sshd" },
+      { "t": "out", "c": "tcp    LISTEN  127.0.0.1:631         0.0.0.0:*          cupsd" },
+      { "t": "out", "c": "tcp    LISTEN  0.0.0.0:8080         0.0.0.0:*          docker-proxy" },
+      { "t": "out", "c": "tcp    LISTEN  0.0.0.0:5432         0.0.0.0:*          postgres" },
+      { "t": "out", "c": "tcp    LISTEN  0.0.0.0:9100         0.0.0.0:*          cups" },
+      { "t": "blank" },
+      { "t": "note", "c": "# 0.0.0.0 means every interface — reachable from the network" }
+    ]
+  },
+  {
+    "file": "shot-09-curl-pipe-bash.png",
+    "title": "the one-liner you should be careful with",
+    "badge": "curl | bash",
+    "width": 1120,
+    "fontSize": 14,
+    "lines": [
+      { "t": "note", "c": "# the pattern you will see in READMEs everywhere:" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "$ ", "c": "curl -fsSL https://example.com/install.sh | bash" },
+      { "t": "out", "c": "  ... downloads a script and runs it immediately" },
+      { "t": "blank" },
+      { "t": "note", "c": "# the version you can actually check:" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "$ ", "c": "curl -fsSLO https://example.com/install.sh" },
+      { "t": "out", "c": "  # download only" },
+      { "t": "cmd", "p": "$ ", "c": "less install.sh" },
+      { "t": "out", "c": "  # read it" },
+      { "t": "cmd", "p": "$ ", "c": "bash install.sh" },
+      { "t": "out", "c": "  # run it once you are satisfied" }
+    ]
+  },
+  {
+    "file": "shot-10-brute-force.png",
+    "title": "alice@web01: ~/terminal-practice",
+    "badge": "log analysis",
+    "width": 1180,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "$ ", "c": "grep \"Failed password\" auth.log | awk '{print $(NF-3)}' | sort | uniq -c | sort -rn" },
+      { "t": "out", "c": "      3 203.0.113.5" },
+      { "t": "out", "c": "      1 192.0.2.44" },
+      { "t": "blank" },
+      { "t": "cmd", "p": "$ ", "c": "grep \"Accepted\" auth.log" },
+      { "t": "out", "c": "Sep 30 10:02:40 host sshd[822]: Accepted password for alice from 198.51.100.7 port 40022 ssh2" },
+      { "t": "blank" },
+      { "t": "note", "c": "# one address, three failures in four minutes, against root and admin" },
+      { "t": "note", "c": "# that is what a brute-force attempt looks like in a log" }
+    ]
+  },
+  {
+    "file": "shot-11-man.png",
+    "title": "reading a man page",
+    "badge": "man",
+    "width": 1120,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "alice@web01:~$ ", "c": "man ls" },
+      { "t": "out", "c": "LS(1)                       User Commands                       LS(1)" },
+      { "t": "blank" },
+      { "t": "out", "c": "NAME" },
+      { "t": "out", "c": "       list directory contents" },
+      { "t": "blank" },
+      { "t": "out", "c": "SYNOPSIS" },
+      { "t": "out", "c": "       ls [OPTION]... [FILE]..." },
+      { "t": "blank" },
+      { "t": "out", "c": "DESCRIPTION" },
+      { "t": "out", "c": "       List information about the FILEs ..." },
+      { "t": "blank" },
+      { "t": "note", "c": "# read the SYNOPSIS first, then press / and type the option you want" },
+      { "t": "note", "c": "# press q to quit" }
+    ]
+  }
+]
