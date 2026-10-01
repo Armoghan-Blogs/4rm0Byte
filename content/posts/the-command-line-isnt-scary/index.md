@@ -10,11 +10,7 @@ showWordCount: true
 showComments: true
 showNewsletter: true
 showDate: true
-showDateUpdated: false
-showHeadingAnchors: true
-showPagination: true
-showReadingTime: true
-showReadingProgress: true
+showTaxonomies: false
 showViews: true
 showLikes: true
 showBreadcrumbs: true
@@ -22,6 +18,11 @@ showEdit: true
 showRelatedContent: true
 showDateOnlyInArticle: false
 replyByEmail: false
+showDateUpdated: false
+showHeadingAnchors: true
+showPagination: true
+showReadingTime: true
+showReadingProgress: true
 tags: ["cybersecurity", "infosec", "beginners", "security-basics", "linux", "command-line", "terminal", "bash", "powershell"]
 categories: ["Cybersecurity", "Fundamentals"]
 keywords: ["command line for beginners", "terminal survival guide", "linux commands for cybersecurity", "bash basics", "how to read a command", "grep and pipes explained", "linux file permissions explained", "command line for hackers", "PowerShell vs bash", "beginner terminal exercises"]
