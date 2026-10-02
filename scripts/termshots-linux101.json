@@ -1,0 +1,356 @@
+[
+  {
+    "file": "shot-01-ip-br-addr-target.png",
+    "title": "target (Ubuntu Server)",
+    "badge": "ip -br addr",
+    "width": 940,
+    "lines": [
+      { "t": "cmd", "p": "armoghan@target:~$ ", "c": "ip -br addr" },
+      { "t": "out", "c": "lo     UNKNOWN  127.0.0.1/8 ::1/128" },
+      { "t": "out", "c": "enp0s3 UP       10.0.2.15/24" },
+      { "t": "out", "c": "enp0s8 UP       192.168.56.102/24" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# enp0s3 -> NAT, internet access, the usual 10.0.2.15"
+      },
+      {
+        "t": "note",
+        "c": "# enp0s8 -> the private lab network, this is your TARGET"
+      }
+    ]
+  },
+  {
+    "file": "shot-02-ss-tuln.png",
+    "title": "target (Ubuntu Server)",
+    "badge": "ss -tuln",
+    "width": 1040,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "armoghan@target:~$ ", "c": "ss -tuln" },
+      {
+        "t": "out",
+        "c": "State  Recv-Q Send-Q Local Address:Port   Peer Address:Port  Process"
+      },
+      {
+        "t": "out",
+        "c": "LISTEN 0      128          127.0.0.11:39595      0.0.0.0:*"
+      },
+      {
+        "t": "out",
+        "c": "LISTEN 0      128               0.0.0.0:22         0.0.0.0:*"
+      },
+      {
+        "t": "out",
+        "c": "LISTEN 0      128               0.0.0.0:80         0.0.0.0:*"
+      },
+      {
+        "t": "out",
+        "c": "LISTEN 0      128            [::]:22            [::]:*"
+      },
+      {
+        "t": "out",
+        "c": "LISTEN 0      128            [::]:80            [::]:*"
+      },
+      { "t": "blank" },
+      { "t": "note", "c": "# :22 is sshd, :80 is apache2" },
+      {
+        "t": "note",
+        "c": "# 0.0.0.0 means it listens on every interface, not just the lab one"
+      }
+    ]
+  },
+  {
+    "file": "shot-03-export-target.png",
+    "title": "kali: security workstation",
+    "badge": "bash",
+    "width": 900,
+    "lines": [
+      {
+        "t": "cmd",
+        "p": "kali㉿kali:~$ ",
+        "c": "export TARGET=192.168.56.102"
+      },
+      { "t": "cmd", "p": "kali㉿kali:~$ ", "c": "echo $TARGET" },
+      { "t": "out", "c": "192.168.56.102" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# one address, stored once. every command below uses $TARGET"
+      },
+      {
+        "t": "note",
+        "c": "# gone when the terminal closes. re-export it in a new one."
+      }
+    ]
+  },
+  {
+    "file": "shot-04-ping.png",
+    "title": "kali: security workstation",
+    "badge": "checkpoint 1",
+    "width": 1060,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "kali㉿kali:~$ ", "c": "ping -c 4 $TARGET" },
+      {
+        "t": "out",
+        "c": "PING 192.168.56.102 (192.168.56.102) 56(84) bytes of data."
+      },
+      {
+        "t": "out",
+        "c": "64 bytes from 192.168.56.102: icmp_seq=1 ttl=64 time=0.412 ms"
+      },
+      {
+        "t": "out",
+        "c": "64 bytes from 192.168.56.102: icmp_seq=2 ttl=64 time=0.298 ms"
+      },
+      {
+        "t": "out",
+        "c": "64 bytes from 192.168.56.102: icmp_seq=3 ttl=64 time=0.305 ms"
+      },
+      {
+        "t": "out",
+        "c": "64 bytes from 192.168.56.102: icmp_seq=4 ttl=64 time=0.287 ms"
+      },
+      { "t": "blank" },
+      { "t": "out", "c": "--- 192.168.56.102 ping statistics ---" },
+      {
+        "t": "out",
+        "c": "4 packets transmitted, 4 received, 0% packet loss, time 3062ms"
+      },
+      { "t": "out", "c": "rtt min/avg/max/mdev = 0.287/0.325/0.412/0.051 ms" },
+      { "t": "blank" },
+      { "t": "ok", "c": "checkpoint passed: the private lab network works" }
+    ]
+  },
+  {
+    "file": "shot-05-nmap-sv.png",
+    "title": "kali: security workstation",
+    "badge": "checkpoint 2",
+    "width": 1140,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "kali㉿kali:~$ ", "c": "nmap -sV $TARGET" },
+      { "t": "blank" },
+      { "t": "out", "c": "Starting Nmap 7.99 ( https://nmap.org )" },
+      { "t": "out", "c": "Nmap scan report for 192.168.56.102" },
+      { "t": "out", "c": "Host is up (0.00052 latency)." },
+      { "t": "out", "c": "Not shown: 997 closed TCP ports (reset)" },
+      { "t": "blank" },
+      { "t": "out", "c": "PORT   STATE SERVICE VERSION" },
+      {
+        "t": "out",
+        "c": "22/tcp open  ssh     OpenSSH 10.2p1 Ubuntu 2+deb13u4 (Ubuntu Linux)"
+      },
+      {
+        "t": "out",
+        "c": "80/tcp open  http    Apache httpd 2.4.66 ((Ubuntu))"
+      },
+      {
+        "t": "out",
+        "c": "MAC Address: 08:00:27:4C:9A:2F (VMware Virtual NIC)"
+      },
+      { "t": "blank" },
+      {
+        "t": "out",
+        "c": "Service detection performed. Please report any incorrect results"
+      },
+      {
+        "t": "out",
+        "c": "at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in"
+      },
+      { "t": "out", "c": "0.71 seconds" }
+    ]
+  },
+  {
+    "file": "shot-06-curl-headers.png",
+    "title": "kali: security workstation",
+    "badge": "curl -I",
+    "width": 1140,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "kali㉿kali:~$ ", "c": "curl -I http://$TARGET" },
+      { "t": "blank" },
+      { "t": "out", "c": "HTTP/1.1 200 OK" },
+      { "t": "out", "c": "Server: Apache/2.4.66 (Ubuntu)" },
+      { "t": "out", "c": "Date: Thu, 01 Oct 2026 21:14:07 GMT" },
+      { "t": "out", "c": "Content-Type: text/html; charset=UTF-8" },
+      { "t": "out", "c": "Content-Length: 10774" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# 200 OK, and the Server header confirms what Nmap guessed"
+      }
+    ]
+  },
+  {
+    "file": "shot-07-ssh.png",
+    "title": "kali → target",
+    "badge": "ssh",
+    "width": 1120,
+    "fontSize": 14,
+    "lines": [
+      { "t": "cmd", "p": "kali㉿kali:~$ ", "c": "ssh armoghan@$TARGET" },
+      {
+        "t": "out",
+        "c": "The authenticity of host '192.168.56.102' can't be established."
+      },
+      {
+        "t": "out",
+        "c": "ED25519 key fingerprint is SHA256:8pQ2xV1mZcR4kL7nWq0dYb3sT9uJ6hF5eA2gXc1Nw."
+      },
+      {
+        "t": "out",
+        "c": "Are you sure you want to continue connecting (yes/no/[fingerprint])? yes"
+      },
+      {
+        "t": "out",
+        "c": "Warning: Permanently added '192.168.56.102' to the list of known hosts."
+      },
+      { "t": "blank" },
+      { "t": "cmd", "p": "armoghan@target:~$ ", "c": "hostname" },
+      { "t": "out", "c": "target" },
+      { "t": "cmd", "p": "armoghan@target:~$ ", "c": "exit" },
+      { "t": "out", "c": "logout" },
+      { "t": "cmd", "p": "kali㉿kali:~$ ", "c": "" }
+    ]
+  },
+  {
+    "file": "shot-08-nmap-closed.png",
+    "title": "kali → target, port 80 stopped",
+    "badge": "closed",
+    "width": 1120,
+    "fontSize": 14,
+    "lines": [
+      { "t": "note", "c": "# on the target first" },
+      {
+        "t": "cmd",
+        "p": "armoghan@target:~$ ",
+        "c": "sudo systemctl stop apache2"
+      },
+      { "t": "blank" },
+      { "t": "note", "c": "# now from kali" },
+      { "t": "cmd", "p": "kali㉿kali:~$ ", "c": "nmap -p 22,80 $TARGET" },
+      { "t": "blank" },
+      { "t": "out", "c": "Starting Nmap 7.99 ( https://nmap.org )" },
+      { "t": "out", "c": "Nmap scan report for 192.168.56.102" },
+      { "t": "out", "c": "Host is up (0.00044 latency)." },
+      { "t": "blank" },
+      { "t": "out", "c": "PORT   STATE  SERVICE" },
+      { "t": "out", "c": "22/tcp open   ssh" },
+      { "t": "out", "c": "80/tcp closed http" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# closed, not filtered: the host answered with a TCP reset."
+      },
+      {
+        "t": "note",
+        "c": "# the machine is there, nothing is listening on 80."
+      }
+    ]
+  },
+  {
+    "file": "shot-09-ufw-filtered.png",
+    "title": "kali → target, ufw enabled",
+    "badge": "filtered",
+    "width": 1120,
+    "fontSize": 14,
+    "lines": [
+      { "t": "note", "c": "# on the target" },
+      {
+        "t": "cmd",
+        "p": "armoghan@target:~$ ",
+        "c": "sudo systemctl start apache2"
+      },
+      { "t": "cmd", "p": "armoghan@target:~$ ", "c": "sudo ufw allow 22/tcp" },
+      { "t": "out", "c": "Rule added" },
+      { "t": "out", "c": "Rule added (v6)" },
+      { "t": "cmd", "p": "armoghan@target:~$ ", "c": "sudo ufw enable" },
+      {
+        "t": "out",
+        "c": "Command may disrupt existing ssh connections. Proceed with operation (y|n)? y"
+      },
+      { "t": "out", "c": "Firewall is active and enabled on system startup" },
+      { "t": "blank" },
+      { "t": "note", "c": "# from kali" },
+      { "t": "cmd", "p": "kali㉿kali:~$ ", "c": "nmap -p 22,80 $TARGET" },
+      { "t": "blank" },
+      { "t": "out", "c": "PORT   STATE  SERVICE" },
+      { "t": "out", "c": "22/tcp open     ssh" },
+      { "t": "out", "c": "80/tcp filtered http" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# apache IS running. ufw drops the packets silently instead of"
+      },
+      {
+        "t": "note",
+        "c": "# resetting them, so the scanner gets no answer at all."
+      },
+      { "t": "note", "c": "# undo it when you are done:  sudo ufw disable" }
+    ]
+  },
+  {
+    "file": "shot-10-tcpdump.png",
+    "title": "kali, interface eth1",
+    "badge": "tcpdump",
+    "width": 1320,
+    "fontSize": 13,
+    "lines": [
+      {
+        "t": "cmd",
+        "p": "kali㉿kali:~$ ",
+        "c": "sudo tcpdump -i eth1 -n 'tcp port 80'"
+      },
+      { "t": "blank" },
+      { "t": "note", "c": "# in a second terminal" },
+      {
+        "t": "cmd",
+        "p": "kali㉿kali:~$ ",
+        "c": "curl -s -o /dev/null http://$TARGET"
+      },
+      { "t": "blank" },
+      {
+        "t": "out",
+        "c": "02:14:31.882115 IP 192.168.56.101.52344 > 192.168.56.102.80: Flags [S],"
+      },
+      {
+        "t": "out",
+        "c": "        seq 248731926, win 64240, options [mss 1460,sackOK,TS val"
+      },
+      {
+        "t": "out",
+        "c": "        1185432,e], seq 0, win 64240, options [mss 1460,sackOK,TS val"
+      },
+      { "t": "out", "c": "        1185432,e], length 0" },
+      {
+        "t": "out",
+        "c": "02:14:31.884022 IP 192.168.56.102.80 > 192.168.56.101.52344: Flags [S.],"
+      },
+      {
+        "t": "out",
+        "c": "        seq 2918824473, ack 248731927, win 65160, options [mss 1460,"
+      },
+      { "t": "out", "c": "        sackOK,TS val 4190874,e], length 0" },
+      {
+        "t": "out",
+        "c": "02:14:31.884108 IP 192.168.56.101.52344 > 192.168.56.102.80: Flags [.],"
+      },
+      { "t": "out", "c": "        ack 1, win 501, length 0" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# [S] is SYN, [S.] is SYN-ACK, [.] is ACK. that is the handshake,"
+      },
+      {
+        "t": "note",
+        "c": "# on a network you built, before any payload is sent."
+      },
+      { "t": "out", "c": "^C" },
+      { "t": "out", "c": "12 packets captured" },
+      { "t": "out", "c": "12 packets received by filter" },
+      { "t": "out", "c": "0 packets dropped by kernel" }
+    ]
+  }
+]
