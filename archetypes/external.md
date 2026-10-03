@@ -29,7 +29,7 @@ keywords: []
 series: []
 series_order: 0
 author: ""
-showAuthorBottom: false
+showAuthorBottom: true
 draft: false
 showZenMode: false
 ---
