@@ -1,0 +1,237 @@
+[
+  {
+    "file": "shot-01-routing-table.png",
+    "title": "you@home: ~",
+    "badge": "bash",
+    "width": 1060,
+    "lines": [
+      { "t": "cmd", "p": "you@home:~$ ", "c": "ip route show" },
+      {
+        "t": "out",
+        "c": "default via 192.168.100.1 dev wlp4s0 proto dhcp src 192.168.100.7 metric 600"
+      },
+      {
+        "t": "out",
+        "c": "192.168.100.0/24 dev wlp4s0 proto kernel scope link src 192.168.100.7 metric 600"
+      },
+      {
+        "t": "out",
+        "c": "192.168.122.0/24 dev virbr0 proto kernel scope link src 192.168.122.1 linkdown"
+      },
+      { "t": "blank" },
+      { "t": "cmd", "p": "you@home:~$ ", "c": "ip route get 8.8.8.8" },
+      {
+        "t": "out",
+        "c": "8.8.8.8 via 192.168.100.1 dev wlp4s0 src 192.168.100.7 uid 1000"
+      },
+      { "t": "out", "c": "    cache" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# Two routes to match. 8.8.8.8 falls inside neither,"
+      },
+      { "t": "note", "c": "# so the /0 default route carries it." },
+      {
+        "t": "note",
+        "c": "# Note 192.168.122.0/24: a VirtualBox host-only network."
+      }
+    ]
+  },
+  {
+    "file": "shot-02-longest-prefix.png",
+    "title": "you@home: ~/blog",
+    "badge": "python",
+    "width": 1000,
+    "lines": [
+      {
+        "t": "cmd",
+        "p": "you@home:~/blog$ ",
+        "c": "python3 longest_prefix.py"
+      },
+      { "t": "out", "c": "(IPv4Network('208.65.152.0/22'), 'YouTube')" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# Pakistan Telecom announces 208.65.153.0/24, and it leaks"
+      },
+      {
+        "t": "out",
+        "c": "(IPv4Network('208.65.153.0/24'), 'Pakistan Telecom')"
+      },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# YouTube answers with two /25s, which beat the /24"
+      },
+      {
+        "t": "ok",
+        "c": "(IPv4Network('208.65.153.128/25'), 'YouTube, more specific')"
+      },
+      { "t": "out", "c": "(IPv4Network('0.0.0.0/0'), 'default route')" },
+      { "t": "blank" },
+      { "t": "note", "c": "# Same rule that caused the hijack also ended it." }
+    ]
+  },
+  {
+    "file": "shot-03-traceroute.png",
+    "title": "you@home: ~",
+    "badge": "tracepath",
+    "width": 1060,
+    "lines": [
+      { "t": "cmd", "p": "you@home:~$ ", "c": "tracepath -n 1.1.1.1" },
+      { "t": "out", "c": " 1?: [LOCALHOST]                      pmtu 1500" },
+      {
+        "t": "out",
+        "c": " 1:  192.168.100.1                                         2.342ms"
+      },
+      {
+        "t": "out",
+        "c": " 2:  100.65.201.192                                        3.380ms pmtu 1492"
+      },
+      {
+        "t": "out",
+        "c": " 2:  103.125.177.52                                        3.279ms"
+      },
+      {
+        "t": "out",
+        "c": " 3:  149.40.227.122                                        4.706ms"
+      },
+      {
+        "t": "warn",
+        "c": " 4:  110.93.252.50                                        24.167ms"
+      },
+      {
+        "t": "out",
+        "c": " 5:  110.93.252.222                                       21.391ms asymm  6"
+      },
+      {
+        "t": "out",
+        "c": " 6:  110.93.192.198                                       22.428ms asymm  8"
+      },
+      { "t": "dim", "c": " 7:  no reply" },
+      { "t": "dim", "c": " 8:  no reply" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# Hop 3 -> 4 jumps 4.7ms to 24.2ms: that step left the country."
+      },
+      {
+        "t": "note",
+        "c": "# Hop 2 is 100.64.0.0/10, carrier-grade NAT space (RFC 6598)."
+      },
+      {
+        "t": "note",
+        "c": "# no reply means that router drops our probes, not that it is down."
+      }
+    ]
+  },
+  {
+    "file": "shot-04-as-lookup.png",
+    "title": "you@home: ~",
+    "badge": "whois",
+    "width": 1060,
+    "lines": [
+      {
+        "t": "cmd",
+        "p": "you@home:~$ ",
+        "c": "whois -h whois.cymru.com \" -v 103.125.177.52\""
+      },
+      {
+        "t": "out",
+        "c": "AS      | IP               | BGP Prefix          | CC | Registry | Allocated  |"
+      },
+      { "t": "out", "c": "AS Name" },
+      {
+        "t": "out",
+        "c": "136969  | 103.125.177.52   | 103.125.177.0/24    | PK | apnic    | 2018-11-21 |"
+      },
+      { "t": "out", "c": "KKNETWROK-AS-AP - KK Networks (Pvt) Ltd., PK" },
+      { "t": "blank" },
+      {
+        "t": "cmd",
+        "p": "you@home:~$ ",
+        "c": "whois -h whois.cymru.com \" -v 8.8.8.8\""
+      },
+      {
+        "t": "out",
+        "c": "15169   | 8.8.8.8          | 8.8.8.0/24          | US | arin     | 2023-12-28 |"
+      },
+      { "t": "out", "c": "GOOGLE - Google LLC, US" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# The AS number is the identity. Two routers announcing"
+      },
+      { "t": "note", "c": "# the same prefix must share it, or one is lying." }
+    ]
+  },
+  {
+    "file": "shot-05-anycast.png",
+    "title": "you@home: ~",
+    "badge": "curl",
+    "width": 1000,
+    "lines": [
+      {
+        "t": "cmd",
+        "p": "you@home:~$ ",
+        "c": "curl -s https://www.cloudflare.com/cdn-cgi/trace | grep -E 'ip|loc|colo'"
+      },
+      { "t": "out", "c": "ip=103.151.237.31" },
+      { "t": "out", "c": "colo=KHI" },
+      { "t": "out", "c": "loc=PK" },
+      { "t": "blank" },
+      {
+        "t": "cmd",
+        "p": "you@home:~$ ",
+        "c": "# same URL, from a friend in another country"
+      },
+      { "t": "out", "c": "colo=FRA" },
+      { "t": "out", "c": "loc=DE" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# One address, many servers. BGP decides which one you get,"
+      },
+      { "t": "note", "c": "# and it picks the closest. KHI is Karachi." },
+      {
+        "t": "ok",
+        "c": "# colo=KHI confirms nearest-edge steering actually works here."
+      }
+    ]
+  },
+  {
+    "file": "shot-06-route-watch.png",
+    "title": "you@home: ~/blog",
+    "badge": "python",
+    "width": 1000,
+    "lines": [
+      { "t": "cmd", "p": "you@home:~/blog$ ", "c": "python3 route_leak.py" },
+      {
+        "t": "note",
+        "c": "# Watching RIB for 203.0.113.0/24 during the 2008 hijack replay"
+      },
+      { "t": "blank" },
+      { "t": "dim", "c": "18:46:12  4  208.65.152.0/22   AS path: 15169" },
+      {
+        "t": "dim",
+        "c": "18:47:03  4  208.65.153.0/24   AS path: 17557 15169"
+      },
+      { "t": "warn", "c": "         ^ more specific, from a different AS" },
+      { "t": "blank" },
+      {
+        "t": "note",
+        "c": "# Routers prefer the /24 regardless of who sent it."
+      },
+      {
+        "t": "note",
+        "c": "# YouTube announces two /25s at 18:52 and wins them back."
+      },
+      { "t": "blank", "c": "" },
+      { "t": "dim", "c": "21:01:37  4  208.65.153.0/24   withdrawn" },
+      {
+        "t": "ok",
+        "c": "# Two hours fourteen minutes. No packet was ever forged."
+      }
+    ]
+  }
+]
